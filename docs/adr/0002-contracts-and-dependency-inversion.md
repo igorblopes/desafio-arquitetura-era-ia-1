@@ -28,7 +28,7 @@ Requisito do desafio para a versão final: a comunicação com o gateway fica co
 Opção 2.
 
 - `app/helpdesk/ports.py` define `LanguageModel(Protocol)` com uma operação: `complete(capability: str, prompt: str) -> str`. É síncrona, devolve texto e não declara erros próprios, que só serão introduzidos quando houver quem os trate (fallback, na `main`).
-- `app/helpdesk/adapters/gateway.py` define `GatewayLanguageModel(LanguageModel)`. Ele usa o SDK `openai` apontado para o gateway (`config.GATEWAY_URL`, `config.GATEWAY_API_KEY`), envia `model=capability` e devolve `choices[0].message.content`. É o **único** componente com SDK de IA. Os padrões do SDK (timeout e retries) não mudam nesta fase.
+- `app/helpdesk/adapters/gateway.py` define `GatewayLanguageModel(LanguageModel)`. Ele usa o SDK `openai` apontado para o gateway (`config.GATEWAY_URL`, `config.GATEWAY_API_KEY`), envia `model=capability` e devolve `choices[0].message.content`. É o **único** componente com SDK de IA. O timeout padrão do SDK não muda nesta fase. O cliente usa `max_retries=0` (revisão do Passo 07): o gateway já retenta 2 vezes por padrão, e manter as 2 do SDK levaria uma falha a até 9 chamadas, contra 3 na v1.
 - Cada feature monta o próprio prompt (`TASK: ...`, que é comportamento caracterizado), declara sua capacidade como constante e recebe o contrato **por parâmetro**.
 - `main.py` é o **Composition Root**: cria o adapter uma vez e o passa às features. Não usamos contêiner de DI nem `Depends`.
 - `llm.py` é substituído progressivamente, feature por feature, e removido quando não tiver mais importadores. `llm.parse_json` vira `json.loads` nas features.

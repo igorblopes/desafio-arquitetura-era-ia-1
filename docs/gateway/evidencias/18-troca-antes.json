@@ -1,0 +1,40 @@
+{
+  "fase": "probe",
+  "quando": "2026-11-25T23:02:13",
+  "resultado": {
+    "gateway": {
+      "status": 200,
+      "seconds": 1.087,
+      "content": "{\"category\": \"delivery\", \"priority\": \"high\"}",
+      "model_field": "ticket-classification",
+      "usage": {
+        "completion_tokens": 11,
+        "prompt_tokens": 19,
+        "total_tokens": 30
+      },
+      "finish_reason": "stop",
+      "top_level_keys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "usage"
+      ]
+    },
+    "admin_calls": [
+      {
+        "id": "b43a6d0633b2",
+        "ts": "2026-11-25T23:02:13.056+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 1077
+      }
+    ]
+  }
+}

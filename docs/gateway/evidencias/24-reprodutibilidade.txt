@@ -1,0 +1,165 @@
+$ docker compose down
+ Container desafio-arquitetura-era-ia-1-edge-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-edge-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-edge-1 Removing 
+ Container desafio-arquitetura-era-ia-1-edge-1 Removed 
+ Container desafio-arquitetura-era-ia-1-app-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-app-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-app-1 Removing 
+ Container desafio-arquitetura-era-ia-1-app-1 Removed 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Removing 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Removed 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Removing 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Removed 
+ Network desafio-arquitetura-era-ia-1_default Removing 
+ Network desafio-arquitetura-era-ia-1_default Removed 
+[exit=0] duração=3s
+
+$ docker compose up -d --build --wait
+ Image desafio-arquitetura-era-ia-1-provider-fake Building 
+ Image desafio-arquitetura-era-ia-1-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.17kB 0.0s done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 273B done
+#2 DONE 0.0s
+
+#3 [provider-fake internal] load build definition from Dockerfile
+#3 transferring dockerfile: 489B done
+#3 DONE 0.1s
+
+#4 [app internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.1s
+
+#5 [app internal] load .dockerignore
+#5 transferring context: 60B done
+#5 DONE 0.0s
+
+#6 [provider-fake internal] load .dockerignore
+#6 transferring context: 67B done
+#6 DONE 0.0s
+
+#7 [provider-fake internal] load build context
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 457B done
+#8 DONE 0.0s
+
+#9 [provider-fake 1/5] FROM docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 DONE 0.1s
+
+#10 [app 4/5] RUN pip install --no-cache-dir -r requirements.txt
+#10 CACHED
+
+#11 [app 3/5] COPY requirements.txt .
+#11 CACHED
+
+#12 [app 5/5] COPY helpdesk ./helpdesk
+#12 CACHED
+
+#7 [provider-fake internal] load build context
+#7 transferring context: 156B done
+#7 DONE 0.0s
+
+#13 [provider-fake 5/6] COPY app ./app
+#13 CACHED
+
+#14 [provider-fake 3/6] COPY requirements.txt .
+#14 CACHED
+
+#15 [provider-fake 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#15 CACHED
+
+#16 [provider-fake 2/5] WORKDIR /srv
+#16 CACHED
+
+#17 [provider-fake 6/6] RUN useradd --uid 10001 --no-create-home fake
+#17 CACHED
+
+#18 [provider-fake] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:4f5035535d35e6a3d5fdcb5c09e8fbd36da8940892421f47218c36c327099a5a 0.0s done
+#18 exporting config sha256:81011677a6cdd57ed9a57ab09b905a93c2ed81d95a90c517970e81edd67e5e1c done
+#18 exporting attestation manifest sha256:bc72b2c16bd873cce8bfadcca0c9a9bdc4d16354e6716e5b2c35b56d9345a318
+#18 exporting attestation manifest sha256:bc72b2c16bd873cce8bfadcca0c9a9bdc4d16354e6716e5b2c35b56d9345a318 0.1s done
+#18 exporting manifest list sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25
+#18 exporting manifest list sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25 0.1s done
+#18 naming to docker.io/library/desafio-arquitetura-era-ia-1-provider-fake:latest 0.0s done
+#18 unpacking to docker.io/library/desafio-arquitetura-era-ia-1-provider-fake:latest 0.0s done
+#18 DONE 0.3s
+
+#19 [app] exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:15af7ec8a688df899da90354eb58b300f5acadd42e3899dd5bab6ec88e2796ed done
+#19 exporting config sha256:67c51a22784d9765b74e6e88645a2d5a4fcea8610876813bd815ee4408a2668d done
+#19 exporting attestation manifest sha256:09e7207d096a70e5860198f89d54951dd4eba7da0f827f31b5236c4a6c02bbd5 0.1s done
+#19 exporting manifest list sha256:002163cee995eb35ec0ae2292bca608f33afa2f5347c7442bf3c48134666e5cc 0.1s done
+#19 naming to docker.io/library/desafio-arquitetura-era-ia-1-app:latest 0.0s done
+#19 unpacking to docker.io/library/desafio-arquitetura-era-ia-1-app:latest 0.0s done
+#19 DONE 0.3s
+
+#20 [app] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [provider-fake] resolving provenance for metadata file
+#21 DONE 0.0s
+ Image desafio-arquitetura-era-ia-1-provider-fake Built 
+ Image desafio-arquitetura-era-ia-1-app Built 
+ Network desafio-arquitetura-era-ia-1_default Creating 
+ Network desafio-arquitetura-era-ia-1_default Creating 
+ Network desafio-arquitetura-era-ia-1_default Created 
+ Network desafio-arquitetura-era-ia-1_default Created 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Creating 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Created 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Creating 
+ Container desafio-arquitetura-era-ia-1-app-1 Creating 
+ Container desafio-arquitetura-era-ia-1-app-1 Created 
+ Container desafio-arquitetura-era-ia-1-edge-1 Creating 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Created 
+ Container desafio-arquitetura-era-ia-1-edge-1 Created 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Starting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Started 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Starting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Starting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Starting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Started 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+[exit=0] duração=19s
+
+$ docker compose ps
+NAME                                           IMAGE                                        COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app             "uvicorn helpdesk.ma…"   app             17 seconds ago   Up 10 seconds (healthy)   8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                            "/docker-entrypoint.…"   edge            17 seconds ago   Up 8 seconds              0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1             "docker/prod_entrypo…"   gateway         17 seconds ago   Up 10 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   desafio-arquitetura-era-ia-1-provider-fake   "uvicorn app.main:ap…"   provider-fake   17 seconds ago   Up 16 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ curl.exe -s http://localhost:4000/health/readiness
+{"status":"healthy","db":"Not connected"}
+[exit=0]
+$ curl.exe -s http://localhost:8000/health
+{"status":"ok"}
+[exit=0]

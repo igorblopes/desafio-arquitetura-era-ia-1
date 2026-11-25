@@ -1,0 +1,55 @@
+{
+  "fase": "retries",
+  "quando": "2026-11-25T23:01:46",
+  "resultado": {
+    "status": 500,
+    "seconds": 4.69,
+    "body": {
+      "error": {
+        "message": "litellm.InternalServerError: InternalServerError: OpenAIException - Falha simulada no provider.. Received Model Group=ticket-classification\nAvailable Model Group Fallbacks=None",
+        "type": "internal_server_error",
+        "param": null,
+        "code": "500"
+      }
+    },
+    "chamadas_no_provider": 3,
+    "admin_calls": [
+      {
+        "id": "5aca5fe5c955",
+        "ts": "2026-11-25T23:01:49.010+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "id": "1a22d901122e",
+        "ts": "2026-11-25T23:01:47.334+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "id": "dfc9d4451dcb",
+        "ts": "2026-11-25T23:01:46.719+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  }
+}

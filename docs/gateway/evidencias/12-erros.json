@@ -1,0 +1,113 @@
+{
+  "fase": "erros",
+  "quando": "2026-11-25T22:59:22",
+  "resultado": {
+    "openai_nativo": [
+      400,
+      {
+        "error": {
+          "message": "A entrada tem 10004 tokens e o contexto máximo do modelo é 8000 tokens.",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "context_length_exceeded"
+        }
+      }
+    ],
+    "anthropic_nativo": [
+      400,
+      {
+        "type": "error",
+        "error": {
+          "type": "invalid_request_error",
+          "message": "prompt is too long: 10004 tokens > 8000 maximum"
+        }
+      }
+    ],
+    "gateway_destino_openai": [
+      400,
+      {
+        "error": {
+          "message": "litellm.BadRequestError: OpenAIException - A entrada tem 10004 tokens e o contexto máximo do modelo é 8000 tokens.. Received Model Group=ticket-classification\nAvailable Model Group Fallbacks=None",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "400"
+        }
+      }
+    ],
+    "gateway_destino_anthropic": [
+      400,
+      {
+        "error": {
+          "message": "litellm.ContextWindowExceededError: litellm.BadRequestError: AnthropicError - {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"prompt is too long: 10004 tokens > 8000 maximum\"}}\nmodel=reply-suggestion. context_window_fallbacks=None. fallbacks=None.\n\nSet 'context_window_fallback' - https://docs.litellm.ai/docs/routing#fallbacks. Received Model Group=reply-suggestion\nAvailable Model Group Fallbacks=None",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "400"
+        }
+      }
+    ],
+    "gateway_capacidade_inexistente": [
+      400,
+      {
+        "error": {
+          "message": "/chat/completions: Invalid model name passed in model=capacidade-que-nao-existe. Call `/v1/models` to view available models for your key.",
+          "type": "invalid_request_error",
+          "param": null,
+          "code": "400",
+          "provider_specific_fields": {
+            "error": "/chat/completions: Invalid model name passed in model=capacidade-que-nao-existe. Call `/v1/models` to view available models for your key."
+          }
+        }
+      }
+    ],
+    "admin_calls": [
+      {
+        "id": "21a4b538fc34",
+        "ts": "2026-11-25T22:59:22.884+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 400,
+        "input_tokens": 10004,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "id": "4ab47904787a",
+        "ts": "2026-11-25T22:59:22.843+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 400,
+        "input_tokens": 10004,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "id": "d757b783914e",
+        "ts": "2026-11-25T22:59:22.834+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 400,
+        "input_tokens": 10004,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "id": "6f74d320f0a0",
+        "ts": "2026-11-25T22:59:22.830+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 400,
+        "input_tokens": 10004,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  }
+}

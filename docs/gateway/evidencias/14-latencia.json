@@ -1,0 +1,88 @@
+{
+  "fase": "latencia",
+  "quando": "2026-11-25T22:59:57",
+  "resultado": {
+    "classify gpt-fake-large": {
+      "direto_s": [
+        1.081,
+        1.08,
+        1.08,
+        1.08,
+        1.08
+      ],
+      "gateway_s": [
+        1.086,
+        1.086,
+        1.086,
+        1.086,
+        1.086
+      ],
+      "mediana_direto": 1.08,
+      "mediana_gateway": 1.086
+    },
+    "suggest claude-fake-large": {
+      "direto_s": [
+        15.954,
+        15.955,
+        15.955
+      ],
+      "gateway_s": [
+        15.962,
+        15.961,
+        15.961
+      ],
+      "mediana_direto": 15.955,
+      "mediana_gateway": 15.961
+    },
+    "admin_calls_ultimas": [
+      {
+        "id": "ac36eb5183de",
+        "ts": "2026-11-25T23:01:29.828+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 15951
+      },
+      {
+        "id": "4a80ef5c0a6d",
+        "ts": "2026-11-25T23:01:13.870+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 15950
+      },
+      {
+        "id": "42ea4f69ac67",
+        "ts": "2026-11-25T23:00:57.914+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 15951
+      },
+      {
+        "id": "de0d53eee857",
+        "ts": "2026-11-25T23:00:41.955+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 15951
+      }
+    ]
+  }
+}

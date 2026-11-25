@@ -3,7 +3,9 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Por enquanto, ele traz apenas as seções **Como rodar**, **Métrica** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Tabela de capacidades, Tabela de fallback, Fluxos, Troca de modelo, Roteiro de governança, Mapa de decisões) entram nos próximos passos.
+> Este README está em construção. Por enquanto, ele traz as seções **Como rodar**, **Tabela de capacidades**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Tabela de fallback, Fluxos, Roteiro de governança) entram nos próximos passos.
+>
+> Estado atual: o AI Gateway (`gateway`, LiteLLM Proxy) já roda no compose e responde às quatro capacidades, mas **a aplicação ainda chama o provider-fake diretamente**. A migração começa no piloto (Passo 08).
 
 ## Como rodar
 
@@ -11,11 +13,21 @@ Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enuncia
 
 ```bash
 cp .env.example .env        # só na primeira vez
-docker compose up -d --build
-curl http://localhost:8000/health   # {"status":"ok"}
+docker compose up -d --build --wait
+curl http://localhost:8000/health                # {"status":"ok"}
+curl http://localhost:4000/health/readiness      # {"status":"healthy","db":"Not connected"}
 ```
 
-A aplicação só é acessada pela borda (`http://localhost:8000`). O provider-fake expõe a administração em `http://localhost:8090/admin/*`.
+A aplicação só é acessada pela borda (`http://localhost:8000`). O provider-fake expõe a administração em `http://localhost:8090/admin/*`. O AI Gateway responde em `http://localhost:4000` (porta publicada só para testes; dentro do compose ele é `http://gateway:4000`).
+
+| Serviço | Porta no host | Papel |
+|---|---|---|
+| `edge` | 8000 | borda (nginx), única entrada do helpdesk |
+| `app` | — | FastAPI do helpdesk |
+| `gateway` | 4000 | AI Gateway (LiteLLM Proxy `v1.102.1`), configuração em `gateway/config.yaml` |
+| `provider-fake` | 8090 | providers simulados (`openai` e `anthropic`) e `/admin/*` |
+
+Já tinha um `.env` de antes? O compose agora exige `GATEWAY_MASTER_KEY` e para com `defina GATEWAY_MASTER_KEY no .env` se ela faltar: copie a linha do `.env.example`. Logs do gateway: `docker compose logs gateway`.
 
 ### 2. Rodar os testes de caracterização
 
@@ -54,7 +66,28 @@ Os valores esperados vêm de respostas reais observadas (golden masters em `test
 git worktree add --detach ../helpdesk-v1 v1-coupled
 ```
 
-### 4. Medir o acoplamento (métricas de Robert C. Martin)
+### 4. Testar o AI Gateway diretamente
+
+Nesta fase o gateway é testado sozinho, com um cliente de teste (a app ainda não o usa).
+
+```bash
+curl -s localhost:4000/v1/chat/completions \
+  -H "Authorization: Bearer sk-gateway-local-0001" -H "Content-Type: application/json" \
+  -d '{"model": "ticket-classification", "messages": [{"role": "user", "content": "TASK: classify\nMeu pedido #481516 não chegou"}]}'
+curl -s "localhost:8090/admin/calls?last=1"     # provider e modelo físico que atenderam
+```
+
+Experimentos reprodutíveis (autenticação, quatro capacidades, normalização, erros, streaming, latência, retries), uma fase por vez:
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 \
+  -e GATEWAY_URL=http://host.docker.internal:4000 -e PROVIDER_URL=http://host.docker.internal:8090 \
+  python:3.12-slim python docs/gateway/experimentos.py capacidades
+```
+
+Fases: `probe`, `auth`, `capacidades`, `normalizacao`, `erros`, `latencia`, `streaming`, `retries` (cada uma começa com `POST /admin/reset`). Resultados e análise em [docs/gateway/relatorio-gateway.md](docs/gateway/relatorio-gateway.md).
+
+### 5. Medir o acoplamento (métricas de Robert C. Martin)
 
 Pré-requisito: Python 3.12 ou mais recente. A ferramenta analisa só o código-fonte (AST): não precisa do Docker no ar e não executa os módulos analisados.
 
@@ -74,6 +107,45 @@ python metrics/measure.py --source ../helpdesk-v1/app/helpdesk --name v1-coupled
 | `--no-plot` | não | só o CSV |
 
 Saída: 0 sucesso, 1 arquivo ilegível ou com erro de sintaxe (nada é gravado), 2 argumentos inválidos. Sem Python no host: `docker run --rm -v "<pasta que contém os dois checkouts>:/p" -w /p/desafio-arquitetura-era-ia-1 python:3.12-slim sh -c "pip install -q -r metrics/requirements.txt && python metrics/measure.py --source ../helpdesk-v1/app/helpdesk --name v1-coupled"`.
+
+## Tabela de capacidades
+
+A aplicação vai pedir **capacidades lógicas**; o gateway decide qual modelo físico atende ([ADR 0004](docs/adr/0004-logical-capabilities.md)). Na `v2-decoupled`, todas usam o modelo `large` que a v1 já usava.
+
+| Capacidade | Feature | Modelo primário | Provider | Fallback técnico | Modelo fraco | Tentativas máximas |
+|---|---|---|---|---|---|---|
+| `ticket-classification` | F1 classificação | `gpt-fake-large` | openai | pendente (Passo 11) | pendente (Passo 11) | pendente (Passo 10)¹ |
+| `reply-suggestion` | F2 sugestão | `claude-fake-large` | anthropic | pendente (Passo 11) | pendente (Passo 11) | pendente (Passo 10)¹ |
+| `topics-report` | F3 relatório | `claude-fake-large` | anthropic | pendente (Passo 11) | pendente (Passo 11) | pendente (Passo 10)¹ |
+| `order-extraction` | F4 extração | `gpt-fake-large` | openai | pendente (Passo 11) | pendente (Passo 11) | pendente (Passo 10)¹ |
+
+¹ Nenhuma política de retry foi configurada ainda. Observado no Passo 07: a imagem do LiteLLM retenta 2 vezes por padrão em erros 5xx (3 chamadas ao provider).
+
+Estado: as quatro capacidades estão configuradas e validadas **no gateway**; a aplicação ainda não as usa.
+
+## Troca de modelo
+
+O mapeamento capacidade → modelo físico fica em [`gateway/config.yaml`](gateway/config.yaml). Para trocar o modelo de uma capacidade, altere só o bloco `litellm_params` dela e reinicie **só** o gateway:
+
+```yaml
+  - model_name: ticket-classification
+    litellm_params:
+      model: anthropic/claude-fake-large          # antes: openai/gpt-fake-large
+      api_base: http://provider-fake:8090/anthropic
+      api_key: os.environ/FAKE_ANTHROPIC_KEY
+      max_tokens: 2000
+```
+
+```bash
+docker compose restart gateway && docker compose up -d --wait gateway
+docker run --rm -v "${PWD}:/w" -w /w -e GATEWAY_URL=http://host.docker.internal:4000 \
+  -e PROVIDER_URL=http://host.docker.internal:8090 python:3.12-slim python docs/gateway/experimentos.py probe
+```
+
+A fase `probe` imprime a resposta e o último registro de `/admin/calls`: o `provider` e o `model` mostram o modelo físico que atendeu. Demonstração feita no Passo 07: `openai/gpt-fake-large` → `anthropic/claude-fake-large` em 8 s, resposta idêntica, container da app com o mesmo Id e horário de início, `app/` sem diff ([relatório, §7.5](docs/gateway/relatorio-gateway.md)).
+
+> [!IMPORTANT]
+> Essa demonstração usou um **cliente de teste** chamando o gateway. A troca de modelo do helpdesk pela borda só poderá ser demonstrada depois que as features migrarem para o gateway (Passos 08 e 09).
 
 ## Métrica
 
@@ -119,6 +191,17 @@ A régua vem do enunciado; a ferramenta está em `metrics/` e a decisão em [ADR
 **Exceções pendentes de validação:** `schemas` é candidata (DTOs do contrato HTTP). `config` não é. `llm`, o futuro componente de comunicação com o gateway e as features não podem ser exceção.
 
 As medições da `v2-decoupled` e da versão final serão adicionadas quando esses estados existirem.
+
+## Mapa de decisões
+
+| ADR | Decisão | Nível | Status |
+|---|---|---|---|
+| [0001](docs/adr/0001-metrics-and-architectural-stability.md) | medir acoplamento com ferramenta estática própria | software | aceita |
+| [0002](docs/adr/0002-contracts-and-dependency-inversion.md) | features dependem de um contrato de IA; só a composição conhece o adapter | software | proposta (piloto, Passo 08) |
+| [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1` | solução | aceita para a infraestrutura; integração pendente |
+| [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita no gateway; uso pela app pendente |
+
+Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md).
 
 ## Diagnóstico da v1
 

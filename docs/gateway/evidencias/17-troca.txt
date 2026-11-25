@@ -1,0 +1,58 @@
+## (a) antes da troca
+$ docker inspect --format '{{.Id}} {{.State.StartedAt}}' (app; gateway)
+app:     e14e9f9a863495904262e5c5ef3a94c87ce5049f2263c6ce5df6d2f390bd7f10 2026-11-25T22:58:00.897566568Z
+gateway: dba6b3e22551f37c10ce9e6488a15b7bcc47113ab3eabb9b234f875ddc9a37cc 2026-11-25T22:58:31.847376398Z
+
+## (b) probe antes -> 18-troca-antes.json
+
+## (c) troca: config-troca.yaml -> gateway/config.yaml
+212d8996cad4eb2846140a3565a3eae2c2eb9cb52e46526f0c9b9405c7e1cfd6 *gateway/config.yaml
+$ docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+[exit=0]
+$ docker compose up -d --wait gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+[exit=0] duração total da troca=8s
+
+## (d) probe depois -> 19-troca-depois.json
+
+## (e) depois da troca
+$ docker inspect --format '{{.Id}} {{.State.StartedAt}}' (app; gateway)
+app:     e14e9f9a863495904262e5c5ef3a94c87ce5049f2263c6ce5df6d2f390bd7f10 2026-11-25T22:58:00.897566568Z
+gateway: dba6b3e22551f37c10ce9e6488a15b7bcc47113ab3eabb9b234f875ddc9a37cc 2026-11-25T23:02:16.687308605Z
+$ git diff --stat -- app/
+[exit=0] (saída vazia acima = nenhuma alteração em app/)
+
+## (f) restauração: config-final.yaml -> gateway/config.yaml
+99722aa347cf8256716490440e9c8c313e2d146d3c89de0ae8e969ceb48d0032 *gateway/config.yaml
+$ docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+[exit=0]
+$ docker compose up -d --wait gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+[exit=0] duração=7s
+
+## (g) probe restaurado -> 20-troca-restaurado.json
+
+## (h) final
+$ docker inspect --format '{{.Id}} {{.State.StartedAt}}' (app; gateway)
+app:     e14e9f9a863495904262e5c5ef3a94c87ce5049f2263c6ce5df6d2f390bd7f10 2026-11-25T22:58:00.897566568Z
+gateway: dba6b3e22551f37c10ce9e6488a15b7bcc47113ab3eabb9b234f875ddc9a37cc 2026-11-25T23:02:35.794215594Z
+$ sha256sum gateway/config.yaml
+99722aa347cf8256716490440e9c8c313e2d146d3c89de0ae8e969ceb48d0032 *gateway/config.yaml

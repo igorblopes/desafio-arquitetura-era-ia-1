@@ -1,0 +1,52 @@
+{
+  "fase": "auth",
+  "quando": "2026-11-25T22:58:46",
+  "resultado": {
+    "chave_valida": {
+      "status": 200,
+      "seconds": 1.086,
+      "body": "{\"category\": \"delivery\", \"priority\": \"high\"}",
+      "chamadas_no_provider": 1
+    },
+    "chave_invalida": {
+      "status": 400,
+      "seconds": 0.007,
+      "body": {
+        "error": {
+          "message": "No connected db.",
+          "type": "no_db_connection",
+          "param": null,
+          "code": "400"
+        }
+      },
+      "chamadas_no_provider": 0
+    },
+    "sem_chave": {
+      "status": 401,
+      "seconds": 0.006,
+      "body": {
+        "error": {
+          "message": "Authentication Error, No api key passed in.",
+          "type": "auth_error",
+          "param": "None",
+          "code": "401"
+        }
+      },
+      "chamadas_no_provider": 0
+    },
+    "admin_calls": [
+      {
+        "id": "bb8a6e207b9a",
+        "ts": "2026-11-25T22:58:46.408+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "classify",
+        "stream": false,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 1076
+      }
+    ]
+  }
+}

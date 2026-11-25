@@ -1,0 +1,36 @@
+$ curl.exe -s -i http://localhost:4000/health/liveliness
+HTTP/1.1 200 OK
+date: Wed, 25 Nov 2026 22:58:17 GMT
+content-length: 12
+content-type: application/json
+x-frame-options: DENY
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+
+"I'm alive!"
+[exit=0]
+
+$ curl.exe -s -i http://localhost:4000/health/readiness
+HTTP/1.1 200 OK
+date: Wed, 25 Nov 2026 22:58:17 GMT
+content-length: 41
+content-type: application/json
+x-frame-options: DENY
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+
+{"status":"healthy","db":"Not connected"}
+[exit=0]
+
+$ curl.exe -s -i http://localhost:4000/health
+HTTP/1.1 401 Unauthorized
+date: Wed, 25 Nov 2026 22:58:17 GMT
+content-length: 115
+content-type: application/json
+x-frame-options: DENY
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+
+{"error":{"message":"Authentication Error, No api key passed in.","type":"auth_error","param":"None","code":"401"}}
+[exit=0]
+

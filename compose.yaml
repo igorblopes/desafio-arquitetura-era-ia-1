@@ -28,3 +28,30 @@ services:
     depends_on:
       provider-fake:
         condition: service_healthy
+
+  # AI Gateway (LiteLLM Proxy). ADR 0003. Nesta etapa roda em paralelo:
+  # a app ainda chama o provider-fake diretamente (migração nos Passos 08 e 09).
+  gateway:
+    image: ghcr.io/berriai/litellm:v1.102.1
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      # Só o que o gateway usa, declarado um a um (sem env_file): chaves dos providers
+      # e a chave própria do gateway. Os valores vêm do .env por interpolação.
+      FAKE_OPENAI_KEY: ${FAKE_OPENAI_KEY:?defina FAKE_OPENAI_KEY no .env}
+      FAKE_ANTHROPIC_KEY: ${FAKE_ANTHROPIC_KEY:?defina FAKE_ANTHROPIC_KEY no .env}
+      GATEWAY_MASTER_KEY: ${GATEWAY_MASTER_KEY:?defina GATEWAY_MASTER_KEY no .env}
+      # Usa a tabela de modelos embutida na imagem, sem buscá-la na internet ao subir.
+      LITELLM_LOCAL_MODEL_COST_MAP: "True"
+    volumes:
+      - ./gateway/config.yaml:/app/config.yaml:ro
+    ports:
+      - "4000:4000"   # só para testes no host; a app usará http://gateway:4000
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/readiness')"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+    depends_on:
+      provider-fake:
+        condition: service_healthy

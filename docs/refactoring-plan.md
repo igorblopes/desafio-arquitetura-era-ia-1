@@ -2,7 +2,7 @@
 
 | Item | Valor |
 |---|---|
-| Versão do plano | 1.0 (planejamento inicial, Passo 06) |
+| Versão do plano | 1.0.1 (1.0 do Passo 06 + fatos do gateway validados no Passo 07) |
 | Data | 2026-11-25 |
 | Estado de partida | tag `v1-coupled` (commit `8028305`) |
 | Estado de chegada desta fase | tag `v2-decoupled` (Passo 09) |
@@ -510,6 +510,8 @@ Centralizar credenciais dos providers; resolver capacidade → modelo físico e 
 
 Não fazem parte da v2: fallback, retry configurado, timeouts por capacidade, budget, rate limiting, logs de custo.
 
+> **Passo 07:** `max_tokens: 2000` foi configurado por capacidade no gateway e aceito, mas não está provado que é aplicado (as saídas caracterizadas ficam abaixo do limite). A imagem faz **2 retentativas por padrão** em 5xx, sem configuração. Ver `docs/gateway/relatorio-gateway.md`.
+
 ### 12.4 Separação de configurações e credenciais
 
 | Informação | Localização atual | Localização proposta |
@@ -541,6 +543,8 @@ Não fazem parte da v2: fallback, retry configurado, timeouts por capacidade, bu
 6. O `/admin/calls` do fake identifica a origem da chamada? Se não, que log do gateway prova que todas as chamadas passaram por ele?
 7. O proxy precisa de banco para a master key? (Esperado: não.)
 8. Vale isolar a rede do `app` do `provider-fake` (o `app` não alcança o fake), como prova física de O6? Decisão no ADR 0003, se for adotado.
+
+> **Respondidas no Passo 07** (`docs/gateway/relatorio-gateway.md`, §12): 1 sim; 2 sim, com e sem streaming; 3 aceito, aplicação não provada; 4 duas retentativas em 5xx; 5 +6 ms; 6 `/admin/calls` não identifica a origem, a prova será por exclusão e contagem (FF7 a FF10); 7 sim, e qualquer outra chave recebe 400; 8 adiado para o Passo 09.
 
 ---
 
@@ -575,7 +579,7 @@ app/helpdesk/
     └── gateway.py     GatewayLanguageModel: SDK openai apontado para o gateway
 ```
 
-`llm.py` sai. `app/requirements.txt` perde `anthropic` no incremento 8. O adapter usa o SDK `openai` (já dependência; o gateway expõe API OpenAI-compatível) em vez de escrever um cliente HTTP à mão. Os padrões do SDK (timeout de 600 s, 2 retries) ficam iguais aos da v1 de propósito: mudá-los é política de resiliência, assunto da `main`.
+`llm.py` sai. `app/requirements.txt` perde `anthropic` no incremento 8. O adapter usa o SDK `openai` (já dependência; o gateway expõe API OpenAI-compatível) em vez de escrever um cliente HTTP à mão. O timeout padrão do SDK (600 s) fica igual ao da v1 de propósito: mudá-lo é política de resiliência, assunto da `main`. **Revisão 1.0.1:** o cliente usa `max_retries=0`, porque o gateway já faz 2 retentativas por padrão (Passo 07). Assim uma falha continua gerando 3 chamadas ao provider, como na v1, em vez de 9; a política de retry passa a ter um único dono, configurado explicitamente no Passo 10.
 
 ---
 
@@ -853,8 +857,12 @@ O incremento 8 vem depois de todas as features porque `llm.py` e as constantes d
   (Ca=4, I=0.20, A=0, D=0.80); features escolhem provider pelo nome da função;
   modelo físico em config.py.
 - Arquitetura proposta: docs/refactoring-plan.md, seções 8, 10 e 13.
-- Gateway: serviço "gateway" (LiteLLM Proxy) em [URL], API OpenAI-compatível,
-  capacidade "ticket-classification" já configurada e validada no Passo 07.
+- Gateway: serviço "gateway" (LiteLLM Proxy v1.102.1) em http://gateway:4000,
+  API OpenAI-compatível (POST /v1/chat/completions), autenticação
+  Authorization: Bearer GATEWAY_API_KEY (valor provisório: a master key).
+  Capacidade "ticket-classification" configurada e validada no Passo 07
+  (docs/gateway/relatorio-gateway.md). A resposta traz o nome lógico em "model";
+  erros chegam como status HTTP com mensagem do LiteLLM: não interprete a mensagem.
 
 ## Tarefa
 - Componente: app/helpdesk/classification.py.
@@ -864,9 +872,10 @@ O incremento 8 vem depois de todas as features porque `llm.py` e as constantes d
      (método complete(capability: str, prompt: str) -> str).
   2. Criar app/helpdesk/adapters/__init__.py (vazio) e adapters/gateway.py com
      GatewayLanguageModel(LanguageModel), usando o SDK openai com
-     base_url=config.GATEWAY_URL e api_key=config.GATEWAY_API_KEY;
-     model=capability; mensagem única de usuário com o prompt; retorna
-     choices[0].message.content. Sem retries, timeouts ou fallback próprios.
+     base_url=config.GATEWAY_URL (http://gateway:4000/v1),
+     api_key=config.GATEWAY_API_KEY e max_retries=0 (o gateway já retenta
+     2 vezes); model=capability; mensagem única de usuário com o prompt; retorna
+     choices[0].message.content. Sem timeouts ou fallback próprios.
   3. classification.classify(ticket, model: LanguageModel): prompt
      f"TASK: classify\n{ticket.text}", capacidade "ticket-classification",
      json.loads; validação e 502 inalterados.
@@ -967,7 +976,7 @@ O agente não decide sozinho se o próprio trabalho está correto porque otimiza
 | R13 | Rollback difícil | baixa | alto | branch e commit por incremento; tag intocada | — |
 | R14 | Diferenças entre APIs dos providers (ex.: `max_tokens` obrigatório na Anthropic) | média | médio | gateway define `max_tokens` por capacidade | Passo 07; FF1 |
 | R15 | Dependência de serviços externos (download da imagem do gateway) | baixa | baixo | imagem com versão fixada | `docker compose pull` |
-| R16 | Retries somados (SDK 2 + gateway N) multiplicam chamadas sob falha | alta sob falha | médio (custo) | não configurar retry agora; registrar o padrão do proxy | `/admin/calls` com injeção de falha (Passo 07) |
+| R16 | Retries somados (SDK 2 + gateway 2) multiplicam chamadas sob falha | **confirmada** no Passo 07 (o gateway retenta 2 vezes por padrão) | médio (custo, até 9 chamadas) | adapter com `max_retries=0` (revisão 1.0.1); política explícita no Passo 10 | `/admin/calls` com injeção de falha |
 | R17 | Latência extra do gateway aproxima F2/F3 dos 30 s da borda | baixa | alto | medir no Passo 07 | tempos de FF1 |
 
 **Riscos que não podem ser eliminados agora** (validar nos Passos 07 e 08): R5, R6, R14, R16, R17 dependem do comportamento real do LiteLLM com o fake; R2 e R3 dependem do que o agente produzir.
@@ -1005,6 +1014,7 @@ Testes antes/depois: pendente. Decisão: pendente.
 | Versão | Evento | Evidência | Alteração realizada | Justificativa |
 |---|---|---|---|---|
 | 1.0 | Planejamento inicial | diagnóstico (Passo 02), comparação de modelos (Passo 03), caracterização (Passo 04), métricas da `v1-coupled` (Passo 05), simulação da 14.2 | plano inicial | — |
+| 1.0.1 | Validação do gateway (Passo 07) | `docs/gateway/relatorio-gateway.md`: retries padrão do LiteLLM (3 chamadas sob 5xx), auth só com master key, `max_tokens` aceito, streaming e normalização validados | respostas da §12.5; handoff (§19.1) com URL, autenticação e `max_retries=0`; §13 e R16 atualizados | evidência experimental: manter o SDK com 2 retentativas sobre o gateway multiplicaria as chamadas (até 9) e mudaria o comportamento sob falha da v1 (3) |
 | 1.1 | Resultado do piloto | a preencher | a preencher | a preencher |
 
 Para cada revisão: hipótese original; resultado esperado; resultado observado; divergências; problemas; alternativas consideradas; mudança no plano; evidência que a motivou; consequências para os próximos incrementos.

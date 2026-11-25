@@ -1,0 +1,12 @@
+$ git diff --stat v1-coupled -- app/ tests/characterization/ provider-fake/ edge/ data/
+[exit=0] (vazio acima = sem diferenças)
+
+$ git status --short
+ M .env.example
+ M compose.yaml
+?? .tmp-passo07/
+?? docs/gateway/
+?? gateway/
+
+$ sha256sum gateway/config.yaml
+99722aa347cf8256716490440e9c8c313e2d146d3c89de0ae8e969ceb48d0032 *gateway/config.yaml

@@ -1,0 +1,54 @@
+{
+  "fase": "streaming",
+  "quando": "2026-11-25T22:59:23",
+  "resultado": {
+    "gateway": {
+      "status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "primeiro_byte_s": 0.823,
+      "primeiro_conteudo_s": 0.823,
+      "total_s": 16.127,
+      "eventos_data": 608,
+      "ultimo_evento": "[DONE]",
+      "caracteres": 2424,
+      "igual_ao_golden": true
+    },
+    "anthropic_nativo": {
+      "status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "primeiro_byte_s": 0.004,
+      "primeiro_conteudo_s": 0.805,
+      "total_s": 16.092,
+      "eventos_data": 611,
+      "ultimo_evento": "{\"type\": \"message_stop\"}",
+      "caracteres": 2424,
+      "igual_ao_golden": true
+    },
+    "admin_calls": [
+      {
+        "id": "6c1b282e6e91",
+        "ts": "2026-11-25T22:59:39.976+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": true,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 16088
+      },
+      {
+        "id": "1afa74fb6e7e",
+        "ts": "2026-11-25T22:59:23.853+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "stream": true,
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 16104
+      }
+    ]
+  }
+}

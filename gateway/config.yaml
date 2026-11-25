@@ -1,0 +1,43 @@
+# AI Gateway do helpdesk (LiteLLM Proxy). Decisões: docs/adr/0003-ai-gateway.md e
+# docs/adr/0004-logical-capabilities.md.
+#
+# model_name   = capacidade lógica: o nome que o consumidor pede.
+# litellm_params.model = "<provider>/<modelo físico>": o prefixo escolhe o tradutor
+#                (openai = Chat Completions; anthropic = Messages).
+# api_base     = endereço do provider DENTRO da rede do compose.
+# api_key      = lida do ambiente do container do gateway (os.environ/...), nunca escrita aqui.
+#
+# v2-decoupled: um destino por capacidade, sempre o modelo "large" que a v1 usava.
+# Fallback, retries, budget e rate limit ainda não estão configurados (Passos 10 a 12).
+
+model_list:
+  - model_name: ticket-classification          # F1
+    litellm_params:
+      model: openai/gpt-fake-large
+      api_base: http://provider-fake:8090/openai/v1
+      api_key: os.environ/FAKE_OPENAI_KEY
+
+  - model_name: order-extraction               # F4
+    litellm_params:
+      model: openai/gpt-fake-large
+      api_base: http://provider-fake:8090/openai/v1
+      api_key: os.environ/FAKE_OPENAI_KEY
+
+  - model_name: reply-suggestion               # F2
+    litellm_params:
+      model: anthropic/claude-fake-large
+      api_base: http://provider-fake:8090/anthropic
+      api_key: os.environ/FAKE_ANTHROPIC_KEY
+      max_tokens: 2000                         # mesmo limite que a v1 envia (config.MAX_OUTPUT_TOKENS)
+
+  - model_name: topics-report                  # F3
+    litellm_params:
+      model: anthropic/claude-fake-large
+      api_base: http://provider-fake:8090/anthropic
+      api_key: os.environ/FAKE_ANTHROPIC_KEY
+      max_tokens: 2000
+
+general_settings:
+  # Autenticação própria do gateway. Sem banco de dados, a master key é a única chave
+  # aceita; chaves virtuais por consumidor ficam para o Passo 12 (ADR 0003).
+  master_key: os.environ/GATEWAY_MASTER_KEY

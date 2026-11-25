@@ -1,0 +1,8 @@
+Variáveis presentes no .env (apenas nomes):
+FAKE_OPENAI_KEY
+FAKE_ANTHROPIC_KEY
+GATEWAY_MASTER_KEY
+
+Linha GATEWAY_MASTER_KEY acrescentada: sim
+BOM no início:  23 20 43
+(arquivo usa terminações CRLF; a linha foi acrescentada com CRLF)
