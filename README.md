@@ -3,7 +3,7 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Por enquanto, ele traz apenas as seções **Como rodar** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Métrica, Tabela de capacidades, Tabela de fallback, Fluxos, Troca de modelo, Roteiro de governança, Mapa de decisões) entram nos próximos passos.
+> Este README está em construção. Por enquanto, ele traz apenas as seções **Como rodar**, **Métrica** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Tabela de capacidades, Tabela de fallback, Fluxos, Troca de modelo, Roteiro de governança, Mapa de decisões) entram nos próximos passos.
 
 ## Como rodar
 
@@ -53,6 +53,72 @@ Os valores esperados vêm de respostas reais observadas (golden masters em `test
 ```bash
 git worktree add --detach ../helpdesk-v1 v1-coupled
 ```
+
+### 4. Medir o acoplamento (métricas de Robert C. Martin)
+
+Pré-requisito: Python 3.12 ou mais recente. A ferramenta analisa só o código-fonte (AST): não precisa do Docker no ar e não executa os módulos analisados.
+
+```bash
+pip install -r metrics/requirements.txt pytest     # matplotlib==3.11.2 (só para o gráfico)
+python -m pytest tests/metrics -q                  # testes da própria ferramenta
+git worktree add --detach ../helpdesk-v1 v1-coupled
+python metrics/measure.py --source ../helpdesk-v1/app/helpdesk --name v1-coupled
+```
+
+| Opção | Obrigatória | Uso |
+|---|---|---|
+| `--source` | sim | diretório do pacote a medir; aponte para qualquer checkout (worktree, outra pasta) |
+| `--name` | sim | nome da medição; vira `metrics/results/<name>.csv` e `.png` |
+| `--output-dir` | não | outro diretório de saída (padrão `metrics/results/`) |
+| `--root-package` | não | pacote raiz dos imports absolutos (padrão: nome do diretório de `--source`) |
+| `--no-plot` | não | só o CSV |
+
+Saída: 0 sucesso, 1 arquivo ilegível ou com erro de sintaxe (nada é gravado), 2 argumentos inválidos. Sem Python no host: `docker run --rm -v "<pasta que contém os dois checkouts>:/p" -w /p/desafio-arquitetura-era-ia-1 python:3.12-slim sh -c "pip install -q -r metrics/requirements.txt && python metrics/measure.py --source ../helpdesk-v1/app/helpdesk --name v1-coupled"`.
+
+## Métrica
+
+A régua vem do enunciado; a ferramenta está em `metrics/` e a decisão em [ADR 0001](docs/adr/0001-metrics-and-architectural-stability.md). Fundamentos, exercícios e glossário em [docs/metricas/fundamentacao.md](docs/metricas/fundamentacao.md); análise completa em [docs/metricas/relatorio-v1-coupled.md](docs/metricas/relatorio-v1-coupled.md).
+
+| Item | Definição |
+|---|---|
+| Componente | cada `.py` de `app/helpdesk/` (recursivo), exceto `__init__.py`; nome com pontos (`adapters.gateway`) |
+| Dependência | import absoluto ou relativo que resolve para **outro** componente; externos, biblioteca padrão, duplicatas, transitivas e autorreferências não contam |
+| Ca | componentes distintos que importam o componente |
+| Ce | componentes distintos que o componente importa |
+| I | Ce / (Ca + Ce); 0 se ambos forem 0 |
+| A | classes que herdam de `typing.Protocol` ou `abc.ABC` / total de classes; 0 sem classes |
+| D | \|A + I − 1\| |
+| Zona de dor | A < 0,5 e I < 0,5 e D ≥ 0,5 |
+
+**Análise estática:** cada arquivo vira uma AST (`ast.parse`); os nós `Import`/`ImportFrom` são resolvidos contra o inventário de componentes (inclusive relativos, aliases e símbolos reexportados por `__init__.py`), e os `ClassDef` têm as bases checadas pela origem do nome. Cálculo com frações exatas; só o resultado é arredondado (2 casas, meio para cima).
+
+**Main Sequence:** a reta A + I = 1. Perto dela, o componente equilibra quanto é usado (estabilidade) com quanto é extensível (abstração). Longe, abaixo e à esquerda, fica a zona de dor: concreto e difícil de mudar.
+
+### Baseline da v1 (`v1-coupled`, commit `8028305`)
+
+| Componente | Ca | Ce | I | A | D | Zona de dor |
+|---|---|---|---|---|---|---|
+| classification | 1 | 3 | 0.75 | 0.00 | 0.25 | |
+| config | 6 | 0 | 0.00 | 0.00 | 1.00 | **sim** |
+| extraction | 1 | 3 | 0.75 | 0.00 | 0.25 | |
+| llm | 4 | 1 | 0.20 | 0.00 | 0.80 | **sim** |
+| main | 0 | 5 | 1.00 | 0.00 | 0.00 | |
+| report | 1 | 4 | 0.80 | 0.00 | 0.20 | |
+| schemas | 5 | 0 | 0.00 | 0.00 | 1.00 | **sim** |
+| suggestion | 1 | 3 | 0.75 | 0.00 | 0.25 | |
+| tickets | 1 | 1 | 0.50 | 0.00 | 0.50 | no limite (I = 0,5) |
+
+![Main Sequence da v1-coupled](metrics/results/v1-coupled.png)
+
+**Leitura:** a v1 tem zero abstrações. As dependências apontam para o que é mais estável (o SDP é respeitado em todas as 20 arestas), mas o que é estável é concreto e tecnológico: `llm` (SDKs e um método por provider) e `config` (nomes de modelos físicos). É a expressão estrutural das Dores 3 e 4 do diagnóstico.
+
+**Exigem investigação:** `llm` e `config` (problemas reais); `tickets` (no limite); as features (métrica boa, mas escolhem o provider pelo nome da função, um acoplamento semântico que a régua não vê).
+
+**Limitações:** a régua não conta SDKs e frameworks, acoplamento semântico, configuração de runtime, contratos HTTP, coesão nem frequência de mudança; módulos isolados e DTOs geram falsos positivos. Nenhuma mudança será feita só para baixar D (Goodhart).
+
+**Exceções pendentes de validação:** `schemas` é candidata (DTOs do contrato HTTP). `config` não é. `llm`, o futuro componente de comunicação com o gateway e as features não podem ser exceção.
+
+As medições da `v2-decoupled` e da versão final serão adicionadas quando esses estados existirem.
 
 ## Diagnóstico da v1
 
