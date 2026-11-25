@@ -88,3 +88,21 @@ python -m pytest tests/metrics -q
 ```
 
 `metrics/results/v1-coupled.csv` versionado; uma segunda execução produz bytes idênticos.
+
+## Revisão no Passo 06 (planejamento da refatoração)
+
+A régua não muda. Esta revisão confere se os critérios do `docs/refactoring-plan.md` são compatíveis com a interpretação deste ADR e registra o que a simulação de métricas antecipou. Os valores são **projetados**: foram calculados com esta ferramenta sobre um esqueleto de imports. Não são medições da v2.
+
+- **Compatibilidade.** Os critérios do plano usam a métrica sempre junto com os testes de caracterização e a revisão do diff, como manda a seção "Critérios de uso durante a refatoração".
+  - Nenhuma meta é percentual ou uniforme.
+  - Cada meta deriva do problema medido no componente.
+- **`config`.** Na v2 ele perde os modelos físicos, as URLs e as chaves de provider. Mesmo assim, a projeção indica Ca=3 e D=1,00, ou seja, continua na zona de dor.
+  - A razão pela qual ele foi recusado como exceção (conteúdo volátil) deixa de existir.
+  - A decisão fica para a `main` final (Passo 16), com a medição real: declará-lo naturalmente estável por revisão deste ADR, ou dissolvê-lo se isso aumentar a coesão.
+  - Nada muda na v2.
+- **Componentes novos.**
+  - `ports` (o `Protocol` de IA) é projetado com A=1, I=0, D=0.
+  - `adapters.gateway` é o componente de comunicação com o gateway, que **não pode** ser exceção. Ele é projetado com Ca=1, Ce=2 e D=0,33.
+  - A simulação mostrou que um adapter sem nenhum import interno teria D=1,00, ou seja, estaria na zona de dor. Por isso, o desenho do adapter será revisado no piloto, e qualquer import acrescentado só para escapar da zona de dor é motivo de recusa.
+- **Features.** O D projetado sobe de 0,25 para 0,33, porque elas passam a ter menos dependências. É uma piora esperada e aceita, não um defeito.
+- **Status:** a decisão deste ADR continua aceita. As exceções seguem como na tabela acima.
