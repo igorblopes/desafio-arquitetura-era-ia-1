@@ -3,7 +3,56 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Por enquanto, ele traz apenas a seção **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Como rodar, Métrica, Tabela de capacidades, Tabela de fallback, Fluxos, Troca de modelo, Roteiro de governança, Mapa de decisões) entram nos próximos passos.
+> Este README está em construção. Por enquanto, ele traz apenas as seções **Como rodar** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Métrica, Tabela de capacidades, Tabela de fallback, Fluxos, Troca de modelo, Roteiro de governança, Mapa de decisões) entram nos próximos passos.
+
+## Como rodar
+
+### 1. Subir o ambiente
+
+```bash
+cp .env.example .env        # só na primeira vez
+docker compose up -d --build
+curl http://localhost:8000/health   # {"status":"ok"}
+```
+
+A aplicação só é acessada pela borda (`http://localhost:8000`). O provider-fake expõe a administração em `http://localhost:8090/admin/*`.
+
+### 2. Rodar os testes de caracterização
+
+Os testes chamam a aplicação real pela borda, com o provider-fake de verdade (sem mocks). Antes de começar, eles conferem o `/health` e fazem `POST /admin/reset` no provider para garantir o modo `normal`.
+
+Opção A, Python local (3.12 ou mais recente):
+
+```bash
+python -m venv .venv
+. .venv/bin/activate              # Windows: .venv\Scripts\Activate.ps1
+pip install -r tests/requirements.txt
+python -m pytest tests/characterization -v
+```
+
+Opção B, sem instalar nada no host (só Docker):
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 \
+  -e HELPDESK_BASE_URL=http://host.docker.internal:8000 \
+  -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 \
+  python:3.12-slim sh -c "pip install -q -r tests/requirements.txt && python -m pytest tests/characterization -v -p no:cacheprovider"
+```
+
+| Variável | Padrão | Uso |
+|---|---|---|
+| `HELPDESK_BASE_URL` | `http://localhost:8000` | Borda (edge) do helpdesk |
+| `PROVIDER_ADMIN_URL` | `http://localhost:8090` | Admin do provider-fake (reset para o modo `normal`) |
+
+Resultado esperado: `32 passed` em cerca de 60 s. A F2 leva ~16 s por caso e a F3 (um dia) ~10 s, ambas abaixo dos 30 s da borda.
+
+Os valores esperados vêm de respostas reais observadas (golden masters em `tests/characterization/expected/`). Uma falha significa que o comportamento mudou: confira se a mudança foi intencional antes de atualizar qualquer expectativa. Detalhes em [docs/caracterizacao/relatorio-caracterizacao.md](docs/caracterizacao/relatorio-caracterizacao.md).
+
+### 3. Voltar à v1 original
+
+```bash
+git worktree add --detach ../helpdesk-v1 v1-coupled
+```
 
 ## Diagnóstico da v1
 
