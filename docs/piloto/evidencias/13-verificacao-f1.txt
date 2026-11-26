@@ -1,0 +1,96 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+{
+  "cenarios": [
+    {
+      "cenario": "sucesso",
+      "ok": true,
+      "status": 200,
+      "corpo": "{\"ticket_id\":\"TK-00042\",\"category\":\"delivery\",\"priority\":\"high\"}",
+      "requisicoes_ao_gateway": 1,
+      "primeira_requisicao": {
+        "caminho": "/v1/chat/completions",
+        "authorization": "Bearer sk-gateway-verificacao",
+        "corpo": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "TASK: classify\nMeu pedido #481516 não chegou e já passou do prazo, urgente"
+            }
+          ],
+          "model": "ticket-classification"
+        }
+      }
+    },
+    {
+      "cenario": "categoria fora da lista vira 502",
+      "ok": true,
+      "status": 502,
+      "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}",
+      "requisicoes_ao_gateway": 1,
+      "primeira_requisicao": {
+        "caminho": "/v1/chat/completions",
+        "authorization": "Bearer sk-gateway-verificacao",
+        "corpo": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "TASK: classify\nMeu pedido #481516 não chegou e já passou do prazo, urgente"
+            }
+          ],
+          "model": "ticket-classification"
+        }
+      }
+    },
+    {
+      "cenario": "prioridade fora da lista vira 502",
+      "ok": true,
+      "status": 502,
+      "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}",
+      "requisicoes_ao_gateway": 1,
+      "primeira_requisicao": {
+        "caminho": "/v1/chat/completions",
+        "authorization": "Bearer sk-gateway-verificacao",
+        "corpo": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "TASK: classify\nMeu pedido #481516 não chegou e já passou do prazo, urgente"
+            }
+          ],
+          "model": "ticket-classification"
+        }
+      }
+    },
+    {
+      "cenario": "gateway em 500: erro propagado, sem retentativa no cliente",
+      "ok": true,
+      "status": 500,
+      "corpo": "Internal Server Error",
+      "requisicoes_ao_gateway": 1,
+      "primeira_requisicao": {
+        "caminho": "/v1/chat/completions",
+        "authorization": "Bearer sk-gateway-verificacao",
+        "corpo": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "TASK: classify\nMeu pedido #481516 não chegou e já passou do prazo, urgente"
+            }
+          ],
+          "model": "ticket-classification"
+        }
+      }
+    }
+  ],
+  "requisicao_ao_gateway": {
+    "caminho é /v1/chat/completions": true,
+    "autentica com a chave do gateway": true,
+    "pede a capacidade lógica": true,
+    "uma mensagem de usuário com o prompt da v1": true,
+    "sem parâmetros extras": true
+  }
+}
+RESULTADO: OK

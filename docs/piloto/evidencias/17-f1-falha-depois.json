@@ -1,0 +1,38 @@
+{
+  "f1": {
+    "rota": "/tickets/classification",
+    "status": 500,
+    "segundos": 4.627,
+    "resposta": "Internal Server Error"
+  },
+  "tentativas_no_provider": 3,
+  "admin_calls": [
+    {
+      "ts": "2026-11-25T23:49:48.980+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-25T23:49:47.696+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-25T23:49:46.698+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    }
+  ]
+}

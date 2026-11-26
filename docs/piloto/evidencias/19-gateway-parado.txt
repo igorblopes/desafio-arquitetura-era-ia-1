@@ -1,0 +1,68 @@
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1   # antes
+5ea6f877a2361e49814cfc764deb5b8bd2b77cdd5cbb395fe3b6387c21e1b0b9 2026-11-25T23:40:59.058101619Z
+
+$ docker compose stop gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopped 
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             sha256:26cb6d95627516a5c6b9bb99b6695b575bb5f159f55da653335bedd4e61a9d76   "uvicorn helpdesk.ma…"   app             9 minutes ago    Up 9 minutes (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            46 minutes ago   Up 46 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   46 minutes ago   Up 46 minutes (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ python docs/piloto/sondas.py f1
+{
+  "f1": {
+    "rota": "/tickets/classification",
+    "status": 500,
+    "segundos": 3.989,
+    "resposta": "Internal Server Error"
+  },
+  "admin_calls": []
+}
+
+$ F4 pela borda (TK-00200) e GET localhost:8090/admin/calls?last=3
+status: 200
+corpo: {"ticket_id":"TK-00200","order_number":"#481516","product":"fone de ouvido bluetooth"}
+admin/calls status: 200
+[
+  {
+    "id": "0834456dfd63",
+    "ts": "2026-11-25T23:50:48.302+00:00",
+    "provider": "openai",
+    "model": "gpt-fake-large",
+    "task": "extract",
+    "stream": false,
+    "status": 200,
+    "input_tokens": 18,
+    "output_tokens": 17,
+    "duration_ms": 1225
+  }
+]
+
+$ docker compose start gateway
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Starting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+
+$ docker compose up -d --wait gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             sha256:26cb6d95627516a5c6b9bb99b6695b575bb5f159f55da653335bedd4e61a9d76   "uvicorn helpdesk.ma…"   app             10 minutes ago   Up 10 minutes (healthy)   8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            46 minutes ago   Up 46 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         46 minutes ago   Up 10 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   46 minutes ago   Up 46 minutes (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1   # depois
+5ea6f877a2361e49814cfc764deb5b8bd2b77cdd5cbb395fe3b6387c21e1b0b9 2026-11-25T23:40:59.058101619Z

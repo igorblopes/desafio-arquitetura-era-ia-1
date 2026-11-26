@@ -1,0 +1,53 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 32 items
+
+tests/characterization/test_classification.py::test_classifica_ticket[entrega-urgente] PASSED [  3%]
+tests/characterization/test_classification.py::test_classifica_ticket[cobranca-duplicada] PASSED [  6%]
+tests/characterization/test_classification.py::test_classifica_ticket[troca-sem-pressa] PASSED [  9%]
+tests/characterization/test_classification.py::test_classifica_ticket[produto-quebrado] PASSED [ 12%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-cadastro] PASSED [ 15%]
+tests/characterization/test_classification.py::test_classifica_ticket[negacao-de-urgencia-vira-high] PASSED [ 18%]
+tests/characterization/test_classification.py::test_classifica_ticket[prazo-de-entrega] PASSED [ 21%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-simples-low] PASSED [ 25%]
+tests/characterization/test_classification.py::test_classifica_ticket[agradecimento] PASSED [ 28%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[corpo-vazio] PASSED [ 31%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 34%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 37%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-nao-string] PASSED [ 40%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-sem-produto] PASSED [ 43%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-e-produto] PASSED [ 46%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[protocolo-nao-e-pedido] PASSED [ 50%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sem-dados-de-pedido] PASSED [ 53%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[numero-sem-cerquilha] PASSED [ 56%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sete-digitos-nao-e-pedido] PASSED [ 59%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[dois-pedidos-pega-o-primeiro] PASSED [ 62%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[sem-ticket-id] PASSED [ 65%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 68%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00042] PASSED [ 71%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00100] PASSED [ 75%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[sem-texto] PASSED [ 78%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 81%]
+tests/characterization/test_topics_report.py::test_relatorio_de_um_dia PASSED [ 84%]
+tests/characterization/test_topics_report.py::test_periodo_sem_tickets PASSED [ 87%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[inicio-depois-do-fim] PASSED [ 90%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[sem-data-final] PASSED [ 93%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[mes-invalido] PASSED [ 96%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[formato-brasileiro] PASSED [100%]
+
+============================= 32 passed in 59.97s ==============================
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             sha256:26cb6d95627516a5c6b9bb99b6695b575bb5f159f55da653335bedd4e61a9d76   "uvicorn helpdesk.ma…"   app             8 minutes ago    Up 8 minutes (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            44 minutes ago   Up 44 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         44 minutes ago   Up 44 minutes (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   44 minutes ago   Up 44 minutes (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+Nota do verificador: o docker compose ps mostra a imagem do app como sha256:26cb6d... (o container não foi recriado pelo up --build; a tag desafio-arquitetura-era-ia-1-app:latest aponta para sha256:c61f35...). Conferência de conteúdo: /srv/helpdesk/{classification,main,ports,config}.py e adapters/{__init__,gateway}.py dentro do container são idênticos aos da árvore de trabalho (cmp, ignorando CR).

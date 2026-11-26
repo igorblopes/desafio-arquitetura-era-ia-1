@@ -1,7 +1,7 @@
 # 0002. Features dependem de um contrato de IA; só o ponto de composição conhece o adapter
 
-- Status: proposta (validar no piloto, Passo 08)
-- Data: 2026-11-25
+- Status: aceita (validada na F1 pelo piloto do Passo 08; F2, F3 e F4 pendentes no Passo 09)
+- Data: 2026-11-25 (proposta no Passo 06; aceita no Passo 08, 2026-11-26)
 - Nível: software
 
 ## Contexto
@@ -62,7 +62,7 @@ Os valores foram calculados com a ferramenta sobre um esqueleto de imports, conf
 
 ## Evidência
 
-Pendente (Passo 08). Será aceita se:
+Condições definidas no Passo 06 (o resultado está na revisão abaixo). Será aceita se:
 
 - os 32 testes de caracterização passarem com a suíte idêntica à `v1-coupled`;
 - a F1 importar só `ports` e `schemas`;
@@ -71,3 +71,29 @@ Pendente (Passo 08). Será aceita se:
 - nenhum componente novo entrar na zona de dor.
 
 Isso será verificado com `python metrics/measure.py --source app/helpdesk --name piloto-f1`.
+
+## Revisão no Passo 08 (piloto da F1)
+
+**Resultado:** todas as condições de aceitação foram atendidas na F1. Status alterado de "proposta" para "aceita", com escopo explícito: a decisão está validada em **um** dos quatro consumidores. A generalização para F2, F3 e F4 é provável, mas só o Passo 09 a comprova.
+
+| Condição | Evidência (`docs/piloto/`) |
+|---|---|
+| 32 testes com a suíte idêntica | `32 passed in 59.97s`; `git diff v1-coupled -- tests/characterization/` vazio (evidências 12 e 14) |
+| F1 importa só `ports` e `schemas` | arestas do `pilot-after.csv`; `grep` de `llm`, `config`, `openai` e `adapters` vazio na F1 |
+| `adapters.gateway` com Ca=1 (`main`) | `pilot-after.csv` |
+| `ports` com A=1,00 | `pilot-after.csv`: 2/0/0/1/0 |
+| Nada novo na zona de dor | `pilot-after.csv`; zona de dor = `config`, `llm` (transitório), `schemas` |
+
+**Hipóteses confirmadas:**
+- o contrato de uma operação bastou, sem nenhum parâmetro a mais;
+- a DI por parâmetro e a instância única em `main` funcionaram sem `Depends` nem contêiner;
+- a F1 não conhece provider, modelo nem SDK;
+- trocar o modelo da F1 não tocou a app (ADR 0004);
+- a herança explícita do `Protocol` se justificou fora da métrica: o `mypy` recusa um `complete` com assinatura errada. O risco R3 não se materializou.
+
+**Limitações encontradas:**
+- O SDK tipa `message.content` como `str | None`, e o contrato promete `str`. O comportamento é o mesmo da v1 (conteúdo nulo vira 500) e foi mantido. Tratar isso é decisão de erros de modelo (Passo 10), junto com a eventual introdução de erros próprios no contrato.
+- Herdar do `Protocol` dá ao adapter um `complete` padrão que devolve `None` se não for sobrescrito (risco levantado pelo agente). Fica coberto pela checagem estática e pelos testes de sucesso.
+- O adapter não trata erros. As exceções do SDK viram 500, como na v1; o efeito de o retry ser agora do gateway está no ADR 0003.
+
+**Consequências para o Passo 09:** a decisão não muda. Cada feature migrada recebe o contrato por parâmetro e declara a própria capacidade, e `main` passa a mesma instância. A projeção para a v2 completa (tabela acima, `ports` com Ca=5) continua válida. `llm.py` deve desaparecer.

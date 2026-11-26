@@ -1,0 +1,18 @@
+$ git diff --stat
+ .env.example           |  1 +
+ app/helpdesk/config.py |  5 +++++
+ compose.yaml           | 12 +++++++++---
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app                                          "uvicorn helpdesk.ma…"   app             5 seconds ago    Up 3 seconds (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            31 minutes ago   Up 31 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         31 minutes ago   Up 31 minutes (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   31 minutes ago   Up 31 minutes (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ docker compose exec app sh -c "env | grep ^GATEWAY_"
+GATEWAY_API_KEY=sk-gateway-local-0001
+GATEWAY_MASTER_KEY=sk-gateway-local-0001
+GATEWAY_URL=http://gateway:4000
+

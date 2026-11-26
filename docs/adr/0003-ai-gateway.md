@@ -1,6 +1,6 @@
 # 0003. Todas as chamadas de IA passam por um AI Gateway self-hosted (LiteLLM Proxy)
 
-- Status: aceita para a infraestrutura (validada isoladamente no Passo 07); a integração com a aplicação está pendente (Passos 08 e 09)
+- Status: aceita para a infraestrutura (Passo 07) e para a integração com a F1 (Passo 08); a integração de F2, F3 e F4 está pendente (Passo 09)
 - Data: 2026-11-25 (proposta no Passo 06, revisada no Passo 07)
 - Nível: solução
 
@@ -75,3 +75,28 @@ LiteLLM Proxy `ghcr.io/berriai/litellm:v1.102.1` (digest observado `sha256:87f34
 - `docs/gateway/relatorio-gateway.md` e `docs/gateway/evidencias/` (arquivos 00 a 25), gerados por `docs/gateway/experimentos.py`.
 - Testes de caracterização com o gateway no ar: `32 passed in 60.01s`.
 - `git diff --stat v1-coupled -- app/ tests/characterization/ provider-fake/ edge/ data/`: vazio.
+
+## Revisão no Passo 08 (primeiro consumidor real)
+
+A F1 é o primeiro consumidor real do gateway. Ela usa o adapter `GatewayLanguageModel` (ADR 0002), com `max_retries=0`, `GATEWAY_URL=http://gateway:4000` e a master key entregue ao `app` como `GATEWAY_API_KEY`.
+
+**Confirmado** (`docs/piloto/evidencias/`):
+- As chamadas da F1 chegam ao gateway (log com o IP do `app`) e só as dela. F2, F3 e F4 seguem direto ao provider até o Passo 09.
+- O retry tem um único dono. Sob 5xx persistente, sai 1 requisição app → gateway e há 3 tentativas no provider, a mesma contagem da v1 (não 9).
+- Com uma conexão keep-alive reutilizada pelo cliente único, o custo do salto extra não aparece no caminho feliz: F1 em 1,08 a 1,09 s, antes e depois.
+
+**Consequências previstas que se concretizaram** (agora medidas):
+
+| Consequência | v1 | Com gateway (F1) |
+|---|---|---|
+| Latência sob falha persistente do provider | 500 em 1,25 s (retries rápidos do SDK) | 500 em 4,6 a 4,7 s (backoff do LiteLLM) |
+| Gateway fora do ar | não se aplica | F1 em 500 (3,99 s), 0 chamadas ao provider; F4, ainda direta, segue em 200 |
+| Falha de conexão no primeiro salto | 3 tentativas (SDK → provider) | 1 tentativa (app → gateway) |
+
+**Limitações:**
+- O ponto único de falha deixou de ser hipótese: cada feature migrada no Passo 09 passa a depender dele em execução (risco R19 do plano).
+- O backoff padrão nunca foi uma decisão nossa. O Passo 10 deve configurar `num_retries`, backoff e timeouts explicitamente (R18, R21).
+- As mensagens de erro do gateway citam o provider e o *model group*. Hoje aparecem só no log da app, porque a rota responde 500 genérico.
+- `max_tokens: 2000` continua sem prova pela app: a F1 não o usa. A verificação fica para a F2.
+
+**A decisão continua válida.** A integração completa não está validada, porque só uma de quatro features migrou.

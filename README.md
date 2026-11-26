@@ -5,7 +5,7 @@ Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enuncia
 > [!NOTE]
 > Este README está em construção. Por enquanto, ele traz as seções **Como rodar**, **Tabela de capacidades**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. As demais seções obrigatórias (Visão geral, Tabela de fallback, Fluxos, Roteiro de governança) entram nos próximos passos.
 >
-> Estado atual: o AI Gateway (`gateway`, LiteLLM Proxy) já roda no compose e responde às quatro capacidades, mas **a aplicação ainda chama o provider-fake diretamente**. A migração começa no piloto (Passo 08).
+> Estado atual (transitório): o AI Gateway (`gateway`, LiteLLM Proxy) roda no compose e responde às quatro capacidades. **Só a F1 (classificação) passa por ele**, desde o piloto do Passo 08 ([relatório](docs/piloto/relatorio-piloto.md)). F2, F3 e F4 ainda chamam o provider-fake diretamente e migram no Passo 09; até lá a app mantém `llm.py` e as chaves dos providers.
 
 ## Como rodar
 
@@ -121,7 +121,9 @@ A aplicação vai pedir **capacidades lógicas**; o gateway decide qual modelo f
 
 ¹ Nenhuma política de retry foi configurada ainda. Observado no Passo 07: a imagem do LiteLLM retenta 2 vezes por padrão em erros 5xx (3 chamadas ao provider).
 
-Estado: as quatro capacidades estão configuradas e validadas **no gateway**; a aplicação ainda não as usa.
+Estado: as quatro capacidades estão configuradas e validadas **no gateway**. A aplicação usa `ticket-classification` (F1, Passo 08); as outras três entram no Passo 09.
+
+¹ Desde o piloto, as 3 tentativas da F1 sob falha vêm do gateway (o adapter usa `max_retries=0`), com o backoff padrão do LiteLLM: um 5xx persistente faz a F1 responder 500 em cerca de 4,6 s (na v1, 1,25 s). A política explícita é do Passo 10.
 
 ## Troca de modelo
 
@@ -144,8 +146,17 @@ docker run --rm -v "${PWD}:/w" -w /w -e GATEWAY_URL=http://host.docker.internal:
 
 A fase `probe` imprime a resposta e o último registro de `/admin/calls`: o `provider` e o `model` mostram o modelo físico que atendeu. Demonstração feita no Passo 07: `openai/gpt-fake-large` → `anthropic/claude-fake-large` em 8 s, resposta idêntica, container da app com o mesmo Id e horário de início, `app/` sem diff ([relatório, §7.5](docs/gateway/relatorio-gateway.md)).
 
+**Pelo helpdesk (F1, Passo 08).** Com o mesmo procedimento, a chamada `POST /tickets/classification` pela borda (porta 8000) passou a ser atendida por `anthropic`/`claude-fake-large`, com a mesma resposta, sem reiniciar nem reconstruir a app (mesmo Id de container, mesmos hashes de código). Para observar:
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e HELPDESK_BASE_URL=http://host.docker.internal:8000 \
+  -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/piloto/sondas.py f1
+```
+
+Evidências em `docs/piloto/evidencias/20` a `23`.
+
 > [!IMPORTANT]
-> Essa demonstração usou um **cliente de teste** chamando o gateway. A troca de modelo do helpdesk pela borda só poderá ser demonstrada depois que as features migrarem para o gateway (Passos 08 e 09).
+> Por enquanto, isso vale só para `ticket-classification`. As outras capacidades só podem ser trocadas pelo helpdesk depois que F2, F3 e F4 migrarem (Passo 09).
 
 ## Métrica
 
@@ -190,18 +201,18 @@ A régua vem do enunciado; a ferramenta está em `metrics/` e a decisão em [ADR
 
 **Exceções pendentes de validação:** `schemas` é candidata (DTOs do contrato HTTP). `config` não é. `llm`, o futuro componente de comunicação com o gateway e as features não podem ser exceção.
 
-As medições da `v2-decoupled` e da versão final serão adicionadas quando esses estados existirem.
+Medição do piloto (estado transitório, só a F1 migrada): [`docs/piloto/metricas/pilot-after.csv`](docs/piloto/metricas/pilot-after.csv). `ports` 2/0/0/1/0 (sobre a Main Sequence); `adapters.gateway` 1/2/0,67/0/0,33; `classification` 1/2/0,67/0/0,33; `llm` 3/1/0,25/0/0,75 (ainda na zona de dor, sai no Passo 09). Os valores coincidem com a projeção do plano. As medições da `v2-decoupled` e da versão final serão adicionadas quando esses estados existirem.
 
 ## Mapa de decisões
 
 | ADR | Decisão | Nível | Status |
 |---|---|---|---|
 | [0001](docs/adr/0001-metrics-and-architectural-stability.md) | medir acoplamento com ferramenta estática própria | software | aceita |
-| [0002](docs/adr/0002-contracts-and-dependency-inversion.md) | features dependem de um contrato de IA; só a composição conhece o adapter | software | proposta (piloto, Passo 08) |
-| [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1` | solução | aceita para a infraestrutura; integração pendente |
-| [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita no gateway; uso pela app pendente |
+| [0002](docs/adr/0002-contracts-and-dependency-inversion.md) | features dependem de um contrato de IA; só a composição conhece o adapter | software | aceita (validada na F1; F2 a F4 no Passo 09) |
+| [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1` | solução | aceita para a infraestrutura e para a F1; F2 a F4 pendentes |
+| [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita no gateway e na F1; demais capacidades pendentes |
 
-Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md).
+Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.1, revisada após o piloto). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md).
 
 ## Diagnóstico da v1
 

@@ -1,0 +1,96 @@
+== 1. Estado antes da troca
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+5ea6f877a2361e49814cfc764deb5b8bd2b77cdd5cbb395fe3b6387c21e1b0b9 2026-11-25T23:40:59.058101619Z
+
+$ git hash-object app/helpdesk/classification.py app/helpdesk/main.py app/helpdesk/ports.py app/helpdesk/adapters/__init__.py app/helpdesk/adapters/gateway.py
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+c3d38a3499a195c47ed78eee68e4a758c56a02e7
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+
+$ git diff --stat -- app/
+ app/helpdesk/classification.py | 12 ++++++++----
+ app/helpdesk/config.py         |  5 +++++
+ app/helpdesk/main.py           |  6 +++++-
+ 3 files changed, 18 insertions(+), 5 deletions(-)
+
+== 2. Sonda f1 antes -> 21-troca-antes.json
+
+== 3. Edição só do bloco ticket-classification em gateway/config.yaml
+$ git diff -- gateway/config.yaml
+warning: in the working copy of 'gateway/config.yaml', LF will be replaced by CRLF the next time Git touches it
+diff --git a/gateway/config.yaml b/gateway/config.yaml
+index a7e3a38..9f2b82b 100644
+--- a/gateway/config.yaml
++++ b/gateway/config.yaml
+@@ -13,9 +13,10 @@
+ model_list:
+   - model_name: ticket-classification          # F1
+     litellm_params:
+-      model: openai/gpt-fake-large
+-      api_base: http://provider-fake:8090/openai/v1
+-      api_key: os.environ/FAKE_OPENAI_KEY
++      model: anthropic/claude-fake-large
++      api_base: http://provider-fake:8090/anthropic
++      api_key: os.environ/FAKE_ANTHROPIC_KEY
++      max_tokens: 2000
+ 
+   - model_name: order-extraction               # F4
+     litellm_params:
+
+== 4. Reinício só do gateway
+$ docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+$ docker compose up -d --wait gateway
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+tempo total (restart + up --wait): 7.7 s
+
+== 5. Sonda f1 depois -> 22-troca-depois.json
+
+== 6. Estado depois da troca
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+5ea6f877a2361e49814cfc764deb5b8bd2b77cdd5cbb395fe3b6387c21e1b0b9 2026-11-25T23:40:59.058101619Z
+
+$ git hash-object app/helpdesk/classification.py app/helpdesk/main.py app/helpdesk/ports.py app/helpdesk/adapters/__init__.py app/helpdesk/adapters/gateway.py
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+c3d38a3499a195c47ed78eee68e4a758c56a02e7
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+
+$ git diff --stat -- app/
+ app/helpdesk/classification.py | 12 ++++++++----
+ app/helpdesk/config.py         |  5 +++++
+ app/helpdesk/main.py           |  6 +++++-
+ 3 files changed, 18 insertions(+), 5 deletions(-)
+
+== 7. Restauração
+$ git restore gateway/config.yaml
+$ docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+$ docker compose up -d --wait gateway
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+tempo total (restart + up --wait): 7.8 s
+$ git diff -- gateway/config.yaml
+sem saída
+
+== 8. Sonda f1 restaurada -> 23-troca-restaurado.json
+
+Nota do verificador: com core.autocrlf=true, o git restore do item 7 regravou gateway/config.yaml com CRLF (antes do experimento a cópia de trabalho estava em LF). Converti de volta para LF e rodei git restore de novo para atualizar o índice: cópia de trabalho em LF (git ls-files --eol: i/lf w/lf), git diff vazio, git status limpo, mesmo blob do HEAD (a7e3a38). O gateway em execução carregou a versão CRLF, de conteúdo idêntico.

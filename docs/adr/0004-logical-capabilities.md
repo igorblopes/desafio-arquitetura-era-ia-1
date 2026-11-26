@@ -1,6 +1,6 @@
 # 0004. A aplicação pede capacidades lógicas; o gateway mapeia para modelos físicos
 
-- Status: aceita no gateway (mapeamento validado no Passo 07); o uso pela aplicação está pendente (Passos 08 e 09)
+- Status: aceita no gateway (Passo 07) e no uso pela aplicação para `ticket-classification` (Passo 08); as outras 3 capacidades pendentes (Passo 09)
 - Data: 2026-11-25 (proposta no Passo 06, revisada no Passo 07)
 - Nível: solução
 
@@ -70,3 +70,26 @@ Regras da decisão:
 
 - `docs/gateway/relatorio-gateway.md`, §6 e §7.5.
 - `docs/gateway/evidencias/10-capacidades.json`, `17-troca.txt`, `18-troca-antes.json`, `19-troca-depois.json` e `20-troca-restaurado.json`.
+
+## Revisão no Passo 08 (troca de modelo pelo helpdesk)
+
+A limitação "a troca foi demonstrada com um cliente de teste" foi resolvida para a F1. A F1 declara `CAPABILITY = "ticket-classification"` e o adapter envia esse nome no campo `model`. O teste a seguir foi feito pela borda, como um cliente real:
+
+| Etapa | Resultado |
+|---|---|
+| Antes | `POST /tickets/classification` (TK-00042) → 200, `delivery`/`high`; `/admin/calls`: `openai`/`gpt-fake-large` |
+| Troca | só o bloco `litellm_params` de `ticket-classification` em `gateway/config.yaml`; `docker compose restart gateway` (7,7 s até ficar saudável) |
+| Depois | mesma requisição → mesma resposta (1,28 s); `/admin/calls`: `anthropic`/`claude-fake-large`/`classify` |
+| App | container com o mesmo Id e o mesmo horário de início; hashes dos arquivos da app e `git diff --stat -- app/` iguais |
+| Restauração | arquivo restaurado (igual ao `HEAD`), gateway reiniciado; a F1 voltou a `openai`/`gpt-fake-large` |
+
+Evidências: `docs/piloto/evidencias/20` a `23`.
+
+**Confirmado:** a escolha do modelo da F1 deixou de ser decisão de código e virou configuração operacional. No Passo 02, a mesma troca exigia editar `config.py`, reconstruir a app e passar por 502 na borda.
+
+**Limitações:**
+- A capacidade continua existindo em dois lugares (constante na feature e `model_name` no gateway). Um nome errado falharia em execução com 400; a verificação própria do piloto confere o nome enviado.
+- A prova vale para uma capacidade. A validação final repete a troca depois da migração completa (Passo 09).
+- `config.CLASSIFICATION_MODEL` não tem mais consumidor, mas fica até o incremento 8 do plano, que remove juntos todos os modelos físicos da app.
+
+**A decisão continua válida, sem mudança.**

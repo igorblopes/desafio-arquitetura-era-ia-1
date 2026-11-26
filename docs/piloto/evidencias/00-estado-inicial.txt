@@ -1,0 +1,24 @@
+$ git branch --show-current
+main
+
+$ git rev-parse HEAD
+6efadeba598c6dcc6a4674b90052385a2b2ee099
+
+$ git log --oneline -3
+6efadeb Implementacao do AI Gateway
+b3fdeb2 Planejamento da refatoração
+13fc247 Ferramental de métricas de acoplamento
+
+$ git status --short
+?? docs/piloto/
+
+$ git rev-parse v1-coupled
+07c2026db512dacefde56420464cf0338535d8a1
+
+$ git rev-parse v1-coupled^{commit}
+80283055f02175a84c8b6bc62dacf81964ad15f0
+
+$ git diff --stat v1-coupled -- app/ tests/characterization/ provider-fake/ edge/ data/
+
+$ git diff --stat 13fc247 -- metrics/ tests/metrics/
+

@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
 from . import classification, extraction, report, suggestion
+from .adapters.gateway import GatewayLanguageModel
 from .schemas import (Classification, OrderData, PeriodInput, ReplySuggestion, TicketInput,
                       TopicsReport)
+
+# Composition Root: uma única instância do adapter, criada no carregamento do módulo.
+language_model = GatewayLanguageModel()
 
 app = FastAPI(title="Helpdesk")
 
@@ -14,7 +18,7 @@ def health():
 
 @app.post("/tickets/classification")
 def classify_ticket(ticket: TicketInput) -> Classification:
-    return classification.classify(ticket)
+    return classification.classify(ticket, language_model)
 
 
 @app.post("/tickets/reply-suggestion")

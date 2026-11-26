@@ -1,0 +1,44 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 32 items
+
+tests/characterization/test_classification.py::test_classifica_ticket[entrega-urgente] PASSED [  3%]
+tests/characterization/test_classification.py::test_classifica_ticket[cobranca-duplicada] PASSED [  6%]
+tests/characterization/test_classification.py::test_classifica_ticket[troca-sem-pressa] PASSED [  9%]
+tests/characterization/test_classification.py::test_classifica_ticket[produto-quebrado] PASSED [ 12%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-cadastro] PASSED [ 15%]
+tests/characterization/test_classification.py::test_classifica_ticket[negacao-de-urgencia-vira-high] PASSED [ 18%]
+tests/characterization/test_classification.py::test_classifica_ticket[prazo-de-entrega] PASSED [ 21%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-simples-low] PASSED [ 25%]
+tests/characterization/test_classification.py::test_classifica_ticket[agradecimento] PASSED [ 28%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[corpo-vazio] PASSED [ 31%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 34%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 37%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-nao-string] PASSED [ 40%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-sem-produto] PASSED [ 43%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-e-produto] PASSED [ 46%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[protocolo-nao-e-pedido] PASSED [ 50%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sem-dados-de-pedido] PASSED [ 53%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[numero-sem-cerquilha] PASSED [ 56%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sete-digitos-nao-e-pedido] PASSED [ 59%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[dois-pedidos-pega-o-primeiro] PASSED [ 62%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[sem-ticket-id] PASSED [ 65%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 68%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00042] PASSED [ 71%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00100] PASSED [ 75%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[sem-texto] PASSED [ 78%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 81%]
+tests/characterization/test_topics_report.py::test_relatorio_de_um_dia PASSED [ 84%]
+tests/characterization/test_topics_report.py::test_periodo_sem_tickets PASSED [ 87%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[inicio-depois-do-fim] PASSED [ 90%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[sem-data-final] PASSED [ 93%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[mes-invalido] PASSED [ 96%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[formato-brasileiro] PASSED [100%]
+
+======================== 32 passed in 60.02s (0:01:00) =========================

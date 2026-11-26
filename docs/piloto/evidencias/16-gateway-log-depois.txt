@@ -1,0 +1,22 @@
+IP do container app: 172.18.0.4
+
+$ docker compose logs gateway --since 2m | grep chat/completions
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:49520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | INFO:     172.18.0.4:46728 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+
+$ docker compose logs gateway --since 1m | grep -E "chat/completions|Retried"
+gateway-1  | INFO:     172.18.0.4:46728 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+gateway-1  | Available Model Group Fallbacks=None LiteLLM Retried: 2 times, LiteLLM Max Retries: 2
+gateway-1  |   File "/app/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2714, in create
+gateway-1  | Available Model Group Fallbacks=None LiteLLM Retried: 2 times, LiteLLM Max Retries: 2
+gateway-1  | INFO:     172.18.0.4:46728 - "POST /v1/chat/completions HTTP/1.1" 500 Internal Server Error
+
+Nota do verificador: a janela de 2 min do primeiro bloco também pegou as 9 chamadas F1 da suíte de caracterização (porta 49520, mesma conexão keep-alive do adapter); a da sonda f1 é a última linha (porta 46728). A janela de 1 min do segundo bloco repete essa linha da sonda f1; o 500 final é a sonda f1-falha (1 requisição do app ao gateway; o gateway retentou 2 vezes).

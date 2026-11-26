@@ -1,0 +1,116 @@
+$ git status --short
+ M .env.example
+ M app/helpdesk/classification.py
+ M app/helpdesk/config.py
+ M app/helpdesk/main.py
+ M compose.yaml
+?? app/helpdesk/adapters/
+?? app/helpdesk/ports.py
+?? docs/piloto/
+
+$ git status --short --untracked-files=all app/ tests/
+ M app/helpdesk/classification.py
+ M app/helpdesk/config.py
+ M app/helpdesk/main.py
+?? app/helpdesk/adapters/__init__.py
+?? app/helpdesk/adapters/gateway.py
+?? app/helpdesk/ports.py
+
+$ git diff --stat
+ .env.example                   |  1 +
+ app/helpdesk/classification.py | 12 ++++++++----
+ app/helpdesk/config.py         |  5 +++++
+ app/helpdesk/main.py           |  6 +++++-
+ compose.yaml                   | 12 +++++++++---
+ 5 files changed, 28 insertions(+), 8 deletions(-)
+
+$ git diff -- app/helpdesk/classification.py app/helpdesk/main.py
+diff --git a/app/helpdesk/classification.py b/app/helpdesk/classification.py
+index bca0826..f4755a8 100644
+--- a/app/helpdesk/classification.py
++++ b/app/helpdesk/classification.py
+@@ -1,15 +1,19 @@
++import json
++
+ from fastapi import HTTPException
+ 
+-from . import config, llm
++from .ports import LanguageModel
+ from .schemas import Classification, TicketInput
+ 
++CAPABILITY = "ticket-classification"
++
+ CATEGORIES = {"delivery", "payment", "exchange_return", "product_defect", "other"}
+ PRIORITIES = {"low", "medium", "high"}
+ 
+ 
+-def classify(ticket: TicketInput) -> Classification:
+-    text = llm.call_openai(config.CLASSIFICATION_MODEL, "classify", ticket.text)
+-    data = llm.parse_json(text)
++def classify(ticket: TicketInput, model: LanguageModel) -> Classification:
++    text = model.complete(CAPABILITY, f"TASK: classify\n{ticket.text}")
++    data = json.loads(text)
+     if data.get("category") not in CATEGORIES or data.get("priority") not in PRIORITIES:
+         raise HTTPException(status_code=502, detail="Classificação fora dos valores permitidos")
+     return Classification(ticket_id=ticket.ticket_id, **data)
+diff --git a/app/helpdesk/main.py b/app/helpdesk/main.py
+index 68a4e13..c3d38a3 100644
+--- a/app/helpdesk/main.py
++++ b/app/helpdesk/main.py
+@@ -1,9 +1,13 @@
+ from fastapi import FastAPI
+ 
+ from . import classification, extraction, report, suggestion
++from .adapters.gateway import GatewayLanguageModel
+ from .schemas import (Classification, OrderData, PeriodInput, ReplySuggestion, TicketInput,
+                       TopicsReport)
+ 
++# Composition Root: uma única instância do adapter, criada no carregamento do módulo.
++language_model = GatewayLanguageModel()
++
+ app = FastAPI(title="Helpdesk")
+ 
+ 
+@@ -14,7 +18,7 @@ def health():
+ 
+ @app.post("/tickets/classification")
+ def classify_ticket(ticket: TicketInput) -> Classification:
+-    return classification.classify(ticket)
++    return classification.classify(ticket, language_model)
+ 
+ 
+ @app.post("/tickets/reply-suggestion")
+
+$ git hash-object app/helpdesk/classification.py app/helpdesk/main.py app/helpdesk/ports.py app/helpdesk/adapters/__init__.py app/helpdesk/adapters/gateway.py
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+c3d38a3499a195c47ed78eee68e4a758c56a02e7
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+
+$ git diff --stat v1-coupled -- tests/characterization/ provider-fake/ edge/ data/
+sem saída
+
+$ git diff --stat 13fc247 -- metrics/ tests/metrics/
+sem saída
+
+$ git diff --stat HEAD -- gateway/ metrics/ tests/ provider-fake/ edge/ data/ docs/adr/ README.md docs/refactoring-plan.md
+sem saída
+
+$ grep -nE "llm|config|openai|anthropic|adapters|gateway" app/helpdesk/classification.py
+sem saída
+
+$ grep -rnE "^\s*(from|import) .*(adapters|gateway)" app/helpdesk --include=*.py
+app/helpdesk/main.py:4:from .adapters.gateway import GatewayLanguageModel
+
+$ grep -rnE "^\s*(from|import) (openai|anthropic)" app/helpdesk --include=*.py
+app/helpdesk/adapters/gateway.py:1:from openai import OpenAI
+app/helpdesk/llm.py:3:from anthropic import Anthropic
+app/helpdesk/llm.py:4:from openai import OpenAI
+
+$ grep -nE "gpt-fake|claude-fake|provider-fake|FAKE_|mini" app/helpdesk/classification.py app/helpdesk/ports.py app/helpdesk/adapters/gateway.py app/helpdesk/main.py
+sem saída
+
+$ grep -rn "async def" app/helpdesk
+sem saída
+

@@ -1,0 +1,22 @@
+$ curl -s -X POST localhost:8090/admin/reset
+{"status":"ok"}
+
+$ curl -s localhost:8090/admin/failures
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                        PORTS
+desafio-arquitetura-era-ia-1-app-1             sha256:26cb6d95627516a5c6b9bb99b6695b575bb5f159f55da653335bedd4e61a9d76   "uvicorn helpdesk.ma…"   app             11 minutes ago   Up 11 minutes (healthy)       8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            48 minutes ago   Up 48 minutes                 0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         48 minutes ago   Up About a minute (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   48 minutes ago   Up 48 minutes (healthy)       0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ git status --short
+ M .env.example
+ M app/helpdesk/classification.py
+ M app/helpdesk/config.py
+ M app/helpdesk/main.py
+ M compose.yaml
+?? app/helpdesk/adapters/
+?? app/helpdesk/ports.py
+?? docs/piloto/

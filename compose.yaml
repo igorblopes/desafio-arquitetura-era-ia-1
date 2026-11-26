@@ -18,6 +18,10 @@ services:
   app:
     build: ./app
     env_file: .env
+    environment:
+      # Passo 08: a F1 consome o AI Gateway. A chave é provisória: a master key (ADR 0003).
+      GATEWAY_URL: http://gateway:4000
+      GATEWAY_API_KEY: ${GATEWAY_MASTER_KEY:?defina GATEWAY_MASTER_KEY no .env}
     volumes:
       - ./data:/data:ro
     healthcheck:
@@ -28,9 +32,11 @@ services:
     depends_on:
       provider-fake:
         condition: service_healthy
+      gateway:
+        condition: service_healthy
 
-  # AI Gateway (LiteLLM Proxy). ADR 0003. Nesta etapa roda em paralelo:
-  # a app ainda chama o provider-fake diretamente (migração nos Passos 08 e 09).
+  # AI Gateway (LiteLLM Proxy). ADR 0003. Desde o Passo 08 a F1 passa por ele;
+  # F2, F3 e F4 ainda chamam o provider-fake diretamente (migração no Passo 09).
   gateway:
     image: ghcr.io/berriai/litellm:v1.102.1
     command: ["--config", "/app/config.yaml", "--port", "4000"]
@@ -45,7 +51,7 @@ services:
     volumes:
       - ./gateway/config.yaml:/app/config.yaml:ro
     ports:
-      - "4000:4000"   # só para testes no host; a app usará http://gateway:4000
+      - "4000:4000"   # só para testes no host; a app usa http://gateway:4000
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/readiness')"]
       interval: 5s

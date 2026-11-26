@@ -106,3 +106,25 @@ A régua não muda. Esta revisão confere se os critérios do `docs/refactoring-
   - A simulação mostrou que um adapter sem nenhum import interno teria D=1,00, ou seja, estaria na zona de dor. Por isso, o desenho do adapter será revisado no piloto, e qualquer import acrescentado só para escapar da zona de dor é motivo de recusa.
 - **Features.** O D projetado sobe de 0,25 para 0,33, porque elas passam a ter menos dependências. É uma piora esperada e aceita, não um defeito.
 - **Status:** a decisão deste ADR continua aceita. As exceções seguem como na tabela acima.
+
+## Revisão no Passo 08 (piloto da F1)
+
+A régua não mudou: `git diff 13fc247 -- metrics/*.py tests/metrics/` está vazio, e `tests/metrics` passa com `64 passed`. Ela foi usada como este ADR manda: mesmo comando antes e depois, nomes diferentes (`pilot-before`, `pilot-after`), sempre junto com a caracterização e a revisão do diff.
+
+- **Reprodutibilidade.**
+  - `pilot-before.csv` é idêntico a `v1-coupled.csv`.
+  - `pilot-after.csv` deu o mesmo resultado em três execuções independentes: a do agente, a da verificação e a do arquiteto.
+  - Ele coincide componente a componente com a projeção do Passo 06: 22 arestas; `ports` 2/0/0/1/0; `adapters.gateway` 1/2/0,67/0/0,33.
+- **O adapter fora da zona de dor sem import artificial.** A preocupação do Passo 06 era que um adapter sem import interno teria D=1,00. O adapter aprovado tem dois imports internos, ambos com função:
+  - `config`, de onde lê endereço e chave;
+  - `ports`, de quem herda para que o `mypy` recuse uma assinatura incompatível, como demonstrado no piloto.
+- **Goodhart, medido.** Duas variações hipotéticas, não aplicadas, mostram que a régua mede dependências **declaradas**:
+  - sem a anotação do contrato na F1, ou sem a herança no adapter, o comportamento é idêntico;
+  - nos dois casos, Ce cai para 1 e D sobe para 0,50.
+  - O critério 2 deste ADR (melhora explicável pelo código) foi o que permitiu aceitar as duas setas: elas têm razão de existir sem a métrica.
+- **Limites confirmados.** A régua não viu nenhum dos problemas reais do piloto:
+  - o gateway como dependência em execução;
+  - o retry que mudou de dono;
+  - a FF6 cega aos imports relativos.
+  - Por isso o plano 1.1 acrescentou verificações fora da régua, sem mexer nela.
+- **Status:** continua aceita, sem mudança na decisão.
