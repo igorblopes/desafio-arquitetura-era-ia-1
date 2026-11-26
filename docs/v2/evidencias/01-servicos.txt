@@ -1,0 +1,55 @@
+$ docker compose up -d --wait; docker compose ps; docker compose images
+# Nota: sem --build. Os containers existentes (criados há ~21-22h) foram apenas reiniciados, não recriados; o app-1 referencia o ID de imagem 26cb6d956275, que não aparece mais em "docker images" (a tag app:latest aponta para c61f350aa6db, criada 2026-11-25 20:40 -03). Conferência abaixo: md5 de app/helpdesk/*.py dentro do container em execução == HEAD 4a3447a.
+--- docker compose up -d --wait
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Starting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Started 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Starting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Starting 
+ Container desafio-arquitetura-era-ia-1-app-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Starting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Started 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+codigo=0
+--- docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED        STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             sha256:26cb6d95627516a5c6b9bb99b6695b575bb5f159f55da653335bedd4e61a9d76   "uvicorn helpdesk.ma…"   app             21 hours ago   Up 3 seconds (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            22 hours ago   Up 1 second               0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         22 hours ago   Up 13 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:6d8eed50d28ceb11db291bab7838fe87f7748b53a5749f0ad0835bef552f4b25   "uvicorn app.main:ap…"   provider-fake   22 hours ago   Up 19 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+--- docker compose images
+CONTAINER                                      REPOSITORY                TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+desafio-arquitetura-era-ia-1-app-1             <none>                    <none>              unknown             26cb6d956275        0B                  N/A
+desafio-arquitetura-era-ia-1-edge-1            nginx                     1.27-alpine         linux/amd64         65645c7bb6a0        73.6MB              19 months ago
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm   v1.102.1            linux/amd64         87f34979b9f8        1.65GB              2 months ago
+desafio-arquitetura-era-ia-1-provider-fake-1   <none>                    <none>              unknown             6d8eed50d28c        0B                  N/A
+--- conferência: docker compose exec -T app sh -c "cd /srv && find helpdesk -name *.py | sort | xargs md5sum"  vs  md5sum de app/helpdesk no HEAD
+d41d8cd98f00b204e9800998ecf8427e *helpdesk/__init__.py
+d41d8cd98f00b204e9800998ecf8427e *helpdesk/adapters/__init__.py
+2fb94285eb33be7eb58ed205fec02503 *helpdesk/adapters/gateway.py
+c381b7d09fcd6726f1b5f55f39f5e016 *helpdesk/classification.py
+7ae890def098b6f25ec0045dca1b0232 *helpdesk/config.py
+9dcff6c9529315320f71e0124db209d6 *helpdesk/extraction.py
+f887db044db59482e8145da3e3f9da4c *helpdesk/llm.py
+226db27fca4677a2949ec2d8906b9d15 *helpdesk/main.py
+5c2627714129702e3b289d7001416ed5 *helpdesk/ports.py
+2154c3e7b546c11b07f5ba79532ca5b0 *helpdesk/report.py
+32b1bf5089da40573d59ec945fd8cd7a *helpdesk/schemas.py
+55ccbd87af6695799a09d9a123f1b5ef *helpdesk/suggestion.py
+3ec1cdf41bb5c55bad82f6b6e51a244b *helpdesk/tickets.py
+IGUAL_AO_HEAD

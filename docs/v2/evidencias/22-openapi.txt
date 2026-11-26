@@ -1,0 +1,45 @@
+$ mkdir -p .tmp-passo09/v1 && git archive v1-coupled app | tar -x -C .tmp-passo09/v1
+sem saída (exit 0)
+
+$ ls .tmp-passo09/v1/app .tmp-passo09/v1/app/helpdesk
+.tmp-passo09/v1/app:
+Dockerfile
+helpdesk
+requirements.txt
+
+.tmp-passo09/v1/app/helpdesk:
+__init__.py
+classification.py
+config.py
+extraction.py
+llm.py
+main.py
+report.py
+schemas.py
+suggestion.py
+tickets.py
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e FAKE_OPENAI_KEY=x -e FAKE_ANTHROPIC_KEY=x -e GATEWAY_URL=http://x -e GATEWAY_API_KEY=x python:3.12-slim sh -c "pip install -q -r .tmp-passo09/v1/app/requirements.txt && python .tmp-passo09/openapi.py .tmp-passo09/v1/app .tmp-passo09/openapi-v1.json && python .tmp-passo09/openapi.py app .tmp-passo09/openapi-v2.json"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+gerado .tmp-passo09/openapi-v1.json a partir de /w/.tmp-passo09/v1/app/helpdesk/main.py
+gerado .tmp-passo09/openapi-v2.json a partir de /w/app/helpdesk/main.py
+[exit 0]
+
+$ diff .tmp-passo09/openapi-v1.json .tmp-passo09/openapi-v2.json
+sem saída (exit 0)
+
+$ sha256sum .tmp-passo09/openapi-v1.json .tmp-passo09/openapi-v2.json
+830128f4b8a01000e7ad265319f5f5f849df632522ae9165550d0808562ede29 *.tmp-passo09/openapi-v1.json
+830128f4b8a01000e7ad265319f5f5f849df632522ae9165550d0808562ede29 *.tmp-passo09/openapi-v2.json
+[exit 0]
+
+$ wc -c .tmp-passo09/openapi-v1.json .tmp-passo09/openapi-v2.json
+ 7454 .tmp-passo09/openapi-v1.json
+ 7454 .tmp-passo09/openapi-v2.json
+14908 total
+[exit 0]
+

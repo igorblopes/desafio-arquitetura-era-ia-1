@@ -1,0 +1,564 @@
+$ git diff --exit-code HEAD -- gateway/config.yaml
+sem saída (exit 0)
+
+# 1. estado do app antes
+$ docker inspect -f "{{.Id}} {{.Image}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+7c6caa788672eadee6135884f54d4a4ee97dac590bdd3f077e3f950fccaf3011 sha256:f55a1d462e9881dea4edd538b324f6d941d80db13fbb4614b90596c2967fc1c9 2026-11-26T21:17:20.645229502Z
+[exit 0]
+
+$ git hash-object app/helpdesk/*.py app/helpdesk/adapters/*.py
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+44d52f913e071b69a2d492ac9fde3f4d1673d9ff
+1410246544b2b398d82f9a24b310f3785c4f4128
+9d2bc5b106c37168a764a3479ca40f7ca23e31b0
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+b2e8573484bda72196423fa6a01cb85821e8421c
+e624cfed21425467ca6630c9e8ef58b8dd7d7009
+8580313f873e77150ece64065033f7f9dca54484
+47ef50a2d15c3f6574e5f62d0174131d37310f80
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+[exit 0]
+
+$ git diff --stat -- app/
+warning: in the working copy of 'app/helpdesk/config.py', LF will be replaced by CRLF the next time Git touches it
+ app/helpdesk/config.py     | 19 +++----------------
+ app/helpdesk/extraction.py | 11 +++++++----
+ app/helpdesk/llm.py        | 30 ------------------------------
+ app/helpdesk/main.py       |  6 +++---
+ app/helpdesk/report.py     | 11 ++++++++---
+ app/helpdesk/suggestion.py |  8 +++++---
+ app/requirements.txt       |  1 -
+ 7 files changed, 26 insertions(+), 60 deletions(-)
+[exit 0]
+
+# 2. F2 antes
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e PYTHONIOENCODING=utf-8 python:3.12-slim python .tmp-passo09/f2.py .tmp-passo09/f2-antes.json
+status: 200
+resposta integral gravada em .tmp-passo09/f2-antes.json
+tamanho_suggestion_caracteres: 2424
+tamanho_como_a_sonda_mede (len(json.dumps(s, ensure_ascii=False))): 2474
+suggestion:
+Olá! Sinto muito pelo transtorno com a entrega do seu pedido.
+
+Caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+O prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Fico à disposição para qualquer outra dúvida. Um abraço, equipe de atendimento.
+GET /admin/calls?last=1:
+[
+  {
+    "id": "55108862e270",
+    "ts": "2026-11-26T21:22:34.176+00:00",
+    "provider": "anthropic",
+    "model": "claude-fake-large",
+    "task": "suggest",
+    "stream": false,
+    "status": 200,
+    "input_tokens": 19,
+    "output_tokens": 606,
+    "duration_ms": 15953
+  }
+]
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 200,
+      "segundos": 1.186,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 200,
+      "segundos": 1.238,
+      "resposta": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 200,
+      "segundos": 15.962,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "suggestion": "<2474 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "suggest",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 200,
+      "segundos": 9.851,
+      "resposta": {
+        "start": "2026-08-01",
+        "end": "2026-08-01",
+        "total_tickets": 137,
+        "topics": "<1426 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "topics",
+          "stream": false
+        }
+      ]
+    }
+  ]
+}
+[exit 0]
+
+# 3. troca do modelo da F2 no gateway
+$ sed -i '/model_name: reply-suggestion/,/max_tokens/{s|model: anthropic/claude-fake-large|model: openai/gpt-fake-large|;s|api_base: http://provider-fake:8090/anthropic|api_base: http://provider-fake:8090/openai/v1|;s|api_key: os.environ/FAKE_ANTHROPIC_KEY|api_key: os.environ/FAKE_OPENAI_KEY|}' gateway/config.yaml
+sem saída (exit 0)
+
+$ git diff -- gateway/config.yaml
+warning: in the working copy of 'gateway/config.yaml', LF will be replaced by CRLF the next time Git touches it
+diff --git a/gateway/config.yaml b/gateway/config.yaml
+index a7e3a38..8ab271e 100644
+--- a/gateway/config.yaml
++++ b/gateway/config.yaml
+@@ -25,9 +25,9 @@ model_list:
+ 
+   - model_name: reply-suggestion               # F2
+     litellm_params:
+-      model: anthropic/claude-fake-large
+-      api_base: http://provider-fake:8090/anthropic
+-      api_key: os.environ/FAKE_ANTHROPIC_KEY
++      model: openai/gpt-fake-large
++      api_base: http://provider-fake:8090/openai/v1
++      api_key: os.environ/FAKE_OPENAI_KEY
+       max_tokens: 2000                         # mesmo limite que a v1 envia (config.MAX_OUTPUT_TOKENS)
+ 
+   - model_name: topics-report                  # F3
+[exit 0]
+
+# 4. restart
+$ date -u +%Y-%m-%dT%H:%M:%S.%3NZ
+2026-11-26T21:23:20.172Z
+[exit 0]
+
+$ time (docker compose restart gateway && docker compose up -d --wait)
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Running 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-edge-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+
+real	0m8.636s
+user	0m0.075s
+sys	0m0.061s
+[exit 0]
+
+$ date -u +%Y-%m-%dT%H:%M:%S.%3NZ
+2026-11-26T21:23:28.991Z
+[exit 0]
+
+# 5. F2 depois
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e PYTHONIOENCODING=utf-8 python:3.12-slim python .tmp-passo09/f2.py .tmp-passo09/f2-depois.json
+status: 200
+resposta integral gravada em .tmp-passo09/f2-depois.json
+tamanho_suggestion_caracteres: 2424
+tamanho_como_a_sonda_mede (len(json.dumps(s, ensure_ascii=False))): 2474
+suggestion:
+Olá! Sinto muito pelo transtorno com a entrega do seu pedido.
+
+Caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+O prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Reforçando o ponto 4: o prazo de retorno da transportadora costuma ser de até dois dias úteis.
+
+Reforçando o ponto 5: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.
+
+Reforçando o ponto 1: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.
+
+Reforçando o ponto 2: se preferir, também é possível solicitar o cancelamento com reembolso integral.
+
+Reforçando o ponto 3: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.
+
+Fico à disposição para qualquer outra dúvida. Um abraço, equipe de atendimento.
+GET /admin/calls?last=1:
+[
+  {
+    "id": "47e38e39f130",
+    "ts": "2026-11-26T21:23:29.943+00:00",
+    "provider": "openai",
+    "model": "gpt-fake-large",
+    "task": "suggest",
+    "stream": false,
+    "status": 200,
+    "input_tokens": 19,
+    "output_tokens": 606,
+    "duration_ms": 15951
+  }
+]
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 200,
+      "segundos": 1.09,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 200,
+      "segundos": 1.24,
+      "resposta": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 200,
+      "segundos": 15.962,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "suggestion": "<2474 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "suggest",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 200,
+      "segundos": 9.852,
+      "resposta": {
+        "start": "2026-08-01",
+        "end": "2026-08-01",
+        "total_tickets": 137,
+        "topics": "<1426 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "topics",
+          "stream": false
+        }
+      ]
+    }
+  ]
+}
+[exit 0]
+
+$ cmp .tmp-passo09/f2-antes.json .tmp-passo09/f2-depois.json
+sem saída (exit 0)
+
+$ sha256sum .tmp-passo09/f2-antes.json .tmp-passo09/f2-depois.json
+bb5965b45c0f6f94c42a584a2a621f4e3148d1c6eab96d832bb274f4c1b252c8 *.tmp-passo09/f2-antes.json
+bb5965b45c0f6f94c42a584a2a621f4e3148d1c6eab96d832bb274f4c1b252c8 *.tmp-passo09/f2-depois.json
+[exit 0]
+
+# 6. estado do app depois
+$ docker inspect -f "{{.Id}} {{.Image}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+7c6caa788672eadee6135884f54d4a4ee97dac590bdd3f077e3f950fccaf3011 sha256:f55a1d462e9881dea4edd538b324f6d941d80db13fbb4614b90596c2967fc1c9 2026-11-26T21:17:20.645229502Z
+[exit 0]
+
+$ git hash-object app/helpdesk/*.py app/helpdesk/adapters/*.py
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+44d52f913e071b69a2d492ac9fde3f4d1673d9ff
+1410246544b2b398d82f9a24b310f3785c4f4128
+9d2bc5b106c37168a764a3479ca40f7ca23e31b0
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+b2e8573484bda72196423fa6a01cb85821e8421c
+e624cfed21425467ca6630c9e8ef58b8dd7d7009
+8580313f873e77150ece64065033f7f9dca54484
+47ef50a2d15c3f6574e5f62d0174131d37310f80
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+[exit 0]
+
+$ git diff --stat -- app/
+warning: in the working copy of 'app/helpdesk/config.py', LF will be replaced by CRLF the next time Git touches it
+ app/helpdesk/config.py     | 19 +++----------------
+ app/helpdesk/extraction.py | 11 +++++++----
+ app/helpdesk/llm.py        | 30 ------------------------------
+ app/helpdesk/main.py       |  6 +++---
+ app/helpdesk/report.py     | 11 ++++++++---
+ app/helpdesk/suggestion.py |  8 +++++---
+ app/requirements.txt       |  1 -
+ 7 files changed, 26 insertions(+), 60 deletions(-)
+[exit 0]
+
+# 7. restauração
+$ git restore gateway/config.yaml
+sem saída (exit 0)
+
+$ git diff --exit-code HEAD -- gateway/config.yaml
+sem saída (exit 0)
+
+$ docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Restarting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+[exit 0]
+
+$ docker compose up -d --wait
+ Container desafio-arquitetura-era-ia-1-edge-1 Running 
+ Container desafio-arquitetura-era-ia-1-app-1 Running 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 200,
+      "segundos": 1.35,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 200,
+      "segundos": 1.239,
+      "resposta": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 200,
+      "segundos": 15.966,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "suggestion": "<2474 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "suggest",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 200,
+      "segundos": 9.846,
+      "resposta": {
+        "start": "2026-08-01",
+        "end": "2026-08-01",
+        "total_tickets": 137,
+        "topics": "<1426 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "topics",
+          "stream": false
+        }
+      ]
+    }
+  ]
+}
+[exit 0]
+

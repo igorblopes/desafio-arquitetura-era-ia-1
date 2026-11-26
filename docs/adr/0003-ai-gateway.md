@@ -1,6 +1,6 @@
 # 0003. Todas as chamadas de IA passam por um AI Gateway self-hosted (LiteLLM Proxy)
 
-- Status: aceita para a infraestrutura (Passo 07) e para a integração com a F1 (Passo 08); a integração de F2, F3 e F4 está pendente (Passo 09)
+- Status: aceita para a infraestrutura (Passo 07) e para a integração com as quatro features (Passos 08 e 09)
 - Data: 2026-11-25 (proposta no Passo 06, revisada no Passo 07)
 - Nível: solução
 
@@ -100,3 +100,32 @@ A F1 é o primeiro consumidor real do gateway. Ela usa o adapter `GatewayLanguag
 - `max_tokens: 2000` continua sem prova pela app: a F1 não o usa. A verificação fica para a F2.
 
 **A decisão continua válida.** A integração completa não está validada, porque só uma de quatro features migrou.
+
+## Revisão no Passo 09 (comunicação exclusiva pelo gateway)
+
+**Gateway efetivamente utilizado.** LiteLLM Proxy `v1.102.1`, sem banco, `gateway/config.yaml` sem mudança neste passo: 4 capacidades, cada uma com o modelo `large` da v1 e a chave do provider lida do ambiente do gateway.
+
+**Comunicação exclusiva da aplicação.** As quatro features chegam ao provider só pelo gateway:
+- FF10: depois de um reset e da suíte inteira, 19 chamadas no provider e 19 `POST /v1/chat/completions` no log do gateway, todas 200 (antes da migração: 19 × 9) (`docs/v2/evidencias/14`).
+- Com o gateway parado, as quatro rotas respondem 500 em ~3,9 s e o provider recebe 0 chamadas; o log da app mostra `APIConnectionError` no adapter (`18`). Não existe caminho alternativo.
+
+**Isolamento de detalhes tecnológicos e credenciais.**
+- A app não tem SDK `anthropic`, URL de provider, modelo físico nem `max_tokens` (`10`).
+- O serviço `app` não tem `env_file` e recebe só `GATEWAY_URL` e `GATEWAY_API_KEY` (`12`). O `provider-fake` também perdeu o `env_file` e recebe só as duas chaves que valida.
+- **Decisão deste passo:** a chave de consumo da app continua sendo o **valor** da master key, entregue como `GATEWAY_API_KEY`. A alternativa (chave virtual por consumidor) exige o banco do LiteLLM (Postgres), um serviço a mais que não se justifica antes da governança. Fica para o Passo 12; a app já usa uma variável própria e não precisará mudar de código.
+- `max_tokens: 2000` do gateway é o limite efetivamente aplicado: com 20, a F2 veio truncada pela borda (`19`).
+
+**Evidências da troca de modelo.** `reply-suggestion` trocada de `anthropic/claude-fake-large` para `openai/gpt-fake-large` só em `gateway/config.yaml`, com restart só do gateway (8,6 s): mesma resposta byte a byte, mesmo Id, imagem e horário de início do container da app (`20`). Detalhe no ADR 0004.
+
+**Consequências operacionais (medidas).**
+
+| Consequência | v1 | v2 |
+|---|---|---|
+| Falha persistente (5xx) | 500 em 1,2 a 1,4 s, 3 tentativas | 500 em 4,0 a 4,6 s, 3 tentativas (backoff padrão do LiteLLM) (`16`) |
+| Gateway fora do ar | não se aplica | as 4 features em 500; 0 chamadas ao provider |
+| Caminho feliz | F1 1,09 s; F4 1,23 s; F2 15,96 s; F3 9,84 s | iguais (`15`) |
+| Subida limpa | — | `cp .env.example .env && docker compose up -d --build --wait` em 21,6 s, `32 passed` (`24`) |
+
+O gateway é agora ponto único de falha de toda a IA da aplicação (R19). Timeout, `num_retries` e backoff explícitos são entrada do Passo 10; fallback, do Passo 11; chaves por consumidor e orçamento, do Passo 12.
+
+**A decisão continua válida, sem mudança.**

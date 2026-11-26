@@ -2,11 +2,11 @@
 
 | Item | Valor |
 |---|---|
-| Versão do plano | 1.1 (1.0 do Passo 06; 1.0.1 com os fatos do gateway do Passo 07; 1.1 com o resultado do piloto do Passo 08) |
-| Data | 2026-11-25 (1.0.1); 2026-11-26 (1.1) |
+| Versão do plano | 1.2 (1.0 do Passo 06; 1.0.1 com os fatos do gateway do Passo 07; 1.1 com o resultado do piloto do Passo 08; 1.2 com a refatoração completa do Passo 09) |
+| Data | 2026-11-25 (1.0.1); 2026-11-26 (1.1 e 1.2) |
 | Estado de partida | tag `v1-coupled` (commit `8028305`) |
 | Estado de chegada desta fase | tag `v2-decoupled` (Passo 09) |
-| Status | **em execução**: gateway validado (Passo 07); piloto da F1 aprovado (Passo 08, seção 23); F2, F3 e F4 pendentes (Passo 09) |
+| Status | **refatoração completa executada e verificada** (Passo 09, seção 28): as 4 features pelo contrato e pelo gateway, `llm.py` removido, credenciais fora do `app`, medição `v2-decoupled` igual à projeção. Commit e tag `v2-decoupled` dependem da aprovação do Igor |
 
 > Convenções deste documento. **Medido** é o que saiu da ferramenta de métricas sobre a `v1-coupled` ou de execuções reais nos Passos 02 a 05. **Projetado** é o que esperamos para a arquitetura proposta; nunca é medição da v2. **Decisão** é algo que adotamos; **requisito** é algo que o enunciado impõe; **hipótese** é algo que o piloto pode derrubar.
 
@@ -854,6 +854,8 @@ Cada incremento termina com FF1 verde e um commit próprio, revisado antes do pr
 
 **Revisão 1.1:** os incrementos 2, 3 e 4 foram executados no Passo 08 como alterações locais na `main` (17.8), com o commit feito pelo Igor depois da aprovação. Os incrementos 5 a 7 passam a exigir também os itens 11 a 13 do protocolo (17.6), e o 10 passa a registrar a sonda de falha da v2 completa como entrada do Passo 10.
 
+**Revisão 1.2:** os incrementos 5 a 9 foram executados no Passo 09 como alterações locais na `main`, cada um aprovado antes do próximo, e serão versionados num único commit feito pelo Igor (os incrementos 5 a 9 do agente correspondem aos handoffs 1 a 5 de `docs/v2/handoffs/`). O incremento 10 (medição) foi feito pelo arquiteto numa verificação independente; o 11 (tag) espera a aprovação. Resultado de cada um na seção 28.
+
 O incremento 8 vem depois de todas as features porque `llm.py` e as constantes de provider só morrem quando o último consumidor sai. O 9 vem depois do 8 porque, enquanto `config.py` ler `FAKE_*`, tirar o `env_file` quebraria o import.
 
 ---
@@ -1303,19 +1305,29 @@ O que pode ser reutilizado:
 | 1.0.1 | Validação do gateway (Passo 07) | `docs/gateway/relatorio-gateway.md`: retries padrão do LiteLLM (3 chamadas sob 5xx), auth só com master key, `max_tokens` aceito, streaming e normalização validados | respostas da §12.5; handoff (§19.1) com URL, autenticação e `max_retries=0`; §13 e R16 atualizados | evidência experimental: manter o SDK com 2 retentativas sobre o gateway multiplicaria as chamadas (até 9) e mudaria o comportamento sob falha da v1 (3) |
 | 1.1 | Resultado do piloto (Passo 08) | `docs/piloto/relatorio-piloto.md`; `docs/piloto/evidencias/`; `docs/piloto/metricas/pilot-{before,after}.csv` | 19.2 e 23 preenchidas; FF6 corrigida e FF12 nova (16); protocolo 17.6 com itens 11 a 13; 17.8, 18 e 22 com o processo real; riscos R18 a R21 (21); 25 e 26.2 atualizadas | o desenho estrutural se confirmou exatamente; o que mudou está fora do que a régua e a suíte enxergam: FF6 não detectava o adapter; a suíte não cobre 502 e falhas; o retry passou ao gateway (falha 3,5 s mais lenta) e o gateway virou dependência em execução |
 
+| 1.2 | Refatoração completa (Passo 09) | `docs/v2/relatorio-v2.md`; `docs/v2/evidencias/00` a `25`; `metrics/results/v2-decoupled.csv` | seção 28 nova; 18 (nota 1.2); 25 com os incrementos 5 a 11; 26.2 e 27 atualizadas | o desenho se confirmou sem mudança nas 4 features; o que se acrescentou foi o protocolo (verificação própria e sonda de falha por feature), o isolamento do `provider-fake` (só `FAKE_*`) e a decisão de usar a master key como chave de consumo até o Passo 12 |
+
 Para cada revisão: hipótese original; resultado esperado; resultado observado; divergências; problemas; alternativas consideradas; mudança no plano; evidência que a motivou; consequências para os próximos incrementos.
 
 Revisar o plano depois do piloto não é falha de planejamento: o piloto existe para confrontar hipóteses com o código real. Um plano que nunca muda diante de evidência é que estaria errado.
 
 ---
 
-## 25. Registro da execução assistida por IA (Passo 08 concluído; Passo 09 pendente)
+## 25. Registro da execução assistida por IA (Passos 08 e 09 concluídos)
 
 | Incremento | Agente / data | Handoff usado | Iterações | Resultado de FF1 | Métricas | Decisão | Observações |
 |---|---|---|---|---|---|---|---|
 | 2 (infraestrutura) | arquiteto (sem agente) / 2026-11-25 | — | 1 | `32 passed in 60.02s` | sem mudança (só `config` ganhou constantes) | aceito | feito antes do agente para não misturar escopos |
 | 3 (piloto F1) | Claude Code, sessão separada / 2026-11-25 | `docs/piloto/handoff-f1.md` (19.1 revisado) | 2 do agente (proposta, implementação) + 1 de verificação | `32 passed` (agente 60.33 s; arquiteto 59.97 s) | iguais à 14.2 | **aprovado** | sem correções; agente apontou a falha da FF6 |
 | 4 (revisão do plano) | arquiteto / 2026-11-26 | — | 1 | — | — | 1.1 | seções 16 a 26 |
+| baseline do Passo 09 | arquiteto / 2026-11-26 | — | 1 | `32 passed in 60.42s` | `v2-baseline` = `pilot-after` | — | evidências `00` a `08` |
+| 5 (F4) | Claude Code, sessão separada / 2026-11-26 | `docs/v2/handoffs/handoff-1-f4.md` | 2 (proposta, implementação) | `32 passed in 60.15s` | 21 arestas, esperado | **aprovado** | sem correção |
+| 6 (F2) | idem | `handoff-2-f2.md` | 2 | `32 passed in 60.08s` | 20 arestas; `llm` D 0,50 | **aprovado** | texto byte a byte |
+| 7 (F3) | idem | `handoff-3-f3.md` | 2 | `32 passed in 60.15s` | 20 arestas; `llm` Ca 0 | **aprovado** | só a linha da chamada |
+| 8 (remoção) | idem | `handoff-4-remocao.md` | 2 | `32 passed in 60.09s` | 19 arestas = 14.2 | **aprovado** | `llm.py` e `anthropic` removidos |
+| 9 (credenciais) | idem | `handoff-5-credenciais.md` | 2 | `32 passed in 60.13s` | iguais ao 8 | **aprovado** | `app` só com `GATEWAY_*` |
+| 10 (medição e verificação) | arquiteto / 2026-11-26 | — | 1 | `32 passed` (60,10 s; 60,06 s; 60,60 s em cópia limpa) | `v2-decoupled` reproduzível | aceito | evidências `09` a `25` |
+| 11 (tag) | Igor | — | — | — | — | pendente | depende da aprovação do commit |
 
 ---
 
@@ -1338,6 +1350,8 @@ Revisar o plano depois do piloto não é falha de planejamento: o piloto existe 
 | Hipóteses a validar | o padrão do piloto se repete sem mudar o contrato (provável; Passo 09); LiteLLM traduz para o fake Anthropic sem alterar o texto **na app** (já validado direto no gateway no Passo 07); latência do gateway desprezível frente aos 30 s (confirmada no caminho feliz da F1) |
 | Riscos remanescentes | R5, R6, R14 (F2); R17; R18 a R21 |
 | Questões em aberto | 12.5 (1 a 8); como provar FF10 de forma objetiva; se `config` vira exceção ou é dissolvido (Passo 16) |
+| Confirmado na refatoração completa (1.2) | o padrão do piloto se repetiu em F4, F2 e F3 sem mudar o contrato; o LiteLLM traduz o texto da F2 byte a byte pela app; `max_tokens` do gateway é aplicado (provado com 20); FF10 objetiva por contagem (19 = 19); a troca de modelo vale para a F2 pela borda; métricas iguais à 14.2 |
+| Ainda abertos depois da 1.2 | R18 a R21 (entrada do Passo 10); master key como chave de consumo (Passo 12); `config` na zona de dor (Passo 16) |
 
 ---
 
@@ -1348,3 +1362,110 @@ A menor transformação que resolve os problemas comprovados da v1 é: um contra
 Próximo passo: Passo 07, subir o gateway e responder às questões da seção 12.5. O checkpoint está em `docs/refatoracao/checkpoint-passo-06.md`; o glossário em `docs/refatoracao/glossario.md`; as decisões em `docs/adr/0002` a `0004`.
 
 **Atualização 1.1 (Passo 08).** O piloto confirmou essa transformação na F1, com o comportamento caracterizado preservado e as métricas exatamente como projetadas. A arquitetura completa **não** está validada: só um de quatro componentes migrou, e a `v2-decoupled` não existe. Próximo passo: Passo 09, migrar F4, F2 e F3 nessa ordem, com o protocolo revisado (17.6, itens 11 a 13), remover `llm.py` e isolar as credenciais. Checkpoint em `docs/piloto/checkpoint-passo-08.md`; glossário em `docs/piloto/glossario.md`.
+
+**Atualização 1.2 (Passo 09).** A transformação foi aplicada às quatro features em cinco incrementos, sem mudar o contrato nem o adapter, e verificada por instrumentos independentes do agente. A candidata à `v2-decoupled` atende todos os critérios da seção 15 (detalhe na seção 28). O que ela não resolve continua fora do escopo por decisão: timeouts, retry explícito, fallback, streaming, F3 assíncrona e governança (Passos 10 a 16). Relatório em `docs/v2/relatorio-v2.md`; checkpoint em `docs/v2/checkpoint-passo-09.md`; glossário em `docs/v2/glossario.md`.
+
+---
+
+## 28. Refatoração completa (Passo 09)
+
+Registro consolidado do que foi planejado, entregue ao agente, implementado, medido e aceito. Os detalhes, as matrizes e os diagramas estão em `docs/v2/relatorio-v2.md`; as saídas integrais, em `docs/v2/evidencias/` (citadas pelo número).
+
+### 28.1 Estratégia revisada após o piloto
+
+Nenhuma mudança de desenho. O piloto confirmou o contrato, o adapter e a composição (seção 23), e o Passo 09 os reutilizou como estavam. O que mudou foi o **protocolo**: cada feature ganhou uma verificação contra um gateway simulado (`docs/v2/verificacao_v2.py`, que cobre 502, campos nulos, lotes da F3 e falha com uma única requisição) e uma sonda de falha pela borda (`docs/v2/sondas_v2.py`), porque a suíte não enxerga esses caminhos (17.6, itens 11 a 13).
+
+### 28.2 Sequência de migração
+
+F4 → F2 → F3 → remoção → credenciais → medição → tag (seção 18, incrementos 5 a 11). F4 primeiro por ter a mesma forma da F1; F2 depois por ser o primeiro texto livre pela tradução do LiteLLM e o primeiro uso real de `max_tokens` no gateway; F3 por último por fazer várias chamadas por requisição. A composição foi consolidada dentro de cada incremento (uma linha por rota).
+
+### 28.3 Handoffs realizados
+
+Cinco handoffs independentes em `docs/v2/handoffs/`, todos com o template da 19.1 (contexto, componente, tarefa, artefatos, restrições, critérios, formato) e executados em duas fases (proposta, depois implementação) por uma sessão do Claude Code separada da do arquiteto, sem acesso à conversa do arquiteto. Nenhum precisou de segunda rodada.
+
+### 28.4 Migração da F1
+
+Migrada no piloto; sem mudança de código no Passo 09 (blob `f4755a8`). Revalidada: FF6 sem saída, verificação OK, sonda em `openai/gpt-fake-large`, falha persistente em 4,0 s com 3 tentativas (evidências `10`, `15`, `16`, `17`).
+
+### 28.5 Migração da F2
+
+`suggestion.py` passou a depender só de `ports` e `schemas` (`CAPABILITY = "reply-suggestion"`). Os 2 golden masters de texto integral passaram; a verificação conferiu o texto unicode exato. O `max_tokens: 2000` saiu da app e ficou no gateway; reduzido para 20 a título de experimento, a resposta pela borda veio truncada (80 caracteres, `output_tokens: 20`), o que prova que o limite do gateway é o aplicado (evidência `19`).
+
+### 28.6 Migração da F3
+
+`report.py` mudou só na assinatura e na linha da chamada dentro do laço; o fatiamento em lotes de `config.TICKETS_PER_CALL`, a agregação e a ordenação ficaram sem diff. A verificação conferiu 274 tickets em 2 lotes, os prompts exatos e a agregação contra um oráculo independente.
+
+### 28.7 Migração da F4
+
+`extraction.py` com `CAPABILITY = "order-extraction"`; a regra do formato do pedido e o 502 ficaram iguais. Verificação: sucesso, campos nulos, formato inválido (502) e falha com uma requisição.
+
+### 28.8 Consolidação do contrato abstrato
+
+`ports.LanguageModel.complete(capability, prompt) -> str` atendeu as quatro features sem evolução: o `max_tokens` é configuração da capacidade no gateway e a F3 chama `complete` uma vez por lote. Nenhum contrato novo foi criado. `ports` tem Ca=5 (4 features e o adapter) e A=1.
+
+### 28.9 Consolidação do gateway adapter
+
+`adapters/gateway.py` sem mudança desde o piloto: único import de SDK em `app/` (FF5), `max_retries=0`, `model=capability`. Não trata erros nem define timeout (Passo 10). FF12 acusa só o `str | None` herdado (R20).
+
+### 28.10 Composição da aplicação
+
+`main.py` cria `language_model = GatewayLanguageModel()` uma vez e passa a mesma instância às quatro rotas. É o único importador do adapter (`main.py:4`; Ca=1).
+
+### 28.11 Remoção das integrações antigas
+
+Depois do último consumidor: `llm.py` removido; de `config.py` saíram as chaves, as URLs do provider-fake, os 4 modelos físicos e `MAX_OUTPUT_TOKENS` (ficaram `GATEWAY_URL`, `GATEWAY_API_KEY`, `TICKETS_FILE`, `TICKETS_PER_CALL`); `anthropic` saiu de `app/requirements.txt`. FF7 e FF8 sem saída.
+
+### 28.12 Isolamento das credenciais
+
+`compose.yaml`: o `app` não tem mais `env_file`; recebe só `GATEWAY_URL` e `GATEWAY_API_KEY` (o valor da master key, provisório até o Passo 12) e não depende mais do `provider-fake` na subida. O `provider-fake` também perdeu o `env_file` e recebe só as duas chaves que valida. FF9: o ambiente do `app` não tem nenhuma chave de provider nem `GATEWAY_MASTER_KEY` (evidência `12`).
+
+### 28.13 Resultados dos testes
+
+`32 passed` em todos os incrementos e três vezes na verificação final (60,10 s; 60,06 s; 60,60 s numa cópia limpa com `cp .env.example .env`). `tests/characterization/` sem diff contra a `v1-coupled`. OpenAPI gerado da v1 e da v2 idêntico (evidência `22`). FF10: 19 chamadas no provider = 19 requisições no gateway.
+
+### 28.14 Métricas oficiais da V2
+
+`metrics/results/v2-decoupled.csv` e `.png`, medidos com a régua sem diff desde o Passo 05 e reproduzidos numa segunda execução (evidência `23`):
+
+| Componente | Ca | Ce | I | A | D | Zona de dor |
+|---|---|---|---|---|---|---|
+| adapters.gateway | 1 | 2 | 0.67 | 0.00 | 0.33 | |
+| classification | 1 | 2 | 0.67 | 0.00 | 0.33 | |
+| config | 3 | 0 | 0.00 | 0.00 | 1.00 | sim |
+| extraction | 1 | 2 | 0.67 | 0.00 | 0.33 | |
+| main | 0 | 6 | 1.00 | 0.00 | 0.00 | |
+| ports | 5 | 0 | 0.00 | 1.00 | 0.00 | |
+| report | 1 | 4 | 0.80 | 0.00 | 0.20 | |
+| schemas | 5 | 0 | 0.00 | 0.00 | 1.00 | sim |
+| suggestion | 1 | 2 | 0.67 | 0.00 | 0.33 | |
+| tickets | 1 | 1 | 0.50 | 0.00 | 0.50 | no limite |
+
+Idêntica, componente a componente, à projeção da 14.2.
+
+### 28.15 Comparação entre V1 e V2
+
+20 → 19 arestas; zona de dor de {`config`, `llm`, `schemas`} para {`config`, `schemas`}; `llm` (D 0,80) removido; `ports` novo sobre a Main Sequence; `config` Ca 6 → 3. As features pioraram em D (0,25 → 0,33) por terem menos dependências, como previsto em 14.3, e nada foi feito para "consertar" isso. Tabela completa em `docs/v2/relatorio-v2.md`, seção 15.
+
+### 28.16 Avaliação do trabalho do agente
+
+Cinco incrementos, cinco aprovações sem correção. Os blobs de `app/` são idênticos aos de uma implementação de referência escrita antes pelo arquiteto. Desvios só de processo (saídas filtradas, uma suíte rodada duas vezes), registrados e aceitos. Toda aprovação se apoiou em evidência que o agente não produziu: verificação própria, sondas, contagem da FF10 e métricas recalculadas.
+
+### 28.17 Revisões do plano
+
+Versão 1.2 (seção 24). Nenhuma decisão revertida. Acrescentados: o isolamento do `provider-fake` (não estava no plano: ele também recebia o `.env` inteiro), a remoção do `depends_on` do `app` para o `provider-fake`, e a decisão explícita de usar a master key como chave de consumo até o Passo 12 (ADR 0003).
+
+### 28.18 Critérios de aceite
+
+Seção 15: B1 a B6, S1 a S5 e I1 a I5 atendidos, com evidência em `docs/v2/relatorio-v2.md`, seção 14. I5 atendido com ressalva (o valor é o da master key). Pendentes só os passos que dependem do Igor: commit, tag, validação entre as tags e push.
+
+### 28.19 Limitações remanescentes
+
+Falha persistente em ~4 a 4,6 s (v1: ~1,2 a 1,4 s), por causa do backoff padrão do LiteLLM (R18); gateway como ponto único de falha de todas as features (R19); `str | None` do SDK (R20); 1 tentativa de conexão no primeiro salto (R21); master key como chave de consumo; a suíte não cobre falhas, timeouts nem períodos longos; a capacidade existe em dois lugares (feature e gateway).
+
+### 28.20 Lições aprendidas
+
+1. Um piloto real com o contrato mínimo tornou a escala mecânica: três features migraram com a mesma mudança de uma linha.
+2. Proposta antes da implementação, comparada contra uma referência do arquiteto, eliminou retrabalho.
+3. A suíte de caracterização prova o comportamento conhecido; os caminhos de erro precisaram de instrumentos próprios.
+4. Remover só depois do último consumidor manteve cada incremento reversível.
+5. Métrica igual à projeção confirma o desenho, mas a decisão de aceitar D pior nas features veio do código, não do número.

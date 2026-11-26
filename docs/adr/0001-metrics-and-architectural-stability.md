@@ -128,3 +128,38 @@ A régua não mudou: `git diff 13fc247 -- metrics/*.py tests/metrics/` está vaz
   - a FF6 cega aos imports relativos.
   - Por isso o plano 1.1 acrescentou verificações fora da régua, sem mexer nela.
 - **Status:** continua aceita, sem mudança na decisão.
+
+## Revisão no Passo 09 (medição oficial da `v2-decoupled`)
+
+A régua continua sem mudança (`git diff 13fc247 -- metrics/*.py tests/metrics/` vazio; `tests/metrics` com `64 passed`). A medição oficial foi feita com o mesmo comando do Passo 05 e repetida com CSV idêntico (`docs/v2/evidencias/23-metricas-v2.txt`): `metrics/results/v2-decoupled.csv` e `.png`.
+
+**Resultados da V1 e da V2.**
+
+| Componente | V1 Ca/Ce/I/A/D | V2 Ca/Ce/I/A/D | Zona de dor V1 → V2 |
+|---|---|---|---|
+| adapters.gateway | — | 1/2/0,67/0/0,33 | — → não |
+| classification, extraction, suggestion | 1/3/0,75/0/0,25 | 1/2/0,67/0/0,33 | não → não |
+| config | 6/0/0/0/1,00 | 3/0/0/0/1,00 | sim → sim |
+| llm | 4/1/0,20/0/0,80 | removido | sim → — |
+| main | 0/5/1/0/0 | 0/6/1/0/0 | não → não |
+| ports | — | 5/0/0/1/0 | — → não |
+| report | 1/4/0,80/0/0,20 | igual | não → não |
+| schemas | 5/0/0/0/1,00 | igual | sim → sim |
+| tickets | 1/1/0,50/0/0,50 | igual | no limite |
+
+20 → 19 arestas. O resultado é idêntico à projeção do Passo 06.
+
+**Interpretação.**
+- O componente estável e concreto que carregava a tecnologia (`llm`) saiu do grafo. O mais usado agora é uma abstração (`ports`, sobre a Main Sequence). É a expressão métrica da inversão de dependência.
+- As features pioraram em D (0,25 → 0,33) porque têm menos dependências. O critério 2 deste ADR (melhora explicável pelo código) se aplicou ao contrário: a piora é explicável e foi aceita, sem nenhuma dependência acrescentada para corrigi-la.
+- O componente que fala com o gateway (`adapters.gateway`) ficou fora da zona de dor sem import artificial: os dois imports (`config` e `ports`) têm função.
+
+**Componentes naturalmente estáveis.**
+- `schemas`: DTOs do contrato HTTP; continua exceção candidata.
+- `config`: perdeu tudo o que era volátil (chaves, URLs, modelos físicos). Sobrou o endereço e a chave do gateway e dois parâmetros do relatório. O motivo pelo qual este ADR o recusou como exceção (conteúdo volátil) deixou de existir. A decisão entre declará-lo naturalmente estável ou dissolvê-lo fica para o Passo 16, com a medição da arquitetura final.
+
+**Limitações confirmadas.** A régua não viu: o gateway como dependência em execução de todas as features; a latência sob falha que mudou de 1,2 s para 4 s; a configuração do compose (credenciais); a capacidade repetida na feature e no gateway. Tudo isso foi verificado fora dela (FF9, FF10, sondas).
+
+**Questões pendentes para a arquitetura final.** Exceção ou dissolução de `config`; se `schemas` vira exceção formal; a terceira medição, na `main` final.
+
+**Status:** continua aceita, sem mudança na decisão.

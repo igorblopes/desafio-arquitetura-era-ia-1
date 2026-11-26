@@ -23,14 +23,14 @@ def classify_ticket(ticket: TicketInput) -> Classification:
 
 @app.post("/tickets/reply-suggestion")
 def suggest_reply(ticket: TicketInput) -> ReplySuggestion:
-    return suggestion.suggest(ticket)
+    return suggestion.suggest(ticket, language_model)
 
 
 @app.post("/tickets/extraction")
 def extract_order_data(ticket: TicketInput) -> OrderData:
-    return extraction.extract(ticket)
+    return extraction.extract(ticket, language_model)
 
 
 @app.post("/reports/topics")
 def topics_report(period: PeriodInput) -> TopicsReport:
-    return report.topics(period)
+    return report.topics(period, language_model)

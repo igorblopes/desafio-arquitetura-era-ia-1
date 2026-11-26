@@ -1,0 +1,139 @@
+$ git log --oneline -3
+4a3447a Refatoracao com agente de IA
+6efadeb Implementacao do AI Gateway
+b3fdeb2 Planejamento da refatoração
+[exit 0]
+
+$ git status --short --untracked-files=all
+ M .env.example
+ M app/helpdesk/config.py
+ M app/helpdesk/extraction.py
+ D app/helpdesk/llm.py
+ M app/helpdesk/main.py
+ M app/helpdesk/report.py
+ M app/helpdesk/suggestion.py
+ M app/requirements.txt
+ M compose.yaml
+?? .tmp-passo09/lib.sh
+?? docs/v2/evidencias/00-estado-inicial.txt
+?? docs/v2/evidencias/01-servicos.txt
+?? docs/v2/evidencias/02-caracterizacao-antes.txt
+?? docs/v2/evidencias/03-ff10-antes.txt
+?? docs/v2/evidencias/04-features-antes.txt
+?? docs/v2/evidencias/05-falha-antes.txt
+?? docs/v2/evidencias/06-verificacao-antes.txt
+?? docs/v2/evidencias/07-metricas-antes.txt
+?? docs/v2/evidencias/08-credenciais-antes.txt
+?? docs/v2/evidencias/09-estado-depois.txt
+?? docs/v2/handoffs/handoff-1-f4.md
+?? docs/v2/handoffs/handoff-2-f2.md
+?? docs/v2/handoffs/handoff-3-f3.md
+?? docs/v2/handoffs/handoff-4-remocao.md
+?? docs/v2/handoffs/handoff-5-credenciais.md
+?? docs/v2/sondas_v2.py
+?? docs/v2/verificacao_v2.py
+[exit 0]
+
+$ git diff --stat
+warning: in the working copy of 'app/helpdesk/config.py', LF will be replaced by CRLF the next time Git touches it
+ .env.example               |  4 ++--
+ app/helpdesk/config.py     | 19 +++----------------
+ app/helpdesk/extraction.py | 11 +++++++----
+ app/helpdesk/llm.py        | 30 ------------------------------
+ app/helpdesk/main.py       |  6 +++---
+ app/helpdesk/report.py     | 11 ++++++++---
+ app/helpdesk/suggestion.py |  8 +++++---
+ app/requirements.txt       |  1 -
+ compose.yaml               | 15 ++++++++-------
+ 9 files changed, 36 insertions(+), 69 deletions(-)
+[exit 0]
+
+$ git hash-object app/helpdesk/*.py app/helpdesk/adapters/*.py app/requirements.txt compose.yaml .env.example gateway/config.yaml
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27
+44d52f913e071b69a2d492ac9fde3f4d1673d9ff
+1410246544b2b398d82f9a24b310f3785c4f4128
+9d2bc5b106c37168a764a3479ca40f7ca23e31b0
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32
+b2e8573484bda72196423fa6a01cb85821e8421c
+e624cfed21425467ca6630c9e8ef58b8dd7d7009
+8580313f873e77150ece64065033f7f9dca54484
+47ef50a2d15c3f6574e5f62d0174131d37310f80
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb
+cf3190a98e1fbcb4f203e7b9ac88c79efb8e7de6
+efd6b8cc0f5829c2c321029d0cda71d75574fc89
+42cd497e725581f0f5fafa71217e88bbee454fa6
+a7e3a3824352c441e350bf1f1c85db7b3cf3d500
+[exit 0]
+
+$ for f in app/helpdesk/*.py app/helpdesk/adapters/*.py app/requirements.txt compose.yaml .env.example gateway/config.yaml; do printf "%s %s\n" "$(git hash-object $f)" "$f"; done
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 app/helpdesk/__init__.py
+f4755a81f3bad6a5f83a82fd573f56ce65aaad27 app/helpdesk/classification.py
+44d52f913e071b69a2d492ac9fde3f4d1673d9ff app/helpdesk/config.py
+1410246544b2b398d82f9a24b310f3785c4f4128 app/helpdesk/extraction.py
+9d2bc5b106c37168a764a3479ca40f7ca23e31b0 app/helpdesk/main.py
+b2f5e25d7e4a64fd4261bba9756501fbf9360a32 app/helpdesk/ports.py
+b2e8573484bda72196423fa6a01cb85821e8421c app/helpdesk/report.py
+e624cfed21425467ca6630c9e8ef58b8dd7d7009 app/helpdesk/schemas.py
+8580313f873e77150ece64065033f7f9dca54484 app/helpdesk/suggestion.py
+47ef50a2d15c3f6574e5f62d0174131d37310f80 app/helpdesk/tickets.py
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 app/helpdesk/adapters/__init__.py
+fabda3ca3d87327c09276e6d59aaf9aa02a353fb app/helpdesk/adapters/gateway.py
+cf3190a98e1fbcb4f203e7b9ac88c79efb8e7de6 app/requirements.txt
+efd6b8cc0f5829c2c321029d0cda71d75574fc89 compose.yaml
+42cd497e725581f0f5fafa71217e88bbee454fa6 .env.example
+a7e3a3824352c441e350bf1f1c85db7b3cf3d500 gateway/config.yaml
+[exit 0]
+
+$ git rev-parse HEAD:gateway/config.yaml
+a7e3a3824352c441e350bf1f1c85db7b3cf3d500
+[exit 0]
+
+$ git rev-parse v1-coupled "v1-coupled^{commit}"
+07c2026db512dacefde56420464cf0338535d8a1
+80283055f02175a84c8b6bc62dacf81964ad15f0
+[exit 0]
+
+$ git tag -l
+v1-coupled
+[exit 0]
+
+# FF2
+$ git diff --exit-code --stat v1-coupled -- tests/characterization/
+sem saída (exit 0)
+
+# FF3
+$ git diff --exit-code --stat v1-coupled -- provider-fake/ edge/ data/
+sem saída (exit 0)
+
+# FF4b
+$ git diff --exit-code --stat 13fc247 -- metrics/*.py tests/metrics/
+sem saída (exit 0)
+
+$ git diff --exit-code --stat HEAD -- gateway/ provider-fake/ edge/ data/ tests/ metrics/ docs/adr/ docs/piloto/ README.md docs/refactoring-plan.md
+sem saída (exit 0)
+
+$ ls app/helpdesk app/helpdesk/adapters
+app/helpdesk:
+__init__.py
+adapters
+classification.py
+config.py
+extraction.py
+main.py
+ports.py
+report.py
+schemas.py
+suggestion.py
+tickets.py
+
+app/helpdesk/adapters:
+__init__.py
+gateway.py
+[exit 0]
+
+$ test -e app/helpdesk/llm.py && echo "llm.py EXISTE" || echo "llm.py não existe"
+llm.py não existe
+[exit 0]
+

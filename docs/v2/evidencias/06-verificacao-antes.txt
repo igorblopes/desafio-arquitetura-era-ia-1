@@ -1,0 +1,191 @@
+$ docker run --rm -v "${PWD}:/w" -v "${PWD}/data:/data:ro" -w /w -e PYTHONDONTWRITEBYTECODE=1 python:3.12-slim sh -c "pip install -q -r app/requirements.txt httpx && python docs/v2/verificacao_v2.py F1 && python docs/v2/verificacao_v2.py F1 F4 F2 F3; echo codigo=$?"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+[
+  {
+    "feature": "F1",
+    "cenario": "sucesso",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00042\",\"category\":\"delivery\",\"priority\":\"high\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "categoria fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "prioridade fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": true,
+    "status": 500,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "Internal Server Error"
+  }
+]
+FEATURES: F1  CENÁRIOS: 4  RESULTADO: OK
+[
+  {
+    "feature": "F1",
+    "cenario": "sucesso",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00042\",\"category\":\"delivery\",\"priority\":\"high\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "categoria fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "prioridade fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": true,
+    "status": 500,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F4",
+    "cenario": "sucesso",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "status",
+      "corpo",
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F4",
+    "cenario": "campos nulos preservados",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "status",
+      "corpo",
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F4",
+    "cenario": "pedido em formato inválido vira 502",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "status",
+      "corpo",
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F4",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F2",
+    "cenario": "texto devolvido sem transformação",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "status",
+      "corpo",
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F2",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F3",
+    "cenario": "274 tickets em 2 lotes: conteúdo e agregação",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "status",
+      "corpo",
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  },
+  {
+    "feature": "F3",
+    "cenario": "período sem tickets: nenhuma requisição",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [],
+    "corpo": "{\"start\":\"2026-09-01\",\"end\":\"2026-09-30\",\"total_tickets\":0,\"topics\":[]}"
+  },
+  {
+    "feature": "F3",
+    "cenario": "gateway em 500 no 1º lote: 500 e 1 requisição",
+    "ok": false,
+    "status": 500,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [
+      "requisições ao gateway"
+    ],
+    "corpo": "Internal Server Error"
+  }
+]
+FEATURES: F1 F4 F2 F3  CENÁRIOS: 13  RESULTADO: FALHOU
+codigo=1

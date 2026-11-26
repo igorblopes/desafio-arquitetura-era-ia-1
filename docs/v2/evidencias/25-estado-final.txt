@@ -1,0 +1,72 @@
+$ curl -s -X POST localhost:8090/admin/reset
+{"status":"ok"}
+[exit 0]
+
+$ curl -s localhost:8090/admin/failures
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}
+[exit 0]
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app                                          "uvicorn helpdesk.ma…"   app             14 minutes ago   Up 8 seconds (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            22 hours ago     Up 6 seconds              0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         22 hours ago     Up 14 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:843a1b5146a66d6add81223b18dd7189a2605f8a7cf99bac675db232908ad6ee   "uvicorn app.main:ap…"   provider-fake   23 minutes ago   Up 20 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+[exit 0]
+
+$ rm -rf .tmp-passo09
+sem saída (exit 0)
+
+$ git diff --exit-code HEAD -- gateway/config.yaml
+sem saída (exit 0)
+
+$ git diff --exit-code --stat v1-coupled -- tests/characterization/ provider-fake/ edge/ data/
+sem saída (exit 0)
+
+$ git status --short --untracked-files=all
+ M .env.example
+ M app/helpdesk/config.py
+ M app/helpdesk/extraction.py
+ D app/helpdesk/llm.py
+ M app/helpdesk/main.py
+ M app/helpdesk/report.py
+ M app/helpdesk/suggestion.py
+ M app/requirements.txt
+ M compose.yaml
+?? docs/v2/evidencias/00-estado-inicial.txt
+?? docs/v2/evidencias/01-servicos.txt
+?? docs/v2/evidencias/02-caracterizacao-antes.txt
+?? docs/v2/evidencias/03-ff10-antes.txt
+?? docs/v2/evidencias/04-features-antes.txt
+?? docs/v2/evidencias/05-falha-antes.txt
+?? docs/v2/evidencias/06-verificacao-antes.txt
+?? docs/v2/evidencias/07-metricas-antes.txt
+?? docs/v2/evidencias/08-credenciais-antes.txt
+?? docs/v2/evidencias/09-estado-depois.txt
+?? docs/v2/evidencias/10-fitness.txt
+?? docs/v2/evidencias/11-servicos.txt
+?? docs/v2/evidencias/12-ff9-credenciais.txt
+?? docs/v2/evidencias/13-caracterizacao-1.txt
+?? docs/v2/evidencias/14-ff10.txt
+?? docs/v2/evidencias/15-features-depois.txt
+?? docs/v2/evidencias/16-falha-depois.txt
+?? docs/v2/evidencias/17-verificacao-depois.txt
+?? docs/v2/evidencias/18-gateway-parado.txt
+?? docs/v2/evidencias/19-max-tokens.txt
+?? docs/v2/evidencias/20-troca-modelo.txt
+?? docs/v2/evidencias/21-caracterizacao-2.txt
+?? docs/v2/evidencias/22-openapi.txt
+?? docs/v2/evidencias/23-metricas-v2.txt
+?? docs/v2/evidencias/24-init-reprodutivel.txt
+?? docs/v2/evidencias/25-estado-final.txt
+?? docs/v2/handoffs/handoff-1-f4.md
+?? docs/v2/handoffs/handoff-2-f2.md
+?? docs/v2/handoffs/handoff-3-f3.md
+?? docs/v2/handoffs/handoff-4-remocao.md
+?? docs/v2/handoffs/handoff-5-credenciais.md
+?? docs/v2/sondas_v2.py
+?? docs/v2/verificacao_v2.py
+?? metrics/results/v2-decoupled.csv
+?? metrics/results/v2-decoupled.png
+[exit 0]
+

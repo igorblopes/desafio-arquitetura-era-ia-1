@@ -1,0 +1,54 @@
+# FF5
+$ grep -rnE "^\s*(from|import) (openai|anthropic)" app/helpdesk
+app/helpdesk/adapters/gateway.py:1:from openai import OpenAI
+[exit 0]
+
+# FF6
+$ grep -nE "adapters|gateway|\bllm\b|\bconfig\b" app/helpdesk/classification.py app/helpdesk/extraction.py app/helpdesk/suggestion.py
+sem saída (exit 1)
+
+$ grep -nE "adapters|gateway|\bllm\b" app/helpdesk/report.py
+sem saída (exit 1)
+
+$ grep -rnE "^\s*(from|import) .*(adapters|gateway)" app/helpdesk --include=*.py
+app/helpdesk/main.py:4:from .adapters.gateway import GatewayLanguageModel
+[exit 0]
+
+$ grep -rn "llm" app/
+sem saída (exit 1)
+
+# FF7
+$ grep -rnE "gpt-fake|claude-fake|mini" app/
+sem saída (exit 1)
+
+# FF8
+$ grep -rnE "FAKE_OPENAI_KEY|FAKE_ANTHROPIC_KEY|sk-fake-openai|sk-ant-fake|provider-fake|8090|MAX_OUTPUT_TOKENS|max_tokens" app/
+sem saída (exit 1)
+
+$ grep -rnE "anthropic" app/
+sem saída (exit 1)
+
+# FF11
+$ grep -rn "async def" app/helpdesk
+sem saída (exit 1)
+
+# FF12
+$ docker run --rm -v "${PWD}:/w" -w /w/app python:3.12-slim sh -c "pip install -q -r requirements.txt mypy && mypy --ignore-missing-imports helpdesk/ports.py helpdesk/adapters helpdesk/classification.py helpdesk/extraction.py helpdesk/suggestion.py helpdesk/report.py; echo exit=\$?"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+helpdesk/adapters/gateway.py:23: error: Incompatible return value type (got "str | None", expected "str")  [return-value]
+Found 1 error in 1 file (checked 7 source files)
+exit=1
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w/app -e GATEWAY_URL=http://x -e GATEWAY_API_KEY=x python:3.12-slim sh -c "pip install -q -r requirements.txt && python -c 'import helpdesk.main' && pip show anthropic; echo exit=\$?"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+WARNING: Package(s) not found: anthropic
+exit=1
+[exit 0]
+

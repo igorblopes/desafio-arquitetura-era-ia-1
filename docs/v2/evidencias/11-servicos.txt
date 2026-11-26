@@ -1,0 +1,141 @@
+$ docker compose up -d --build --wait
+ Image desafio-arquitetura-era-ia-1-app Building 
+ Image desafio-arquitetura-era-ia-1-provider-fake Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.17kB 0.0s done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 273B done
+#2 DONE 0.0s
+
+#3 [provider-fake internal] load build definition from Dockerfile
+#3 transferring dockerfile: 489B done
+#3 DONE 0.1s
+
+#4 [provider-fake internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.1s
+
+#5 [provider-fake internal] load .dockerignore
+#5 transferring context: 67B done
+#5 DONE 0.0s
+
+#6 [app internal] load .dockerignore
+#6 transferring context: 60B done
+#6 DONE 0.0s
+
+#7 [provider-fake internal] load build context
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 15.05kB done
+#8 DONE 0.0s
+
+#9 [app 1/6] FROM docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 DONE 0.1s
+
+#10 [app 3/5] COPY requirements.txt .
+#10 CACHED
+
+#11 [app 4/5] RUN pip install --no-cache-dir -r requirements.txt
+#11 CACHED
+
+#7 [provider-fake internal] load build context
+#7 transferring context: 156B done
+#7 DONE 0.0s
+
+#12 [provider-fake 5/6] COPY app ./app
+#12 CACHED
+
+#13 [provider-fake 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#13 CACHED
+
+#14 [provider-fake 2/6] WORKDIR /srv
+#14 CACHED
+
+#15 [provider-fake 3/6] COPY requirements.txt .
+#15 CACHED
+
+#16 [provider-fake 6/6] RUN useradd --uid 10001 --no-create-home fake
+#16 CACHED
+
+#17 [app 5/5] COPY helpdesk ./helpdesk
+#17 DONE 0.1s
+
+#18 [provider-fake] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:4f5035535d35e6a3d5fdcb5c09e8fbd36da8940892421f47218c36c327099a5a 0.0s done
+#18 exporting config sha256:81011677a6cdd57ed9a57ab09b905a93c2ed81d95a90c517970e81edd67e5e1c 0.0s done
+#18 exporting attestation manifest sha256:dbe0a481f9a27e7c355130824768539ef6fba7f6571e409a8f6a6e9863492d79 0.1s done
+#18 exporting manifest list sha256:6065bac78ccd2978b9724eb327aaebbc34774952fde1ff28e51b8a418bfe3bf5 0.1s done
+#18 naming to docker.io/library/desafio-arquitetura-era-ia-1-provider-fake:latest
+#18 naming to docker.io/library/desafio-arquitetura-era-ia-1-provider-fake:latest 0.0s done
+#18 unpacking to docker.io/library/desafio-arquitetura-era-ia-1-provider-fake:latest 0.0s done
+#18 DONE 0.3s
+
+#19 [app] exporting to image
+#19 exporting layers 0.4s done
+#19 exporting manifest sha256:b3a6710f4da1fc312d1021e2d6b920b4aa24579ea9d9fccbc536e537d986d0cf 0.1s done
+#19 exporting config sha256:6a56ca3172f32de7e84bf99e522a2a604e5e216c5b5f2615e495f2558368955b 0.1s done
+#19 exporting attestation manifest sha256:b3cb0a7255274ec129d12abdaa6d5d058a1dd19fd688312a63936746a3dcc78e
+#19 ...
+
+#20 [provider-fake] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#19 [app] exporting to image
+#19 exporting attestation manifest sha256:b3cb0a7255274ec129d12abdaa6d5d058a1dd19fd688312a63936746a3dcc78e 0.1s done
+#19 exporting manifest list sha256:f55a1d462e9881dea4edd538b324f6d941d80db13fbb4614b90596c2967fc1c9 0.1s done
+#19 naming to docker.io/library/desafio-arquitetura-era-ia-1-app:latest done
+#19 unpacking to docker.io/library/desafio-arquitetura-era-ia-1-app:latest 0.1s done
+#19 DONE 0.8s
+
+#21 [app] resolving provenance for metadata file
+#21 DONE 0.0s
+ Image desafio-arquitetura-era-ia-1-provider-fake Built 
+ Image desafio-arquitetura-era-ia-1-app Built 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-edge-1 Running 
+ Container desafio-arquitetura-era-ia-1-app-1 Recreate 
+ Container desafio-arquitetura-era-ia-1-app-1 Recreated 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Starting 
+ Container desafio-arquitetura-era-ia-1-app-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+[exit 0]
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED         STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app                                          "uvicorn helpdesk.ma…"   app             6 seconds ago   Up 3 seconds (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            22 hours ago    Up 39 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         22 hours ago    Up 40 minutes (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:843a1b5146a66d6add81223b18dd7189a2605f8a7cf99bac675db232908ad6ee   "uvicorn app.main:ap…"   provider-fake   9 minutes ago   Up 9 minutes (healthy)    0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+[exit 0]
+
+$ docker compose images
+CONTAINER                                      REPOSITORY                         TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app   latest              linux/amd64         f55a1d462e98        246MB               7 seconds ago
+desafio-arquitetura-era-ia-1-edge-1            nginx                              1.27-alpine         linux/amd64         65645c7bb6a0        73.6MB              19 months ago
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm            v1.102.1            linux/amd64         87f34979b9f8        1.65GB              2 months ago
+desafio-arquitetura-era-ia-1-provider-fake-1   <none>                             <none>              unknown             843a1b5146a6        0B                  N/A
+[exit 0]
+
+$ docker inspect -f "{{.Id}} {{.Image}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+7c6caa788672eadee6135884f54d4a4ee97dac590bdd3f077e3f950fccaf3011 sha256:f55a1d462e9881dea4edd538b324f6d941d80db13fbb4614b90596c2967fc1c9 2026-11-26T21:17:20.645229502Z
+[exit 0]
+

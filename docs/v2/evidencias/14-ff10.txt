@@ -1,0 +1,20 @@
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py contar
+{
+  "chamadas_no_provider": 19,
+  "por_provider_modelo_tarefa": {
+    "anthropic/claude-fake-large/topics": 1,
+    "anthropic/claude-fake-large/suggest": 2,
+    "openai/gpt-fake-large/extract": 7,
+    "openai/gpt-fake-large/classify": 9
+  }
+}
+[exit 0]
+
+$ docker compose logs --since 2026-11-26T21:17:35Z gateway | grep -c "POST /v1/chat/completions"
+19
+[exit 0]
+
+$ docker compose logs --since 2026-11-26T21:17:35Z gateway | grep "POST /v1/chat/completions" | grep -vc " 200"
+0
+[exit 1]
+

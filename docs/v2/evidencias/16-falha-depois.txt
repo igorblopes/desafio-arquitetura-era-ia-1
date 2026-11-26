@@ -1,0 +1,164 @@
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py falha F1
+{
+  "feature": "F1",
+  "falha_injetada": "openai/gpt-fake-large error_500",
+  "status": 500,
+  "segundos": 4.019,
+  "resposta": "Internal Server Error",
+  "tentativas_no_provider": 3,
+  "admin_calls": [
+    {
+      "ts": "2026-11-26T21:19:19.919+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:18.832+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:18.159+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "classify",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    }
+  ]
+}
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py falha F4
+{
+  "feature": "F4",
+  "falha_injetada": "openai/gpt-fake-large error_500",
+  "status": 500,
+  "segundos": 4.553,
+  "resposta": "Internal Server Error",
+  "tentativas_no_provider": 3,
+  "admin_calls": [
+    {
+      "ts": "2026-11-26T21:19:25.708+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "extract",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:24.455+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "extract",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:23.253+00:00",
+      "provider": "openai",
+      "model": "gpt-fake-large",
+      "task": "extract",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    }
+  ]
+}
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py falha F2
+{
+  "feature": "F2",
+  "falha_injetada": "anthropic/claude-fake-large error_500",
+  "status": 500,
+  "segundos": 4.087,
+  "resposta": "Internal Server Error",
+  "tentativas_no_provider": 3,
+  "admin_calls": [
+    {
+      "ts": "2026-11-26T21:19:30.900+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "suggest",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:29.830+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "suggest",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    },
+    {
+      "ts": "2026-11-26T21:19:28.906+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "suggest",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 0
+    }
+  ]
+}
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py falha F3
+{
+  "feature": "F3",
+  "falha_injetada": "anthropic/claude-fake-large error_500",
+  "status": 500,
+  "segundos": 4.599,
+  "resposta": "Internal Server Error",
+  "tentativas_no_provider": 3,
+  "admin_calls": [
+    {
+      "ts": "2026-11-26T21:19:36.218+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "topics",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 1
+    },
+    {
+      "ts": "2026-11-26T21:19:34.676+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "topics",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 1
+    },
+    {
+      "ts": "2026-11-26T21:19:34.113+00:00",
+      "provider": "anthropic",
+      "model": "claude-fake-large",
+      "task": "topics",
+      "stream": false,
+      "status": 500,
+      "duration_ms": 1
+    }
+  ]
+}
+[exit 0]
+
+$ curl -s localhost:8090/admin/failures
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}
+[exit 0]
+

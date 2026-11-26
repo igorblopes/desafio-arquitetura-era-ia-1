@@ -1,0 +1,83 @@
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 200,
+      "segundos": 1.089,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 200,
+      "segundos": 1.238,
+      "resposta": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 200,
+      "segundos": 15.963,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "suggestion": "<2474 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "suggest",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 200,
+      "segundos": 9.849,
+      "resposta": {
+        "start": "2026-08-01",
+        "end": "2026-08-01",
+        "total_tickets": 137,
+        "topics": "<1426 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "topics",
+          "stream": false
+        }
+      ]
+    }
+  ]
+}
+[exit 0]
+

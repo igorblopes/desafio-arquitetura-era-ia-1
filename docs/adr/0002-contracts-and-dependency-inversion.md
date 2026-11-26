@@ -1,7 +1,7 @@
 # 0002. Features dependem de um contrato de IA; só o ponto de composição conhece o adapter
 
-- Status: aceita (validada na F1 pelo piloto do Passo 08; F2, F3 e F4 pendentes no Passo 09)
-- Data: 2026-11-25 (proposta no Passo 06; aceita no Passo 08, 2026-11-26)
+- Status: aceita (validada na F1 pelo piloto do Passo 08 e nas quatro features pelo Passo 09)
+- Data: 2026-11-25 (proposta no Passo 06; aceita no Passo 08, 2026-11-26; consolidada no Passo 09, 2026-11-26)
 - Nível: software
 
 ## Contexto
@@ -97,3 +97,30 @@ Isso será verificado com `python metrics/measure.py --source app/helpdesk --nam
 - O adapter não trata erros. As exceções do SDK viram 500, como na v1; o efeito de o retry ser agora do gateway está no ADR 0003.
 
 **Consequências para o Passo 09:** a decisão não muda. Cada feature migrada recebe o contrato por parâmetro e declara a própria capacidade, e `main` passa a mesma instância. A projeção para a v2 completa (tabela acima, `ports` com Ca=5) continua válida. `llm.py` deve desaparecer.
+
+## Revisão no Passo 09 (refatoração completa)
+
+**Contratos efetivamente utilizados.** Um só: `ports.LanguageModel.complete(capability, prompt) -> str`, usado sem mudança pelas quatro features. A F2 não precisou de parâmetro para `max_tokens` (é configuração da capacidade no gateway) e a F3 chama `complete` uma vez por lote. As alternativas "evoluir o contrato" e "contratos específicos" foram reavaliadas e rejeitadas por falta de necessidade real (`docs/v2/relatorio-v2.md`, seção 7).
+
+**Direção das dependências.** `classification`, `extraction` e `suggestion` dependem só de `ports` e `schemas`; `report` de `ports`, `schemas`, `tickets` e `config`. `adapters.gateway` depende de `ports` e `config`. Nenhuma feature importa SDK, `llm` ou o adapter (FF5 e FF6 sem saída, evidência `10`).
+
+**Ponto de composição.** `main.py` cria `GatewayLanguageModel()` uma vez e passa a mesma instância às quatro rotas; é o único importador do adapter (`main.py:4`, Ca=1).
+
+**Responsabilidades do adapter.** Traduzir `complete` em `POST {GATEWAY_URL}/v1/chat/completions` com a chave do gateway e `model=capability`, sem retry (`max_retries=0`). Não conhece provider, modelo, limite de tokens nem regra de negócio. Não trata erros nem define timeout: isso é do Passo 10.
+
+**Justificativa da estratégia.** Branch by Abstraction: o contrato criado no piloto permitiu migrar uma feature por vez com o `llm.py` ainda em uso pelas outras, e removê-lo quando o último consumidor saiu.
+
+**Evidências da refatoração.**
+
+| Condição | Evidência (`docs/v2/evidencias/`) |
+|---|---|
+| 32 testes com a suíte idêntica | `13`, `21`, `24`; `git diff v1-coupled -- tests/characterization/` vazio (`09`) |
+| features só com `ports` e `schemas` (F3 também `tickets`, `config`) | arestas do `v2-decoupled.csv` (`23`); FF6 (`10`) |
+| `adapters.gateway` com Ca=1 | `v2-decoupled.csv` |
+| `ports` com A=1 e Ca=5 | `v2-decoupled.csv` |
+| nada novo na zona de dor | zona de dor = {`config`, `schemas`} |
+| contratos HTTP preservados | OpenAPI da v1 e da v2 idênticos (`22`) |
+
+**Consequências.** Confirmadas as previstas: as features deixaram de conhecer provider, modelo e SDK; trocar o mecanismo de IA afeta só o adapter e `main`; o D das features piorou para 0,33 e foi aceito. Nova: todas as features dependem agora, em execução, de um único adapter e de um único gateway (ADR 0003). Persistem a limitação `str | None` (FF12 com 1 erro, R20) e a ausência de erros próprios no contrato.
+
+**A decisão continua válida, sem mudança.**

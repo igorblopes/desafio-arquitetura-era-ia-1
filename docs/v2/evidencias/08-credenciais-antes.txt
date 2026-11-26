@@ -1,0 +1,60 @@
+$ docker compose exec app env | sed -E "s/=.*/=***/" | sort; grep -rnE "FAKE_OPENAI_KEY|FAKE_ANTHROPIC_KEY|sk-fake-openai|sk-ant-fake" app/; grep -rnE "gpt-fake|claude-fake" app/; docker compose config | sed -n "/^  app:/,/^  [a-z]/p" | sed -E "s/(KEY: ).*/\1***/"
+--- docker compose exec app env | sed -E "s/=.*/=***/" | sort
+FAKE_ANTHROPIC_KEY=***
+FAKE_OPENAI_KEY=***
+GATEWAY_API_KEY=***
+GATEWAY_MASTER_KEY=***
+GATEWAY_URL=***
+GPG_KEY=***
+HOME=***
+HOSTNAME=***
+LANG=***
+PATH=***
+PYTHON_SHA256=***
+PYTHON_VERSION=***
+--- grep -rnE "FAKE_OPENAI_KEY|FAKE_ANTHROPIC_KEY|sk-fake-openai|sk-ant-fake" app/
+app/helpdesk/config.py:3:OPENAI_API_KEY = os.environ["FAKE_OPENAI_KEY"]
+app/helpdesk/config.py:4:ANTHROPIC_API_KEY = os.environ["FAKE_ANTHROPIC_KEY"]
+codigo=0
+--- grep -rnE "gpt-fake|claude-fake" app/
+app/helpdesk/config.py:15:CLASSIFICATION_MODEL = "gpt-fake-large"
+app/helpdesk/config.py:16:EXTRACTION_MODEL = "gpt-fake-large"
+app/helpdesk/config.py:17:SUGGESTION_MODEL = "claude-fake-large"
+app/helpdesk/config.py:18:REPORT_MODEL = "claude-fake-large"
+codigo=0
+--- docker compose config | sed -n "/^  app:/,/^  [a-z]/p" | sed -E "s/(KEY: ).*/\1***/"
+  app:
+    environment:
+      FAKE_ANTHROPIC_KEY: ***
+      FAKE_OPENAI_KEY: ***
+      GATEWAY_API_KEY: ***
+      GATEWAY_MASTER_KEY: ***
+      GATEWAY_URL: http://gateway:4000
+    networks:
+      default: null
+    volumes:
+      - type: bind
+        source: D:\Projetos\Fullcycle\desafio-arquitetura-era-ia-1\data
+        target: /data
+        read_only: true
+        bind: {}
+    build:
+      context: D:\Projetos\Fullcycle\desafio-arquitetura-era-ia-1\app
+      dockerfile: Dockerfile
+    depends_on:
+      gateway:
+        condition: service_healthy
+        required: true
+      provider-fake:
+        condition: service_healthy
+        required: true
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')
+      timeout: 3s
+      interval: 2s
+      retries: 20
+  edge:

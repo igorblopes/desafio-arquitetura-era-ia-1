@@ -1,0 +1,23 @@
+$ git log --oneline -3; git status --short --untracked-files=all; git tag -l; git rev-parse v1-coupled "v1-coupled^{commit}"; git diff --stat v1-coupled -- tests/characterization/ provider-fake/ edge/ data/; git diff --stat 13fc247 -- metrics/*.py tests/metrics/
+--- git log --oneline -3
+4a3447a Refatoracao com agente de IA
+6efadeb Implementacao do AI Gateway
+b3fdeb2 Planejamento da refatoração
+--- git status --short --untracked-files=all
+?? docs/v2/evidencias/00-estado-inicial.txt
+?? docs/v2/handoffs/handoff-1-f4.md
+?? docs/v2/handoffs/handoff-2-f2.md
+?? docs/v2/handoffs/handoff-3-f3.md
+?? docs/v2/handoffs/handoff-4-remocao.md
+?? docs/v2/handoffs/handoff-5-credenciais.md
+?? docs/v2/sondas_v2.py
+?? docs/v2/verificacao_v2.py
+--- git tag -l
+v1-coupled
+--- git rev-parse v1-coupled "v1-coupled^{commit}"
+07c2026db512dacefde56420464cf0338535d8a1
+80283055f02175a84c8b6bc62dacf81964ad15f0
+--- git diff --stat v1-coupled -- tests/characterization/ provider-fake/ edge/ data/
+[fim diff1, linhas=0]
+--- git diff --stat 13fc247 -- metrics/*.py tests/metrics/
+[fim diff2, linhas=0]

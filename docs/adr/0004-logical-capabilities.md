@@ -1,6 +1,6 @@
 # 0004. A aplicação pede capacidades lógicas; o gateway mapeia para modelos físicos
 
-- Status: aceita no gateway (Passo 07) e no uso pela aplicação para `ticket-classification` (Passo 08); as outras 3 capacidades pendentes (Passo 09)
+- Status: aceita no gateway (Passo 07) e no uso pela aplicação para as quatro capacidades (Passos 08 e 09)
 - Data: 2026-11-25 (proposta no Passo 06, revisada no Passo 07)
 - Nível: solução
 
@@ -91,5 +91,36 @@ Evidências: `docs/piloto/evidencias/20` a `23`.
 - A capacidade continua existindo em dois lugares (constante na feature e `model_name` no gateway). Um nome errado falharia em execução com 400; a verificação própria do piloto confere o nome enviado.
 - A prova vale para uma capacidade. A validação final repete a troca depois da migração completa (Passo 09).
 - `config.CLASSIFICATION_MODEL` não tem mais consumidor, mas fica até o incremento 8 do plano, que remove juntos todos os modelos físicos da app.
+
+**A decisão continua válida, sem mudança.**
+
+## Revisão no Passo 09 (quatro capacidades pela aplicação)
+
+**Capacidades implementadas e mapeamento inicial.**
+
+| Capacidade | Feature (constante `CAPABILITY`) | Modelo físico (`gateway/config.yaml`) | Modelo na v1 (`config.py`) |
+|---|---|---|---|
+| `ticket-classification` | F1 `classification.py` | `openai/gpt-fake-large` | `CLASSIFICATION_MODEL = "gpt-fake-large"` |
+| `reply-suggestion` | F2 `suggestion.py` | `anthropic/claude-fake-large`, `max_tokens: 2000` | `SUGGESTION_MODEL = "claude-fake-large"` |
+| `topics-report` | F3 `report.py` | `anthropic/claude-fake-large`, `max_tokens: 2000` | `REPORT_MODEL = "claude-fake-large"` |
+| `order-extraction` | F4 `extraction.py` | `openai/gpt-fake-large` | `EXTRACTION_MODEL = "gpt-fake-large"` |
+
+Todas usam o modelo `large` que a v1 usava; nenhum `mini` aparece no código nem na configuração.
+
+**Separação entre capacidades e implementações físicas.** `grep -rnE "gpt-fake|claude-fake|mini" app/` sem saída; as 4 constantes de modelo saíram de `config.py` (`docs/v2/evidencias/10`). A sonda pela borda mostra cada feature atendida pelo modelo do gateway (`15`).
+
+**Troca de modelo pela borda, depois da migração completa** (`20`):
+
+| Etapa | Resultado |
+|---|---|
+| Antes | `POST /tickets/reply-suggestion` (TK-00042) → 200, 2424 caracteres; `/admin/calls`: `anthropic`/`claude-fake-large`/`suggest` |
+| Troca | 3 linhas de `litellm_params` de `reply-suggestion` (`model`, `api_base`, `api_key`); `docker compose restart gateway && docker compose up -d --wait` (8,6 s) |
+| Depois | mesma resposta (`cmp` sem diferença, mesmo sha256); `/admin/calls`: `openai`/`gpt-fake-large`/`suggest`; F1, F3 e F4 inalteradas |
+| App | mesmo Id de container, mesma imagem (`sha256:f55a1d46…`), mesmo horário de início; hashes de `app/` iguais |
+| Restauração | `git restore gateway/config.yaml`, diff vazio; F2 de volta a `anthropic` |
+
+A F2 foi escolhida por ser a capacidade mais sensível (texto longo e mudança de formato de API entre providers). A resposta idêntica é propriedade do provider-fake (respostas determinísticas por tarefa); com providers reais, a troca de modelo muda o texto, e é por isso que ela é decisão operacional, não de código.
+
+**Limitações.** A capacidade continua em dois lugares (constante na feature e `model_name` no gateway); um nome errado falharia com 400 em execução, e a verificação própria confere os quatro nomes. Fallback e modelo fraco por capacidade ficam para o Passo 11.
 
 **A decisão continua válida, sem mudança.**

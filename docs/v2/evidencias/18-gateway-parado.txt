@@ -1,0 +1,221 @@
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+7c6caa788672eadee6135884f54d4a4ee97dac590bdd3f077e3f950fccaf3011 2026-11-26T21:17:20.645229502Z
+[exit 0]
+
+$ docker compose stop gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopped 
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 500,
+      "segundos": 3.968,
+      "resposta": "Internal Server Error",
+      "atendido_por": []
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 500,
+      "segundos": 3.86,
+      "resposta": "Internal Server Error",
+      "atendido_por": []
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 500,
+      "segundos": 3.85,
+      "resposta": "Internal Server Error",
+      "atendido_por": []
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 500,
+      "segundos": 3.885,
+      "resposta": "Internal Server Error",
+      "atendido_por": []
+    }
+  ]
+}
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py contar
+{
+  "chamadas_no_provider": 0,
+  "por_provider_modelo_tarefa": {}
+}
+[exit 0]
+
+$ docker compose logs --since 2m app | tail -40
+app-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+app-1  |     raw_response = await run_endpoint_function(
+app-1  |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/fastapi/routing.py", line 214, in run_endpoint_function
+app-1  |     return await run_in_threadpool(dependant.call, **values)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/starlette/concurrency.py", line 39, in run_in_threadpool
+app-1  |     return await anyio.to_thread.run_sync(func, *args)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/to_thread.py", line 65, in run_sync
+app-1  |     return await get_async_backend().run_sync_in_worker_thread(
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2779, in run_sync_in_worker_thread
+app-1  |     return await future
+app-1  |            ^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1124, in run
+app-1  |     result = context.run(func, *args)
+app-1  |              ^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/srv/helpdesk/main.py", line 36, in topics_report
+app-1  |     return report.topics(period, language_model)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/srv/helpdesk/report.py", line 23, in topics
+app-1  |     answer = json.loads(model.complete(CAPABILITY, f"TASK: topics\n{content}"))
+app-1  |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/srv/helpdesk/adapters/gateway.py", line 19, in complete
+app-1  |     response = self._client.chat.completions.create(
+app-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/openai/_utils/_utils.py", line 298, in wrapper
+app-1  |     return func(*args, **kwargs)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 1317, in create
+app-1  |     return self._post(
+app-1  |            ^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1439, in post
+app-1  |     return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+app-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1182, in request
+app-1  |     raise APIConnectionError(request=request) from err
+app-1  | openai.APIConnectionError: Connection error.
+app-1  | INFO:     127.0.0.1:45734 - "GET /health HTTP/1.1" 200 OK
+[exit 0]
+
+$ docker compose start gateway
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Starting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+[exit 0]
+
+$ docker compose up -d --wait
+ Container desafio-arquitetura-era-ia-1-edge-1 Running 
+ Container desafio-arquitetura-era-ia-1-app-1 Running 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Running 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+[exit 0]
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app                                          "uvicorn helpdesk.ma…"   app             3 minutes ago    Up 3 minutes (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            22 hours ago     Up 43 minutes             0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         22 hours ago     Up 11 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:843a1b5146a66d6add81223b18dd7189a2605f8a7cf99bac675db232908ad6ee   "uvicorn app.main:ap…"   provider-fake   12 minutes ago   Up 12 minutes (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+[exit 0]
+
+$ docker inspect -f "{{.Id}} {{.State.StartedAt}}" desafio-arquitetura-era-ia-1-app-1
+7c6caa788672eadee6135884f54d4a4ee97dac590bdd3f077e3f950fccaf3011 2026-11-26T21:17:20.645229502Z
+[exit 0]
+
+$ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim python docs/v2/sondas_v2.py features
+{
+  "features": [
+    {
+      "feature": "F1",
+      "rota": "/tickets/classification",
+      "status": 200,
+      "segundos": 1.419,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "rota": "/tickets/extraction",
+      "status": 200,
+      "segundos": 1.239,
+      "resposta": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "atendido_por": [
+        {
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F2",
+      "rota": "/tickets/reply-suggestion",
+      "status": 200,
+      "segundos": 15.966,
+      "resposta": {
+        "ticket_id": "TK-00042",
+        "suggestion": "<2474 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "suggest",
+          "stream": false
+        }
+      ]
+    },
+    {
+      "feature": "F3",
+      "rota": "/reports/topics",
+      "status": 200,
+      "segundos": 9.849,
+      "resposta": {
+        "start": "2026-08-01",
+        "end": "2026-08-01",
+        "total_tickets": 137,
+        "topics": "<1426 caracteres>"
+      },
+      "atendido_por": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "topics",
+          "stream": false
+        }
+      ]
+    }
+  ]
+}
+[exit 0]
+
