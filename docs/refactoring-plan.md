@@ -6,7 +6,7 @@
 | Data | 2026-11-25 (1.0.1); 2026-11-26 (1.1 e 1.2) |
 | Estado de partida | tag `v1-coupled` (commit `8028305`) |
 | Estado de chegada desta fase | tag `v2-decoupled` (Passo 09) |
-| Status | **refatoração completa executada e verificada** (Passo 09, seção 28): as 4 features pelo contrato e pelo gateway, `llm.py` removido, credenciais fora do `app`, medição `v2-decoupled` igual à projeção. Commit e tag `v2-decoupled` dependem da aprovação do Igor |
+| Status | **refatoração completa executada e verificada** (Passo 09, seção 28): as 4 features pelo contrato e pelo gateway, `llm.py` removido, credenciais fora do `app`, medição `v2-decoupled` igual à projeção. Commit `b637c5a` e tag anotada `v2-decoupled`; suíte, inicialização e métricas validadas nas duas tags |
 
 > Convenções deste documento. **Medido** é o que saiu da ferramenta de métricas sobre a `v1-coupled` ou de execuções reais nos Passos 02 a 05. **Projetado** é o que esperamos para a arquitetura proposta; nunca é medição da v2. **Decisão** é algo que adotamos; **requisito** é algo que o enunciado impõe; **hipótese** é algo que o piloto pode derrubar.
 
@@ -854,7 +854,7 @@ Cada incremento termina com FF1 verde e um commit próprio, revisado antes do pr
 
 **Revisão 1.1:** os incrementos 2, 3 e 4 foram executados no Passo 08 como alterações locais na `main` (17.8), com o commit feito pelo Igor depois da aprovação. Os incrementos 5 a 7 passam a exigir também os itens 11 a 13 do protocolo (17.6), e o 10 passa a registrar a sonda de falha da v2 completa como entrada do Passo 10.
 
-**Revisão 1.2:** os incrementos 5 a 9 foram executados no Passo 09 como alterações locais na `main`, cada um aprovado antes do próximo, e serão versionados num único commit feito pelo Igor (os incrementos 5 a 9 do agente correspondem aos handoffs 1 a 5 de `docs/v2/handoffs/`). O incremento 10 (medição) foi feito pelo arquiteto numa verificação independente; o 11 (tag) espera a aprovação. Resultado de cada um na seção 28.
+**Revisão 1.2:** os incrementos 5 a 9 foram executados no Passo 09 como alterações locais na `main`, cada um aprovado antes do próximo, e serão versionados num único commit feito pelo Igor (os incrementos 5 a 9 do agente correspondem aos handoffs 1 a 5 de `docs/v2/handoffs/`). O incremento 10 (medição) foi feito pelo arquiteto numa verificação independente; o 11 (tag) foi feito depois da aprovação, sobre o commit `b637c5a`. Resultado de cada um na seção 28.
 
 O incremento 8 vem depois de todas as features porque `llm.py` e as constantes de provider só morrem quando o último consumidor sai. O 9 vem depois do 8 porque, enquanto `config.py` ler `FAKE_*`, tirar o `env_file` quebraria o import.
 
@@ -1327,7 +1327,7 @@ Revisar o plano depois do piloto não é falha de planejamento: o piloto existe 
 | 8 (remoção) | idem | `handoff-4-remocao.md` | 2 | `32 passed in 60.09s` | 19 arestas = 14.2 | **aprovado** | `llm.py` e `anthropic` removidos |
 | 9 (credenciais) | idem | `handoff-5-credenciais.md` | 2 | `32 passed in 60.13s` | iguais ao 8 | **aprovado** | `app` só com `GATEWAY_*` |
 | 10 (medição e verificação) | arquiteto / 2026-11-26 | — | 1 | `32 passed` (60,10 s; 60,06 s; 60,60 s em cópia limpa) | `v2-decoupled` reproduzível | aceito | evidências `09` a `25` |
-| 11 (tag) | Igor | — | — | — | — | pendente | depende da aprovação do commit |
+| 11 (tag) | Igor (commit) e arquiteto (tag) / 2026-11-26 | — | 1 | `32 passed` nos worktrees das duas tags | CSVs das tags iguais aos oficiais | **criada** em `b637c5a` | evidências `26` a `29`; push da tag com o Igor |
 
 ---
 
@@ -1456,7 +1456,7 @@ Versão 1.2 (seção 24). Nenhuma decisão revertida. Acrescentados: o isolament
 
 ### 28.18 Critérios de aceite
 
-Seção 15: B1 a B6, S1 a S5 e I1 a I5 atendidos, com evidência em `docs/v2/relatorio-v2.md`, seção 14. I5 atendido com ressalva (o valor é o da master key). Pendentes só os passos que dependem do Igor: commit, tag, validação entre as tags e push.
+Seção 15: B1 a B6, S1 a S5 e I1 a I5 atendidos, com evidência em `docs/v2/relatorio-v2.md`, seção 14. I5 atendido com ressalva (o valor é o da master key). Commit `b637c5a` e tag `v2-decoupled` criados; entre as tags, suíte idêntica, `32 passed` nas duas a partir de worktrees limpos e métricas reproduzidas (evidências `26` a `29`). Falta só o push da tag.
 
 ### 28.19 Limitações remanescentes
 

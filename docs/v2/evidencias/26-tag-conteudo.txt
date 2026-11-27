@@ -1,0 +1,52 @@
+$ git rev-parse v2-decoupled "v2-decoupled^{commit}"; git cat-file -p v2-decoupled | head -6
+c954c434d16c1e8d489d57baa0dd02b4fd3e1294
+b637c5ae2036642c0eaffa985880691a6c9aed66
+object b637c5ae2036642c0eaffa985880691a6c9aed66
+type commit
+tag v2-decoupled
+tagger igorblopes <igorblopes1993@gmail.com> 1795731409 -0300
+
+Decoupled architecture preserving original behavior
+
+$ git ls-tree -r v2-decoupled -- app/helpdesk app/requirements.txt compose.yaml .env.example gateway/config.yaml README.md docs/refactoring-plan.md docs/adr docs/v2/relatorio-v2.md docs/v2/glossario.md docs/v2/checkpoint-passo-09.md metrics/results/v2-decoupled.csv
+100644 blob 42cd497e725581f0f5fafa71217e88bbee454fa6	.env.example
+100644 blob 80a8bf8c370cdd40d700e026d8d41915e4e9b245	README.md
+100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391	app/helpdesk/__init__.py
+100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391	app/helpdesk/adapters/__init__.py
+100644 blob fabda3ca3d87327c09276e6d59aaf9aa02a353fb	app/helpdesk/adapters/gateway.py
+100644 blob f4755a81f3bad6a5f83a82fd573f56ce65aaad27	app/helpdesk/classification.py
+100644 blob 44d52f913e071b69a2d492ac9fde3f4d1673d9ff	app/helpdesk/config.py
+100644 blob 1410246544b2b398d82f9a24b310f3785c4f4128	app/helpdesk/extraction.py
+100644 blob 9d2bc5b106c37168a764a3479ca40f7ca23e31b0	app/helpdesk/main.py
+100644 blob b2f5e25d7e4a64fd4261bba9756501fbf9360a32	app/helpdesk/ports.py
+100644 blob b2e8573484bda72196423fa6a01cb85821e8421c	app/helpdesk/report.py
+100644 blob e624cfed21425467ca6630c9e8ef58b8dd7d7009	app/helpdesk/schemas.py
+100644 blob 8580313f873e77150ece64065033f7f9dca54484	app/helpdesk/suggestion.py
+100644 blob 47ef50a2d15c3f6574e5f62d0174131d37310f80	app/helpdesk/tickets.py
+100644 blob cf3190a98e1fbcb4f203e7b9ac88c79efb8e7de6	app/requirements.txt
+100644 blob efd6b8cc0f5829c2c321029d0cda71d75574fc89	compose.yaml
+100644 blob 76f000c086cae1f44b661af47dd09216a456b624	docs/adr/0000-template.md
+100644 blob 3ff382a1f49ab8cc035788d6fbbe76c7e48c0dd5	docs/adr/0001-metrics-and-architectural-stability.md
+100644 blob 0540b1e81f63d619a205e5e465aafec256123d44	docs/adr/0002-contracts-and-dependency-inversion.md
+100644 blob 71f2931fbd1f73c7f22379bce36e81d27c9e1009	docs/adr/0003-ai-gateway.md
+100644 blob f417ed992b3ea42ebcb3923b9110f18318cca673	docs/adr/0004-logical-capabilities.md
+100644 blob 71b5dde6ccb36d063914aef98a085cb00c7eb78e	docs/refactoring-plan.md
+100644 blob a0beb16d807a28e55daa1cf8e8bc80a0dc84bbf6	docs/v2/checkpoint-passo-09.md
+100644 blob 40b6174facf21dccfcbc617f731553bc9fc9ff1b	docs/v2/glossario.md
+100644 blob 4bb908457228d1a2d560c04d9df216aa74554ae0	docs/v2/relatorio-v2.md
+100644 blob a7e3a3824352c441e350bf1f1c85db7b3cf3d500	gateway/config.yaml
+100644 blob 04e8d86eeb72430623fefc69edac6f96394e40ac	metrics/results/v2-decoupled.csv
+
+$ git ls-tree v2-decoupled app/helpdesk/llm.py
+
+--- Conferência dos blobs esperados (prefixo de 7 caracteres)
+classification f4755a8 OK | config 44d52f9 OK | extraction 1410246 OK | main 9d2bc5b OK
+ports b2f5e25 OK | report b2e8573 OK | schemas e624cfe OK | suggestion 8580313 OK
+tickets 47ef50a OK | adapters/gateway fabda3c OK | requirements cf3190a OK
+compose.yaml efd6b8c OK | .env.example 42cd497 OK | gateway/config.yaml a7e3a38 OK
+README 80a8bf8 OK | refactoring-plan 71b5dde OK | ADR 0001 3ff382a OK | ADR 0002 0540b1e OK
+ADR 0003 71f2931 OK | ADR 0004 f417ed9 OK | relatorio-v2 4bb9084 OK | glossario 40b6174 OK
+checkpoint a0beb16 OK
+Resultado: 23 de 23 batem; nenhum diverge.
+Sem valor esperado informado: metrics/results/v2-decoupled.csv 04e8d86, docs/adr/0000-template.md 76f000c, __init__.py (vazios) e69de29.
+app/helpdesk/llm.py na tag: ausente (ls-tree vazio).

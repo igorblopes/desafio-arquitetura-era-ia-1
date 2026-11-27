@@ -3,7 +3,7 @@
 | Item | Valor |
 |---|---|
 | Ponto de partida | `main` em `4a3447a` (piloto da F1 aprovado; F2, F3 e F4 ainda diretas ao provider) |
-| Ponto de chegada | candidata à `v2-decoupled`: as quatro features pelo contrato e pelo gateway; `llm.py` removido; credenciais dos providers fora do serviço `app` |
+| Ponto de chegada | `v2-decoupled` (commit `b637c5a`): as quatro features pelo contrato e pelo gateway; `llm.py` removido; credenciais dos providers fora do serviço `app` |
 | Executor do código | Claude Code, sessão separada na máquina do Igor, guiado por 5 handoffs (`docs/v2/handoffs/`) |
 | Verificação | sessões do arquiteto antes (evidências `00` a `08`) e depois (evidências `09` a `25`), com instrumentos que o agente não escreveu |
 | Data | 2026-11-26 (horários em UTC nas evidências) |
@@ -100,7 +100,7 @@ flowchart LR
 | 5 | Remover integrações antigas | só depois do último consumidor | `llm.py`, constantes e `anthropic` removidos |
 | 6 | Isolar credenciais | o `app` só lê `GATEWAY_*` depois do passo 5 | `env_file` removido de `app` e `provider-fake` |
 | 7 | Medição oficial | código final | `metrics/results/v2-decoupled.{csv,png}` |
-| 8 | Tag `v2-decoupled` | só depois do checklist (4.37) e da aprovação do Igor | pendente de aprovação |
+| 8 | Tag `v2-decoupled` | só depois do checklist (4.37) e da aprovação do Igor | criada em `b637c5a`, validada entre as tags (seção 19) |
 
 A consolidação da composição não virou um incremento próprio: cada handoff mudou exatamente uma linha de `main.py`, e o incremento 3 terminou com as quatro rotas injetando a mesma instância.
 
@@ -369,9 +369,9 @@ O esquema OpenAPI gerado do código da `v1-coupled` e do código atual é **idê
 | F2 | 4 | 4 | passam |
 | F3 | 6 | 6 | passam |
 | F4 | 9 | 9 | passam |
-| Total | 32 | 32 | `32 passed` em 60,10 s (`13`), 60,06 s (`21`) e 60,60 s numa cópia limpa (`24`) |
+| Total | 32 | 32 | `32 passed` em 60,10 s (`13`), 60,06 s (`21`), 60,60 s numa cópia limpa (`24`) e 60,67 s no worktree da tag (`28`) |
 
-Integridade da suíte: `git diff --exit-code v1-coupled -- tests/characterization/` sem saída (`09`, `25`). A igualdade é a prova de que nenhum golden master foi ajustado para acomodar a refatoração. A comparação entre as tags (`git diff v1-coupled v2-decoupled -- tests/characterization/`) será feita depois da tag (4.40).
+Integridade da suíte: `git diff --exit-code v1-coupled -- tests/characterization/` sem saída (`09`, `25`). A igualdade é a prova de que nenhum golden master foi ajustado para acomodar a refatoração. Entre as tags, `git diff v1-coupled v2-decoupled -- tests/characterization/` também é vazio (seção 19).
 
 **O que a suíte não cobre** e foi coberto à parte: respostas 502 (verificação própria), falhas do provider (sonda `falha`), gateway parado (`18`), `max_tokens` (`19`). O que segue sem cobertura: períodos longos da F3 pela borda, conteúdo nulo do modelo, timeouts.
 
@@ -517,29 +517,40 @@ A cópia foi derrubada com `down --rmi local` e apagada; a stack principal volto
 | Documentação | plano 1.2, ADRs, README, este relatório, glossário e checkpoint |
 | Integridade | `tests/characterization/`, `provider-fake/`, `edge/`, `data/` sem diff contra a `v1-coupled`; tag `v1-coupled` intacta (`07c2026d` → `8028305`); `.tmp-passo09/` apagada |
 
-Pendente só o que depende do Igor: commit, tag e push (4.38, 4.39, 4.43), e as verificações que só existem depois da tag (4.40 a 4.42).
+Depois do checklist, o Igor fez o commit `b637c5a` e a tag foi criada (seção 19).
 
 ## 19. Depois da tag (4.40 a 4.43)
 
-Esta seção é preenchida depois da aprovação do commit e da tag. Roteiro:
+Tag anotada `v2-decoupled` (objeto `c954c434`) criada sobre o commit `b637c5a` do Igor, que já estava no `origin/main`. Os blobs da tag foram conferidos contra os verificados: os 23 arquivos de código, configuração e documentação batem, e `llm.py` não existe na tag (evidência `26`). A `v1-coupled` continua em `07c2026d` → `8028305`.
 
-1. **4.40.** `git diff v1-coupled v2-decoupled -- tests/characterization/` deve ser vazio.
-2. **4.41.** Worktrees separados, com nomes de projeto do compose distintos e uma stack de cada vez:
-   - `git worktree add --detach ../helpdesk-v1 v1-coupled` (já existe desde o Passo 05: reutilizar depois de conferir o commit);
-   - `git worktree add --detach ../helpdesk-v2 v2-decoupled`;
-   - em cada um: `cp .env.example .env`, `docker compose -p <nome> up -d --build --wait`, `/health` e a suíte.
-3. **4.42.** Medir os dois worktrees com a ferramenta da `main` e comparar com `v1-coupled.csv` e `v2-decoupled.csv`.
-4. **4.43.** `git push origin main` e `git push origin v2-decoupled`, só com aprovação.
+**4.40, suíte entre as tags.** `git diff --exit-code v1-coupled v2-decoupled -- tests/characterization/` saiu com `exit=0` (`27`). A igualdade mostra que nenhum golden master foi ajustado para acomodar a refatoração. Junto com a aprovação nas duas versões, é evidência de que o comportamento **caracterizado** foi preservado, mas não prova equivalência em tudo: a suíte não cobre 502, falhas do provider, timeouts, períodos longos da F3 nem a latência sob falha, que mudou (seção 21).
 
 | Característica | v1-coupled | v2-decoupled |
 |---|---|---|
-| Suíte de caracterização | original | idêntica (a confirmar entre as tags) |
+| Suíte de caracterização | original | idêntica (`exit=0`) |
 | Contratos HTTP | originais | preservados (OpenAPI idêntico) |
 | Modos de resposta | síncronos | síncronos |
 | Modelos | large | large |
 | Comunicação com IA | direta, 2 SDKs | gateway, 1 adapter |
 | Credenciais dos providers | na aplicação | fora da aplicação |
 | Estrutura interna | original | refatorada |
+
+**4.41, as duas tags em checkouts separados** (`28`). Worktrees `../helpdesk-v1` (já existia, limpo) e `../helpdesk-v2` (criado com `--detach`), cada um com `cp .env.example .env` e nome de projeto próprio no compose; uma stack de cada vez, com a stack principal parada sem `-v` e religada no fim.
+
+| Verificação | v1-coupled (`8028305`) | v2-decoupled (`b637c5a`) |
+|---|---|---|
+| Inicialização | ok, 12,9 s (`app`, `edge`, `provider-fake`) | ok, 22,2 s (mais o `gateway`) |
+| Healthcheck | `{"status":"ok"}` 200 | `{"status":"ok"}` 200 |
+| Testes F1 | 13/13 | 13/13 |
+| Testes F2 | 4/4 | 4/4 |
+| Testes F3 | 6/6 | 6/6 |
+| Testes F4 | 9/9 | 9/9 |
+| Resultado geral | `32 passed in 59.97s` | `32 passed in 60.67s` |
+| Ambiente do `app` | `FAKE_ANTHROPIC_KEY`, `FAKE_OPENAI_KEY` | `GATEWAY_API_KEY`, `GATEWAY_URL` |
+
+**4.42, métricas reproduzidas.** A ferramenta da `main` mediu os dois worktrees: `tag-v1` é idêntica a `metrics/results/v1-coupled.csv` (20 arestas) e `tag-v2` é idêntica a `metrics/results/v2-decoupled.csv` (19 arestas), sem diferença nem de fim de linha (`29`).
+
+**4.43, publicação.** O commit já está no `origin/main`. A tag existe só localmente até o Igor rodar `git push origin v2-decoupled`.
 
 ## 20. Dores da v1 reavaliadas (4.44)
 

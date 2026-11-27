@@ -1,0 +1,540 @@
+$ git worktree list
+D:/Projetos/Fullcycle/desafio-arquitetura-era-ia-1 b637c5a [main]
+D:/Projetos/Fullcycle/helpdesk-v1                  8028305 (detached HEAD)
+
+$ git -C ../helpdesk-v1 rev-parse HEAD; git -C ../helpdesk-v1 status --short; echo "status_lines=$(git -C ../helpdesk-v1 status --short | wc -l)"
+80283055f02175a84c8b6bc62dacf81964ad15f0
+status_lines=0
+
+$ git worktree add --detach ../helpdesk-v2 v2-decoupled
+Preparing worktree (detached HEAD b637c5a)
+HEAD is now at b637c5a Refatoracao completa e criação de tag
+
+$ git -C ../helpdesk-v2 rev-parse HEAD; git worktree list
+b637c5ae2036642c0eaffa985880691a6c9aed66
+D:/Projetos/Fullcycle/desafio-arquitetura-era-ia-1 b637c5a [main]
+D:/Projetos/Fullcycle/helpdesk-v1                  8028305 (detached HEAD)
+D:/Projetos/Fullcycle/helpdesk-v2                  b637c5a (detached HEAD)
+
+$ docker compose stop
+ Container desafio-arquitetura-era-ia-1-edge-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-edge-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-app-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-app-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Stopped 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Stopping 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Stopped 
+
+$ docker compose ps
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+
+===== helpdesk-v1 em /d/Projetos/Fullcycle/helpdesk-v1 =====
+
+$ git rev-parse HEAD
+80283055f02175a84c8b6bc62dacf81964ad15f0
+
+$ test -e .env && echo ".env JÁ EXISTIA" || { cp .env.example .env && echo ".env não existia; copiado de .env.example"; }
+.env não existia; copiado de .env.example
+
+$ time docker compose -p helpdesk-v1 up -d --build --wait
+ Image helpdesk-v1-provider-fake Building 
+ Image helpdesk-v1-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.03kB 0.0s done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 273B done
+#2 DONE 0.0s
+
+#3 [provider-fake internal] load build definition from Dockerfile
+#3 transferring dockerfile: 489B done
+#3 DONE 0.1s
+
+#4 [provider-fake internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.1s
+
+#5 [app internal] load .dockerignore
+#5 transferring context: 60B done
+#5 DONE 0.0s
+
+#6 [provider-fake internal] load .dockerignore
+#6 transferring context: 67B done
+#6 DONE 0.0s
+
+#7 [provider-fake internal] load build context
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 7.10kB done
+#8 DONE 0.0s
+
+#9 [provider-fake 1/5] FROM docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 DONE 0.1s
+
+#10 [app 3/5] COPY requirements.txt .
+#10 CACHED
+
+#11 [app 4/5] RUN pip install --no-cache-dir -r requirements.txt
+#11 CACHED
+
+#12 [app 5/5] COPY helpdesk ./helpdesk
+#12 CACHED
+
+#7 [provider-fake internal] load build context
+#7 transferring context: 28.52kB done
+#7 DONE 0.0s
+
+#13 [provider-fake 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#13 CACHED
+
+#14 [provider-fake 3/6] COPY requirements.txt .
+#14 CACHED
+
+#15 [provider-fake 5/6] COPY app ./app
+#15 CACHED
+
+#16 [provider-fake 2/5] WORKDIR /srv
+#16 CACHED
+
+#17 [provider-fake 6/6] RUN useradd --uid 10001 --no-create-home fake
+#17 CACHED
+
+#18 [provider-fake] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:e43af00487a014490f89c57c1fafa5de1178d2ee4f9996133103e846af0b28fe 0.1s done
+#18 exporting config sha256:6c80e0dd8fc8038b20fa7f3c2eb9dcb3477131626c17b14763f542134de62c99
+#18 exporting config sha256:6c80e0dd8fc8038b20fa7f3c2eb9dcb3477131626c17b14763f542134de62c99 0.1s done
+#18 exporting attestation manifest sha256:87cba7eaa9592381ab33236385553f90d28f645fcf6ccce45471ee2685dd0e9c
+#18 exporting attestation manifest sha256:87cba7eaa9592381ab33236385553f90d28f645fcf6ccce45471ee2685dd0e9c 0.1s done
+#18 exporting manifest list sha256:e0bfcd5b0881c652582e4ebe6891b84d2a274292b2c7ab61b3101775fc6cbe2d
+#18 exporting manifest list sha256:e0bfcd5b0881c652582e4ebe6891b84d2a274292b2c7ab61b3101775fc6cbe2d 0.0s done
+#18 naming to docker.io/library/helpdesk-v1-provider-fake:latest done
+#18 unpacking to docker.io/library/helpdesk-v1-provider-fake:latest 0.0s done
+#18 DONE 0.4s
+
+#19 [app] exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:f8cd76015118dad38540992818dd968419199f9c6ce1fefdaf575d131a30310b 0.1s done
+#19 exporting config sha256:d1a669ab2213b86155027eae279b223e5ee4a5b651a9421eab9c92f4bb007d0a 0.1s done
+#19 exporting attestation manifest sha256:c009913d24dce18e28e69b76044085e26e3a2165d6645b365655fd47b58912ae 0.1s done
+#19 exporting manifest list sha256:06a604fa1c11add27eaede36c802b3495107e28ff096dbd61145747b2aa73d13 0.1s done
+#19 naming to docker.io/library/helpdesk-v1-app:latest 0.0s done
+#19 unpacking to docker.io/library/helpdesk-v1-app:latest
+#19 ...
+
+#20 [provider-fake] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#19 [app] exporting to image
+#19 unpacking to docker.io/library/helpdesk-v1-app:latest 1.7s done
+#19 DONE 2.1s
+
+#21 [app] resolving provenance for metadata file
+#21 DONE 0.0s
+ Image helpdesk-v1-provider-fake Built 
+ Image helpdesk-v1-app Built 
+ Network helpdesk-v1_default Creating 
+ Network helpdesk-v1_default Creating 
+ Network helpdesk-v1_default Created 
+ Network helpdesk-v1_default Created 
+ Container helpdesk-v1-provider-fake-1 Creating 
+ Container helpdesk-v1-provider-fake-1 Created 
+ Container helpdesk-v1-app-1 Creating 
+ Container helpdesk-v1-app-1 Created 
+ Container helpdesk-v1-edge-1 Creating 
+ Container helpdesk-v1-edge-1 Created 
+ Container helpdesk-v1-provider-fake-1 Starting 
+ Container helpdesk-v1-provider-fake-1 Started 
+ Container helpdesk-v1-provider-fake-1 Waiting 
+ Container helpdesk-v1-provider-fake-1 Healthy 
+ Container helpdesk-v1-app-1 Starting 
+ Container helpdesk-v1-app-1 Started 
+ Container helpdesk-v1-app-1 Waiting 
+ Container helpdesk-v1-app-1 Healthy 
+ Container helpdesk-v1-edge-1 Starting 
+ Container helpdesk-v1-edge-1 Started 
+ Container helpdesk-v1-edge-1 Waiting 
+ Container helpdesk-v1-app-1 Waiting 
+ Container helpdesk-v1-provider-fake-1 Waiting 
+ Container helpdesk-v1-edge-1 Healthy 
+ Container helpdesk-v1-provider-fake-1 Healthy 
+ Container helpdesk-v1-app-1 Healthy 
+
+real	0m12.922s
+user	0m0.015s
+sys	0m0.076s
+
+$ docker compose -p helpdesk-v1 ps
+NAME                          IMAGE                       COMMAND                  SERVICE         CREATED          STATUS                   PORTS
+helpdesk-v1-app-1             helpdesk-v1-app             "uvicorn helpdesk.ma…"   app             10 seconds ago   Up 3 seconds (healthy)   8080/tcp
+helpdesk-v1-edge-1            nginx:1.27-alpine           "/docker-entrypoint.…"   edge            10 seconds ago   Up 1 second              0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+helpdesk-v1-provider-fake-1   helpdesk-v1-provider-fake   "uvicorn app.main:ap…"   provider-fake   10 seconds ago   Up 9 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ curl -s -w " %{http_code}" localhost:8000/health
+{"status":"ok"} 200
+$ docker run --rm -v "D:/Projetos/Fullcycle/helpdesk-v1:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim sh -c "pip install -q -r tests/requirements.txt && python -m pytest tests/characterization -v -p no:cacheprovider"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 32 items
+
+tests/characterization/test_classification.py::test_classifica_ticket[entrega-urgente] PASSED [  3%]
+tests/characterization/test_classification.py::test_classifica_ticket[cobranca-duplicada] PASSED [  6%]
+tests/characterization/test_classification.py::test_classifica_ticket[troca-sem-pressa] PASSED [  9%]
+tests/characterization/test_classification.py::test_classifica_ticket[produto-quebrado] PASSED [ 12%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-cadastro] PASSED [ 15%]
+tests/characterization/test_classification.py::test_classifica_ticket[negacao-de-urgencia-vira-high] PASSED [ 18%]
+tests/characterization/test_classification.py::test_classifica_ticket[prazo-de-entrega] PASSED [ 21%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-simples-low] PASSED [ 25%]
+tests/characterization/test_classification.py::test_classifica_ticket[agradecimento] PASSED [ 28%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[corpo-vazio] PASSED [ 31%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 34%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 37%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-nao-string] PASSED [ 40%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-sem-produto] PASSED [ 43%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-e-produto] PASSED [ 46%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[protocolo-nao-e-pedido] PASSED [ 50%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sem-dados-de-pedido] PASSED [ 53%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[numero-sem-cerquilha] PASSED [ 56%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sete-digitos-nao-e-pedido] PASSED [ 59%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[dois-pedidos-pega-o-primeiro] PASSED [ 62%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[sem-ticket-id] PASSED [ 65%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 68%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00042] PASSED [ 71%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00100] PASSED [ 75%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[sem-texto] PASSED [ 78%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 81%]
+tests/characterization/test_topics_report.py::test_relatorio_de_um_dia PASSED [ 84%]
+tests/characterization/test_topics_report.py::test_periodo_sem_tickets PASSED [ 87%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[inicio-depois-do-fim] PASSED [ 90%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[sem-data-final] PASSED [ 93%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[mes-invalido] PASSED [ 96%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[formato-brasileiro] PASSED [100%]
+
+============================= 32 passed in 59.97s ==============================
+
+$ docker compose -p helpdesk-v1 exec app env | sed -E "s/=.*/=***/" | sort
+FAKE_ANTHROPIC_KEY=***
+FAKE_OPENAI_KEY=***
+GPG_KEY=***
+HOME=***
+HOSTNAME=***
+LANG=***
+PATH=***
+PYTHON_SHA256=***
+PYTHON_VERSION=***
+
+$ docker compose -p helpdesk-v1 down --rmi local
+ Container helpdesk-v1-edge-1 Stopping 
+ Container helpdesk-v1-edge-1 Stopped 
+ Container helpdesk-v1-edge-1 Removing 
+ Container helpdesk-v1-edge-1 Removed 
+ Container helpdesk-v1-app-1 Stopping 
+ Container helpdesk-v1-app-1 Stopped 
+ Container helpdesk-v1-app-1 Removing 
+ Container helpdesk-v1-app-1 Removed 
+ Container helpdesk-v1-provider-fake-1 Stopping 
+ Container helpdesk-v1-provider-fake-1 Stopped 
+ Container helpdesk-v1-provider-fake-1 Removing 
+ Container helpdesk-v1-provider-fake-1 Removed 
+ Network helpdesk-v1_default Removing 
+ Image helpdesk-v1-provider-fake:latest Removing 
+ Image helpdesk-v1-app:latest Removing 
+ Image helpdesk-v1-app:latest Removed 
+ Image helpdesk-v1-provider-fake:latest Removed 
+ Network helpdesk-v1_default Removed 
+
+===== helpdesk-v2 em /d/Projetos/Fullcycle/helpdesk-v2 =====
+
+$ git rev-parse HEAD
+b637c5ae2036642c0eaffa985880691a6c9aed66
+
+$ test -e .env && echo ".env JÁ EXISTIA" || { cp .env.example .env && echo ".env não existia; copiado de .env.example"; }
+.env não existia; copiado de .env.example
+
+$ time docker compose -p helpdesk-v2 up -d --build --wait
+ Image helpdesk-v2-app Building 
+ Image helpdesk-v2-provider-fake Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.03kB 0.0s done
+#1 DONE 0.0s
+
+#2 [app internal] load build definition from Dockerfile
+#2 transferring dockerfile: 273B done
+#2 DONE 0.0s
+
+#3 [provider-fake internal] load build definition from Dockerfile
+#3 transferring dockerfile: 489B done
+#3 DONE 0.1s
+
+#4 [app internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.1s
+
+#5 [provider-fake internal] load .dockerignore
+#5 transferring context: 67B done
+#5 DONE 0.0s
+
+#6 [app internal] load .dockerignore
+#6 transferring context: 60B done
+#6 DONE 0.0s
+
+#7 [provider-fake internal] load build context
+#7 DONE 0.0s
+
+#8 [app internal] load build context
+#8 transferring context: 7.65kB done
+#8 DONE 0.0s
+
+#9 [app 1/6] FROM docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+#9 resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b 0.1s done
+#9 DONE 0.1s
+
+#10 [app 3/5] COPY requirements.txt .
+#10 CACHED
+
+#11 [app 4/5] RUN pip install --no-cache-dir -r requirements.txt
+#11 CACHED
+
+#7 [provider-fake internal] load build context
+#7 transferring context: 28.52kB done
+#7 DONE 0.0s
+
+#12 [provider-fake 5/6] COPY app ./app
+#12 CACHED
+
+#13 [provider-fake 2/6] WORKDIR /srv
+#13 CACHED
+
+#14 [provider-fake 3/6] COPY requirements.txt .
+#14 CACHED
+
+#15 [provider-fake 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#15 CACHED
+
+#16 [provider-fake 6/6] RUN useradd --uid 10001 --no-create-home fake
+#16 CACHED
+
+#17 [app 5/5] COPY helpdesk ./helpdesk
+#17 DONE 0.2s
+
+#18 [app] exporting to image
+#18 exporting layers
+#18 ...
+
+#19 [provider-fake] exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:a0f071cb32cbb6ed3a1f61a0f09e6933aa33cbddd96e3e1b56d3c86daaff4c80 0.1s done
+#19 exporting config sha256:f6b3756bb92acf3bfd194b7470e14145a6b8bd44b20cc9ee23040913aeee1580 0.1s done
+#19 exporting attestation manifest sha256:981b8b160d5454cb6bc1cebeeb4f7cbc191cacc00d6c43bf3ee173995c22f702 0.1s done
+#19 exporting manifest list sha256:a9e6fc2641d281e8cee936cdd065aadee60ba9e639f2b78cb8655511768e24b2 0.0s done
+#19 naming to docker.io/library/helpdesk-v2-provider-fake:latest 0.0s done
+#19 unpacking to docker.io/library/helpdesk-v2-provider-fake:latest 0.0s done
+#19 DONE 0.4s
+
+#18 [app] exporting to image
+#18 exporting layers 0.4s done
+#18 exporting manifest sha256:2cc6d54aced7554ab673e8263bf40de6a1258df118f489b5339adeea28b90bc7 0.1s done
+#18 exporting config sha256:4c3777cdcc9fd2f5de3eeb8fb07de12bf9bc08d055a62f8c426ab386733c14f4 0.1s done
+#18 exporting attestation manifest sha256:fba8abcdb5fe87d7351bf2cbd504843d3aef12884d7386281b4a4863e101051b 0.1s done
+#18 exporting manifest list sha256:466a7ea95f22143ac9a343646abf1ca17c857a5833779228ed319fbd871908ed
+#18 exporting manifest list sha256:466a7ea95f22143ac9a343646abf1ca17c857a5833779228ed319fbd871908ed 0.1s done
+#18 naming to docker.io/library/helpdesk-v2-app:latest 0.0s done
+#18 unpacking to docker.io/library/helpdesk-v2-app:latest
+#18 unpacking to docker.io/library/helpdesk-v2-app:latest 0.1s done
+#18 DONE 0.8s
+
+#20 [provider-fake] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [app] resolving provenance for metadata file
+#21 DONE 0.0s
+ Image helpdesk-v2-provider-fake Built 
+ Image helpdesk-v2-app Built 
+ Network helpdesk-v2_default Creating 
+ Network helpdesk-v2_default Creating 
+ Network helpdesk-v2_default Created 
+ Network helpdesk-v2_default Created 
+ Container helpdesk-v2-provider-fake-1 Creating 
+ Container helpdesk-v2-provider-fake-1 Created 
+ Container helpdesk-v2-gateway-1 Creating 
+ Container helpdesk-v2-gateway-1 Created 
+ Container helpdesk-v2-app-1 Creating 
+ Container helpdesk-v2-app-1 Created 
+ Container helpdesk-v2-edge-1 Creating 
+ Container helpdesk-v2-edge-1 Created 
+ Container helpdesk-v2-provider-fake-1 Starting 
+ Container helpdesk-v2-provider-fake-1 Started 
+ Container helpdesk-v2-provider-fake-1 Waiting 
+ Container helpdesk-v2-provider-fake-1 Healthy 
+ Container helpdesk-v2-gateway-1 Starting 
+ Container helpdesk-v2-gateway-1 Started 
+ Container helpdesk-v2-gateway-1 Waiting 
+ Container helpdesk-v2-gateway-1 Healthy 
+ Container helpdesk-v2-app-1 Starting 
+ Container helpdesk-v2-app-1 Started 
+ Container helpdesk-v2-app-1 Waiting 
+ Container helpdesk-v2-app-1 Healthy 
+ Container helpdesk-v2-edge-1 Starting 
+ Container helpdesk-v2-edge-1 Started 
+ Container helpdesk-v2-edge-1 Waiting 
+ Container helpdesk-v2-app-1 Waiting 
+ Container helpdesk-v2-gateway-1 Waiting 
+ Container helpdesk-v2-provider-fake-1 Waiting 
+ Container helpdesk-v2-app-1 Healthy 
+ Container helpdesk-v2-gateway-1 Healthy 
+ Container helpdesk-v2-provider-fake-1 Healthy 
+ Container helpdesk-v2-edge-1 Healthy 
+
+real	0m22.152s
+user	0m0.015s
+sys	0m0.076s
+
+$ docker compose -p helpdesk-v2 ps
+NAME                          IMAGE                              COMMAND                  SERVICE         CREATED          STATUS                    PORTS
+helpdesk-v2-app-1             helpdesk-v2-app                    "uvicorn helpdesk.ma…"   app             20 seconds ago   Up 3 seconds (healthy)    8080/tcp
+helpdesk-v2-edge-1            nginx:1.27-alpine                  "/docker-entrypoint.…"   edge            20 seconds ago   Up 1 second               0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+helpdesk-v2-gateway-1         ghcr.io/berriai/litellm:v1.102.1   "docker/prod_entrypo…"   gateway         21 seconds ago   Up 13 seconds (healthy)   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+helpdesk-v2-provider-fake-1   helpdesk-v2-provider-fake          "uvicorn app.main:ap…"   provider-fake   21 seconds ago   Up 19 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ curl -s -w " %{http_code}" localhost:8000/health
+{"status":"ok"} 200
+$ docker run --rm -v "D:/Projetos/Fullcycle/helpdesk-v2:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim sh -c "pip install -q -r tests/requirements.txt && python -m pytest tests/characterization -v -p no:cacheprovider"
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 32 items
+
+tests/characterization/test_classification.py::test_classifica_ticket[entrega-urgente] PASSED [  3%]
+tests/characterization/test_classification.py::test_classifica_ticket[cobranca-duplicada] PASSED [  6%]
+tests/characterization/test_classification.py::test_classifica_ticket[troca-sem-pressa] PASSED [  9%]
+tests/characterization/test_classification.py::test_classifica_ticket[produto-quebrado] PASSED [ 12%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-cadastro] PASSED [ 15%]
+tests/characterization/test_classification.py::test_classifica_ticket[negacao-de-urgencia-vira-high] PASSED [ 18%]
+tests/characterization/test_classification.py::test_classifica_ticket[prazo-de-entrega] PASSED [ 21%]
+tests/characterization/test_classification.py::test_classifica_ticket[duvida-simples-low] PASSED [ 25%]
+tests/characterization/test_classification.py::test_classifica_ticket[agradecimento] PASSED [ 28%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[corpo-vazio] PASSED [ 31%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 34%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 37%]
+tests/characterization/test_classification.py::test_rejeita_entrada_invalida[texto-nao-string] PASSED [ 40%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-sem-produto] PASSED [ 43%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[pedido-e-produto] PASSED [ 46%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[protocolo-nao-e-pedido] PASSED [ 50%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sem-dados-de-pedido] PASSED [ 53%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[numero-sem-cerquilha] PASSED [ 56%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[sete-digitos-nao-e-pedido] PASSED [ 59%]
+tests/characterization/test_extraction.py::test_extrai_dados_do_pedido[dois-pedidos-pega-o-primeiro] PASSED [ 62%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[sem-ticket-id] PASSED [ 65%]
+tests/characterization/test_extraction.py::test_rejeita_entrada_invalida[texto-vazio] PASSED [ 68%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00042] PASSED [ 71%]
+tests/characterization/test_reply_suggestion.py::test_sugere_resposta_com_texto_integral[reply_suggestion_TK-00100] PASSED [ 75%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[sem-texto] PASSED [ 78%]
+tests/characterization/test_reply_suggestion.py::test_rejeita_entrada_invalida[ticket-id-vazio] PASSED [ 81%]
+tests/characterization/test_topics_report.py::test_relatorio_de_um_dia PASSED [ 84%]
+tests/characterization/test_topics_report.py::test_periodo_sem_tickets PASSED [ 87%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[inicio-depois-do-fim] PASSED [ 90%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[sem-data-final] PASSED [ 93%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[mes-invalido] PASSED [ 96%]
+tests/characterization/test_topics_report.py::test_rejeita_periodo_invalido[formato-brasileiro] PASSED [100%]
+
+======================== 32 passed in 60.67s (0:01:00) =========================
+
+$ docker compose -p helpdesk-v2 exec app env | sed -E "s/=.*/=***/" | sort
+GATEWAY_API_KEY=***
+GATEWAY_URL=***
+GPG_KEY=***
+HOME=***
+HOSTNAME=***
+LANG=***
+PATH=***
+PYTHON_SHA256=***
+PYTHON_VERSION=***
+
+$ docker compose -p helpdesk-v2 down --rmi local
+ Container helpdesk-v2-edge-1 Stopping 
+ Container helpdesk-v2-edge-1 Stopped 
+ Container helpdesk-v2-edge-1 Removing 
+ Container helpdesk-v2-edge-1 Removed 
+ Container helpdesk-v2-app-1 Stopping 
+ Container helpdesk-v2-app-1 Stopped 
+ Container helpdesk-v2-app-1 Removing 
+ Container helpdesk-v2-app-1 Removed 
+ Container helpdesk-v2-gateway-1 Stopping 
+ Container helpdesk-v2-gateway-1 Stopped 
+ Container helpdesk-v2-gateway-1 Removing 
+ Container helpdesk-v2-gateway-1 Removed 
+ Container helpdesk-v2-provider-fake-1 Stopping 
+ Container helpdesk-v2-provider-fake-1 Stopped 
+ Container helpdesk-v2-provider-fake-1 Removing 
+ Container helpdesk-v2-provider-fake-1 Removed 
+ Network helpdesk-v2_default Removing 
+ Image helpdesk-v2-provider-fake:latest Removing 
+ Image helpdesk-v2-app:latest Removing 
+ Image helpdesk-v2-provider-fake:latest Removed 
+ Image helpdesk-v2-app:latest Removed 
+ Network helpdesk-v2_default Removed 
+
+===== pasta principal =====
+
+$ docker compose up -d --wait
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Starting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Started 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Starting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Starting 
+ Container desafio-arquitetura-era-ia-1-app-1 Started 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Starting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Started 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-edge-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-app-1 Waiting 
+ Container desafio-arquitetura-era-ia-1-provider-fake-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-edge-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-gateway-1 Healthy 
+ Container desafio-arquitetura-era-ia-1-app-1 Healthy 
+
+$ docker compose ps
+NAME                                           IMAGE                                                                     COMMAND                  SERVICE         CREATED             STATUS                    PORTS
+desafio-arquitetura-era-ia-1-app-1             desafio-arquitetura-era-ia-1-app                                          "uvicorn helpdesk.ma…"   app             About an hour ago   Up 3 seconds (healthy)    8080/tcp
+desafio-arquitetura-era-ia-1-edge-1            nginx:1.27-alpine                                                         "/docker-entrypoint.…"   edge            23 hours ago        Up 1 second               0.0.0.0:8000->80/tcp, [::]:8000->80/tcp
+desafio-arquitetura-era-ia-1-gateway-1         ghcr.io/berriai/litellm:v1.102.1                                          "docker/prod_entrypo…"   gateway         23 hours ago        Up 9 seconds (healthy)    0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp
+desafio-arquitetura-era-ia-1-provider-fake-1   sha256:843a1b5146a66d6add81223b18dd7189a2605f8a7cf99bac675db232908ad6ee   "uvicorn app.main:ap…"   provider-fake   About an hour ago   Up 15 seconds (healthy)   0.0.0.0:8090->8090/tcp, [::]:8090->8090/tcp
+
+$ curl -s -w " %{http_code}" localhost:8000/health
+{"status":"ok"} 200
+===== Resumo 4.41 =====
+
+| Versão | Commit   | Worktree               | .env no worktree             | Inicialização (up --build --wait) | /health      | F1 test_classification | F2 test_reply_suggestion | F3 test_topics_report | F4 test_extraction | Linha final do pytest                            |
+|--------|----------|------------------------|------------------------------|-----------------------------------|--------------|------------------------|--------------------------|-----------------------|--------------------|--------------------------------------------------|
+| v1     | 8028305  | ../helpdesk-v1 (já existia, limpo) | não existia; copiado de .env.example | ok, real 0m12.922s (3 serviços)  | {"status":"ok"} 200 | 13/13 PASSED  | 4/4 PASSED               | 6/6 PASSED            | 9/9 PASSED         | 32 passed in 59.97s                              |
+| v2     | b637c5a  | ../helpdesk-v2 (criado agora)      | não existia; copiado de .env.example | ok, real 0m22.152s (4 serviços, com gateway) | {"status":"ok"} 200 | 13/13 PASSED | 4/4 PASSED       | 6/6 PASSED            | 9/9 PASSED         | 32 passed in 60.67s (0:01:00)                    |
+
+Diferenças observadas:
+- Serviços: v1 sobe app, edge, provider-fake; v2 sobe também gateway (litellm v1.102.1).
+- Ambiente do app (nomes, valores mascarados): v1 tem FAKE_ANTHROPIC_KEY e FAKE_OPENAI_KEY; v2 tem só GATEWAY_API_KEY e GATEWAY_URL. As demais variáveis são de base da imagem Python.
+- Mesmos 32 testes coletados e aprovados nas duas versões, com os mesmos IDs.
+- Pasta principal: docker compose stop antes; docker compose up -d --wait depois; 4 serviços healthy e /health 200.
+- Observação pré-existente: o container provider-fake da stack principal aparece com imagem sha256:843a1b5146a6… sem tag (já assim em 11-servicos.txt e 25-estado-final.txt); a tag desafio-arquitetura-era-ia-1-provider-fake:latest aponta hoje para 6065bac78ccd. Não alterado aqui.
+- Worktrees mantidos; os .env copiados ficam nos worktrees (ignorados pelo git).

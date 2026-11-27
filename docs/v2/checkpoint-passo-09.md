@@ -2,7 +2,7 @@
 
 | Item | Estado |
 |---|---|
-| Estado da aplicação | desacoplada: as 4 features pelo contrato e pelo gateway; comportamento externo igual à `v1-coupled` (32 testes, OpenAPI idêntico); síncrona; modelos `large` |
+| Estado da aplicação | `v2-decoupled`, desacoplada: as 4 features pelo contrato e pelo gateway; comportamento externo igual à `v1-coupled` (32 testes, OpenAPI idêntico); síncrona; modelos `large` |
 | Arquitetura | `edge` → `main` (Composition Root) → features → `ports.LanguageModel` ← `adapters.gateway` → `gateway` (LiteLLM) → `provider-fake` |
 | Componentes (`app/helpdesk/`) | `main`, `classification`, `suggestion`, `report`, `extraction`, `ports`, `adapters/gateway`, `schemas`, `tickets`, `config`. `llm.py` removido |
 | Contrato | `ports.LanguageModel(Protocol)`: `complete(capability: str, prompt: str) -> str`, sem mudança desde o piloto |
@@ -27,14 +27,14 @@
 | Revisões do plano | 1.2: seção 28; 18, 24, 25, 26.2 e 27 atualizadas |
 | Limitações remanescentes | R18 (latência sob falha), R19 (SPOF), R20 (`str \| None`), R21 (1 tentativa no primeiro salto); master key como chave de consumo; suíte sem falhas, timeouts e períodos longos; capacidade em dois lugares |
 | Commit da `v1-coupled` | `8028305` (tag anotada `07c2026d`) |
-| Commit da `v2-decoupled` | **a registrar** depois do commit do Igor (o código verificado parte de `4a3447a` + alterações locais) |
-| Publicação das tags | `v1-coupled` publicada; `v2-decoupled` **pendente** (4.39 a 4.43) |
+| Commit da `v2-decoupled` | `b637c5a` (tag anotada `c954c434`); blobs conferidos contra os verificados |
+| Publicação das tags | `v1-coupled` publicada; commit `b637c5a` no `origin/main`; tag `v2-decoupled` local até `git push origin v2-decoupled` |
+| Validação entre as tags | suíte idêntica (`exit=0`); worktrees `../helpdesk-v1` e `../helpdesk-v2` sobem do zero e passam `32 passed` (59,97 s e 60,67 s); métricas dos dois worktrees iguais aos CSVs oficiais (evidências `26` a `29`) |
 | Conhecimentos | `docs/v2/glossario.md`; relatório `docs/v2/relatorio-v2.md` |
 
 ## Pendências
 
-1. Igor: aprovar o commit, a tag `v2-decoupled` e o push.
-2. Depois da tag: `git diff v1-coupled v2-decoupled -- tests/characterization/` vazio (4.40); worktrees das duas tags rodando a suíte, uma de cada vez (4.41); medir os dois worktrees (4.42); push da tag (4.43). Registrar os resultados no relatório (seção 19) e neste checkpoint.
+1. Igor: `git push origin v2-decoupled` e commitar as evidências `26` a `29` com esta atualização do relatório e do checkpoint.
 
 ## Entradas do Passo 10 (Timeout, Retry e Backoff)
 
