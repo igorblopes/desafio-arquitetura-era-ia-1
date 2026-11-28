@@ -1,0 +1,127 @@
+{
+  "gerado_em": "2026-11-28T08:52:45.699+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "rajadas de F1 simultâneas pela borda (exemplo TK-00042), modo normal",
+  "niveis": [
+    {
+      "simultaneas": 1,
+      "sucessos": 1,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 1,
+        "min": 1.094,
+        "max": 1.094,
+        "media": 1.094,
+        "mediana": 1.094
+      },
+      "tempo_do_conjunto_s": 1.094,
+      "health_durante_s": []
+    },
+    {
+      "simultaneas": 5,
+      "sucessos": 5,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 5,
+        "min": 1.094,
+        "max": 1.11,
+        "media": 1.106,
+        "mediana": 1.108
+      },
+      "tempo_do_conjunto_s": 1.11,
+      "health_durante_s": []
+    },
+    {
+      "simultaneas": 10,
+      "sucessos": 10,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 10,
+        "min": 1.095,
+        "max": 1.132,
+        "media": 1.117,
+        "mediana": 1.118
+      },
+      "tempo_do_conjunto_s": 1.133,
+      "health_durante_s": []
+    },
+    {
+      "simultaneas": 20,
+      "sucessos": 20,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 20,
+        "min": 1.105,
+        "max": 1.168,
+        "media": 1.139,
+        "mediana": 1.135,
+        "p95": 1.166
+      },
+      "tempo_do_conjunto_s": 1.169,
+      "health_durante_s": []
+    },
+    {
+      "simultaneas": 40,
+      "sucessos": 40,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 40,
+        "min": 1.108,
+        "max": 1.276,
+        "media": 1.2,
+        "mediana": 1.212,
+        "p95": 1.274
+      },
+      "tempo_do_conjunto_s": 1.717,
+      "health_durante_s": [
+        0.811,
+        0.002,
+        0.002
+      ]
+    },
+    {
+      "simultaneas": 60,
+      "sucessos": 60,
+      "falhas": 0,
+      "status": [
+        200
+      ],
+      "latencia": {
+        "n": 60,
+        "min": 1.257,
+        "max": 2.416,
+        "media": 1.622,
+        "mediana": 1.281,
+        "p95": 2.411
+      },
+      "tempo_do_conjunto_s": 2.429,
+      "health_durante_s": [
+        0.965,
+        0.002,
+        0.002
+      ]
+    }
+  ],
+  "chamadas_ao_provider": 136,
+  "modelos": [
+    "gpt-fake-large"
+  ],
+  "status_no_provider": [
+    200
+  ]
+}

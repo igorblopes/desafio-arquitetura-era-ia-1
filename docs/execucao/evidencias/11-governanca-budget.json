@@ -1,0 +1,37 @@
+{
+  "gerado_em": "2026-11-28T08:54:48.491+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "recusa de governança pela borda: budget",
+  "chamadas_antes": 0,
+  "chamadas_depois": 0,
+  "execucoes": [
+    {
+      "feature": "F1",
+      "status": 503,
+      "ttfb_s": 0.028,
+      "total_s": 0.028,
+      "body": {
+        "detail": "O orçamento de uso de IA deste serviço está esgotado.",
+        "code": "model_budget_exceeded"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas_novas_ao_provider": 0
+    },
+    {
+      "feature": "F4",
+      "status": 503,
+      "ttfb_s": 0.007,
+      "total_s": 0.007,
+      "body": {
+        "detail": "O orçamento de uso de IA deste serviço está esgotado.",
+        "code": "model_budget_exceeded"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas_novas_ao_provider": 0
+    }
+  ]
+}

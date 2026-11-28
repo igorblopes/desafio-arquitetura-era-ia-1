@@ -1,0 +1,54 @@
+# python docs/execucao/exemplo_event_loop.py 10   (fastapi 0.115.6, uvicorn 0.34.0, python 3.12)
+[
+  {
+    "rota": "/def-bloqueante",
+    "simultaneas": 10,
+    "conjunto_s": 1.02,
+    "latencia_min_s": 1.02,
+    "latencia_max_s": 1.02,
+    "health_durante_s": 0.005
+  },
+  {
+    "rota": "/async-bloqueante",
+    "simultaneas": 10,
+    "conjunto_s": 10.02,
+    "latencia_min_s": 1.01,
+    "latencia_max_s": 10.02,
+    "health_durante_s": 9.818
+  },
+  {
+    "rota": "/async-nao-bloqueante",
+    "simultaneas": 10,
+    "conjunto_s": 1.02,
+    "latencia_min_s": 1.01,
+    "latencia_max_s": 1.02,
+    "health_durante_s": 0.005
+  }
+]
+# N = 50 (acima das 40 threads do pool)
+[
+  {
+    "rota": "/def-bloqueante",
+    "simultaneas": 50,
+    "conjunto_s": 2.09,
+    "latencia_min_s": 1.08,
+    "latencia_max_s": 2.08,
+    "health_durante_s": 0.006
+  },
+  {
+    "rota": "/async-bloqueante",
+    "simultaneas": 50,
+    "conjunto_s": 50.06,
+    "latencia_min_s": 1.03,
+    "latencia_max_s": 50.06,
+    "health_durante_s": 49.861
+  },
+  {
+    "rota": "/async-nao-bloqueante",
+    "simultaneas": 50,
+    "conjunto_s": 1.05,
+    "latencia_min_s": 1.03,
+    "latencia_max_s": 1.05,
+    "health_durante_s": 0.005
+  }
+]

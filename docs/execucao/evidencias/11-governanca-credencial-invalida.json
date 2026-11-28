@@ -1,0 +1,37 @@
+{
+  "gerado_em": "2026-11-28T08:55:00.393+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "recusa de governança pela borda: credencial-invalida",
+  "chamadas_antes": 0,
+  "chamadas_depois": 0,
+  "execucoes": [
+    {
+      "feature": "F1",
+      "status": 502,
+      "ttfb_s": 0.041,
+      "total_s": 0.041,
+      "body": {
+        "detail": "A requisição ao modelo foi recusada.",
+        "code": "model_rejected"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas_novas_ao_provider": 0
+    },
+    {
+      "feature": "F4",
+      "status": 502,
+      "ttfb_s": 0.016,
+      "total_s": 0.016,
+      "body": {
+        "detail": "A requisição ao modelo foi recusada.",
+        "code": "model_rejected"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas_novas_ao_provider": 0
+    }
+  ]
+}

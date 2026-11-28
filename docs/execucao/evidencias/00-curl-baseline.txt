@@ -1,0 +1,12 @@
+== f1
+{"ticket_id":"TK-00042","category":"delivery","priority":"high"}
+HTTP: 200
+TTFB: 1.090574s
+Tempo total: 1.090612s
+== f4
+{"ticket_id":"TK-00042","order_number":"#481516","product":null}
+HTTP: 200
+TTFB: 1.087866s
+Tempo total: 1.087904s
+== /admin/calls
+[{"id":"9ecc6ae6d9c8","ts":"2026-11-28T08:46:38.627+00:00","provider":"openai","model":"gpt-fake-large","task":"extract","stream":false,"status":200,"input_tokens":15,"output_tokens":11,"duration_ms":1076},{"id":"dd8c41156f33","ts":"2026-11-28T08:46:37.512+00:00","provider":"openai","model":"gpt-fake-large","task":"classify","stream":false,"status":200,"input_tokens":19,"output_tokens":11,"duration_ms":1076}]

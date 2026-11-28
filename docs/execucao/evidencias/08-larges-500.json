@@ -1,0 +1,237 @@
+{
+  "gerado_em": "2026-11-28T08:50:31.353+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "os dois large em error_500; mini no ar",
+  "execucoes": [
+    {
+      "feature": "F1",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 2.458,
+      "total_s": 2.458,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:17.650+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:18.446+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:19.712+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:19.719+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-mini",
+          "task": "classify",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 374
+        }
+      ]
+    },
+    {
+      "feature": "F1",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 2.571,
+      "total_s": 2.571,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:21.115+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:21.776+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:23.294+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:23.300+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-mini",
+          "task": "classify",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 374
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "normal"
+      },
+      "status": 503,
+      "ttfb_s": 2.246,
+      "total_s": 2.247,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:24.749+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:25.578+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:26.957+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "normal"
+      },
+      "status": 503,
+      "ttfb_s": 2.351,
+      "total_s": 2.351,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:28.000+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:29.246+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:30.317+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Integridade do Passo 13 (2026-11-28T09:09:30Z), main em 8227f5a, sem commit
+$ git rev-parse v1-coupled^{commit} v2-decoupled^{commit} v1-coupled v2-decoupled
+80283055f02175a84c8b6bc62dacf81964ad15f0
+b637c5ae2036642c0eaffa985880691a6c9aed66
+07c2026db512dacefde56420464cf0338535d8a1
+c954c434d16c1e8d489d57baa0dd02b4fd3e1294
+$ git diff v2-decoupled --stat -- provider-fake/ edge/ data/
+(vazio = intacto)
+$ git status --short -- provider-fake edge data tests/characterization
+(vazio)
+$ git diff v1-coupled v2-decoupled --stat -- tests/characterization/
+$ git diff v2-decoupled --stat -- tests/characterization/
+(vazios)
+$ grep -rE "gpt-fake|claude-fake" app/ --include=*.py
+(vazio)
+$ grep -rE "FAKE_OPENAI_KEY|FAKE_ANTHROPIC_KEY|sk-fake-openai|sk-ant-fake|GATEWAY_MASTER_KEY|sk-gateway" app/ --include=*.py
+(vazio)
+$ docker compose exec app env (só nomes; valores ocultos)
+GATEWAY_API_KEY
+GATEWAY_URL
+$ docker compose config (serviço app): environment
+    environment:
+      GATEWAY_API_KEY: ***   # interpolada de HELPDESK_GATEWAY_KEY (chave virtual helpdesk-app)
+      GATEWAY_URL: ***
+(nenhuma chave de provider, master key ou senha de banco no serviço app)
+$ git diff --stat (rastreados)
+warning: in the working copy of 'app/helpdesk/classification.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/helpdesk/extraction.py', LF will be replaced by CRLF the next time Git touches it
+ README.md                      | 82 ++++++++++++++++++++++++++++++++++++++++--
+ app/helpdesk/classification.py | 21 +++++++++--
+ app/helpdesk/extraction.py     | 30 +++++++++++++---
+ 3 files changed, 122 insertions(+), 11 deletions(-)
+$ git status --short (novos)
+ M README.md
+ M app/helpdesk/classification.py
+ M app/helpdesk/extraction.py
+?? docs/adr/0011-execution-modes.md
+?? docs/execucao/
+?? tests/execution/
+$ curl -s localhost:8090/admin/failures
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}

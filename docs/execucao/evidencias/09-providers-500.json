@@ -1,0 +1,235 @@
+{
+  "gerado_em": "2026-11-28T08:50:46.183+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "os dois providers inteiros em error_500",
+  "execucoes": [
+    {
+      "feature": "F1",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "error_500",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "error_500"
+      },
+      "status": 503,
+      "ttfb_s": 2.586,
+      "total_s": 2.586,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:32.383+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:33.500+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:34.928+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:34.934+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-mini",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    },
+    {
+      "feature": "F1",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "error_500",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "error_500"
+      },
+      "status": 503,
+      "ttfb_s": 2.164,
+      "total_s": 2.164,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:35.979+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:36.548+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:38.103+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:38.109+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-mini",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "error_500",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "error_500"
+      },
+      "status": 503,
+      "ttfb_s": 2.781,
+      "total_s": 2.781,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:39.195+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:40.216+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:41.942+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "error_500",
+        "claude-fake-large": "error_500",
+        "claude-fake-mini": "error_500"
+      },
+      "status": 503,
+      "ttfb_s": 2.195,
+      "total_s": 2.196,
+      "body": {
+        "detail": "O modelo está indisponível.",
+        "code": "model_unavailable"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:50:42.985+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:43.672+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:50:45.148+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        }
+      ]
+    }
+  ]
+}

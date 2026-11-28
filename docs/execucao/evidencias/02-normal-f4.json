@@ -1,0 +1,656 @@
+{
+  "gerado_em": "2026-11-28T08:48:23.742+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "F4 em modo normal: entradas da caracterização x 3 rodadas + 20 repetições do exemplo do enunciado",
+  "resumo_entradas": {
+    "n": 21,
+    "min": 1.062,
+    "max": 1.237,
+    "media": 1.109,
+    "mediana": 1.088,
+    "p95": 1.237
+  },
+  "resumo_exemplo_20x": {
+    "n": 20,
+    "min": 1.087,
+    "max": 1.096,
+    "media": 1.088,
+    "mediana": 1.088,
+    "p95": 1.089
+  },
+  "serie_exemplo_20x": [
+    1.088,
+    1.088,
+    1.088,
+    1.087,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.088,
+    1.096,
+    1.088,
+    1.088,
+    1.089,
+    1.087,
+    1.088
+  ],
+  "acima_de_3s": 0,
+  "execucoes_com_chamada_extra_ou_fora_do_primario": 0,
+  "execucoes": [
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00042",
+      "texto": "Quero devolver o teclado do pedido #481516.",
+      "caso": "exemplo do enunciado (produto citado só como 'teclado')",
+      "status": 200,
+      "ttfb_s": 1.091,
+      "total_s": 1.091,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:38.619+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00200",
+      "texto": "Pedido #481516, o fone de ouvido bluetooth veio com chiado",
+      "caso": "pedido e produto presentes",
+      "status": 200,
+      "ttfb_s": 1.237,
+      "total_s": 1.237,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:39.709+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1226
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00201",
+      "texto": "O protocolo #12345 não resolveu, o aspirador robô continua sem funcionar",
+      "caso": "pedido ausente, produto presente",
+      "status": 200,
+      "ttfb_s": 1.138,
+      "total_s": 1.138,
+      "body": {
+        "ticket_id": "TK-00201",
+        "order_number": null,
+        "product": "aspirador robô"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:40.949+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 22,
+          "output_tokens": 13,
+          "duration_ms": 1126
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00042",
+      "texto": "Meu pedido #481516 não chegou e já passou do prazo, urgente",
+      "caso": "pedido presente, produto ausente",
+      "status": 200,
+      "ttfb_s": 1.087,
+      "total_s": 1.087,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:42.090+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00202",
+      "texto": "Como faço para alterar meu e-mail de cadastro?",
+      "caso": "pedido e produto ausentes",
+      "status": 200,
+      "ttfb_s": 1.062,
+      "total_s": 1.062,
+      "body": {
+        "ticket_id": "TK-00202",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:43.180+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1050
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00203",
+      "texto": "Meu pedido 481516 não chegou",
+      "caso": "número sem cerquilha",
+      "status": 200,
+      "ttfb_s": 1.087,
+      "total_s": 1.088,
+      "body": {
+        "ticket_id": "TK-00203",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:44.246+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 11,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 1,
+      "ticket_id": "TK-00204",
+      "texto": "O pedido #4815162 veio com o produto errado",
+      "caso": "sete dígitos não é pedido",
+      "status": 200,
+      "ttfb_s": 1.062,
+      "total_s": 1.062,
+      "body": {
+        "ticket_id": "TK-00204",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:45.336+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1051
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00042",
+      "texto": "Quero devolver o teclado do pedido #481516.",
+      "caso": "exemplo do enunciado (produto citado só como 'teclado')",
+      "status": 200,
+      "ttfb_s": 1.089,
+      "total_s": 1.089,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:46.402+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00200",
+      "texto": "Pedido #481516, o fone de ouvido bluetooth veio com chiado",
+      "caso": "pedido e produto presentes",
+      "status": 200,
+      "ttfb_s": 1.237,
+      "total_s": 1.237,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:47.494+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1226
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00201",
+      "texto": "O protocolo #12345 não resolveu, o aspirador robô continua sem funcionar",
+      "caso": "pedido ausente, produto presente",
+      "status": 200,
+      "ttfb_s": 1.137,
+      "total_s": 1.137,
+      "body": {
+        "ticket_id": "TK-00201",
+        "order_number": null,
+        "product": "aspirador robô"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:48.734+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 22,
+          "output_tokens": 13,
+          "duration_ms": 1126
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00042",
+      "texto": "Meu pedido #481516 não chegou e já passou do prazo, urgente",
+      "caso": "pedido presente, produto ausente",
+      "status": 200,
+      "ttfb_s": 1.087,
+      "total_s": 1.087,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:49.875+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1075
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00202",
+      "texto": "Como faço para alterar meu e-mail de cadastro?",
+      "caso": "pedido e produto ausentes",
+      "status": 200,
+      "ttfb_s": 1.063,
+      "total_s": 1.063,
+      "body": {
+        "ticket_id": "TK-00202",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:50.966+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1051
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00203",
+      "texto": "Meu pedido 481516 não chegou",
+      "caso": "número sem cerquilha",
+      "status": 200,
+      "ttfb_s": 1.087,
+      "total_s": 1.087,
+      "body": {
+        "ticket_id": "TK-00203",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:52.032+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 11,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 2,
+      "ticket_id": "TK-00204",
+      "texto": "O pedido #4815162 veio com o produto errado",
+      "caso": "sete dígitos não é pedido",
+      "status": 200,
+      "ttfb_s": 1.062,
+      "total_s": 1.062,
+      "body": {
+        "ticket_id": "TK-00204",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:53.123+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1051
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00042",
+      "texto": "Quero devolver o teclado do pedido #481516.",
+      "caso": "exemplo do enunciado (produto citado só como 'teclado')",
+      "status": 200,
+      "ttfb_s": 1.089,
+      "total_s": 1.089,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:54.190+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00200",
+      "texto": "Pedido #481516, o fone de ouvido bluetooth veio com chiado",
+      "caso": "pedido e produto presentes",
+      "status": 200,
+      "ttfb_s": 1.237,
+      "total_s": 1.237,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:55.282+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1226
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00201",
+      "texto": "O protocolo #12345 não resolveu, o aspirador robô continua sem funcionar",
+      "caso": "pedido ausente, produto presente",
+      "status": 200,
+      "ttfb_s": 1.138,
+      "total_s": 1.138,
+      "body": {
+        "ticket_id": "TK-00201",
+        "order_number": null,
+        "product": "aspirador robô"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:56.523+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 22,
+          "output_tokens": 13,
+          "duration_ms": 1126
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00042",
+      "texto": "Meu pedido #481516 não chegou e já passou do prazo, urgente",
+      "caso": "pedido presente, produto ausente",
+      "status": 200,
+      "ttfb_s": 1.088,
+      "total_s": 1.088,
+      "body": {
+        "ticket_id": "TK-00042",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:57.664+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00202",
+      "texto": "Como faço para alterar meu e-mail de cadastro?",
+      "caso": "pedido e produto ausentes",
+      "status": 200,
+      "ttfb_s": 1.062,
+      "total_s": 1.062,
+      "body": {
+        "ticket_id": "TK-00202",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:58.755+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1051
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00203",
+      "texto": "Meu pedido 481516 não chegou",
+      "caso": "número sem cerquilha",
+      "status": 200,
+      "ttfb_s": 1.088,
+      "total_s": 1.088,
+      "body": {
+        "ticket_id": "TK-00203",
+        "order_number": "#481516",
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:47:59.822+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 11,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "rodada": 3,
+      "ticket_id": "TK-00204",
+      "texto": "O pedido #4815162 veio com o produto errado",
+      "caso": "sete dígitos não é pedido",
+      "status": 200,
+      "ttfb_s": 1.062,
+      "total_s": 1.062,
+      "body": {
+        "ticket_id": "TK-00204",
+        "order_number": null,
+        "product": null
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:00.914+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 15,
+          "output_tokens": 10,
+          "duration_ms": 1050
+        }
+      ]
+    }
+  ]
+}

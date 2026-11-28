@@ -1,0 +1,325 @@
+{
+  "gerado_em": "2026-11-28T08:49:04.898+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "primário (gpt-fake-large) em error_500",
+  "execucoes": [
+    {
+      "feature": "F1",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 2.664,
+      "total_s": 2.664,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:38.168+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:38.682+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:39.738+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "feature": "F1",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 3.848,
+      "total_s": 3.848,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:41.836+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:42.863+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:44.596+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1075
+        }
+      ]
+    },
+    {
+      "feature": "F1",
+      "execucao": 3,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 3.342,
+      "total_s": 3.342,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:46.694+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:47.549+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "classify",
+          "status": 500,
+          "input_tokens": 19,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:48.948+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "classify",
+          "status": 200,
+          "input_tokens": 19,
+          "output_tokens": 11,
+          "duration_ms": 1076
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 1,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 3.843,
+      "total_s": 3.843,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:51.045+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:52.274+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:53.649+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1226
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 2,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 3.241,
+      "total_s": 3.241,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:48:55.897+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:56.458+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:48:57.900+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1226
+        }
+      ]
+    },
+    {
+      "feature": "F4",
+      "execucao": 3,
+      "modos": {
+        "gpt-fake-large": "error_500",
+        "gpt-fake-mini": "normal",
+        "claude-fake-large": "normal",
+        "claude-fake-mini": "normal"
+      },
+      "status": 200,
+      "ttfb_s": 3.747,
+      "total_s": 3.747,
+      "body": {
+        "ticket_id": "TK-00200",
+        "order_number": "#481516",
+        "product": "fone de ouvido bluetooth"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false,
+      "chamadas": [
+        {
+          "ts": "2026-11-28T08:49:00.148+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:49:01.281+00:00",
+          "provider": "openai",
+          "model": "gpt-fake-large",
+          "task": "extract",
+          "status": 500,
+          "input_tokens": 18,
+          "output_tokens": null,
+          "duration_ms": 0
+        },
+        {
+          "ts": "2026-11-28T08:49:02.657+00:00",
+          "provider": "anthropic",
+          "model": "claude-fake-large",
+          "task": "extract",
+          "status": 200,
+          "input_tokens": 18,
+          "output_tokens": 17,
+          "duration_ms": 1225
+        }
+      ]
+    }
+  ]
+}

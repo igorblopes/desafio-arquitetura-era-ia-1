@@ -1,0 +1,34 @@
+{
+  "gerado_em": "2026-11-28T08:52:02.362+00:00",
+  "borda": "http://host.docker.internal:8000",
+  "descricao": "gateway congelado (docker compose pause gateway): deadline global da app",
+  "chamadas_ao_provider": 0,
+  "execucoes": [
+    {
+      "feature": "F1",
+      "status": 503,
+      "ttfb_s": 14.021,
+      "total_s": 14.021,
+      "body": {
+        "detail": "O modelo não respondeu dentro do prazo.",
+        "code": "model_timeout"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false
+    },
+    {
+      "feature": "F4",
+      "status": 503,
+      "ttfb_s": 14.019,
+      "total_s": 14.019,
+      "body": {
+        "detail": "O modelo não respondeu dentro do prazo.",
+        "code": "model_timeout"
+      },
+      "content_type": "application/json",
+      "retry_after": null,
+      "edge_504": false
+    }
+  ]
+}

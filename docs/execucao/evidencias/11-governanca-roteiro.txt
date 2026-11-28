@@ -1,0 +1,30 @@
+== 2026-11-28T08:54:31Z chaves efêmeras (master key só neste roteiro de operador; a app nunca a recebe)
+budget: alias test-execucao-budget max_budget 0.0004 | rate: alias test-execucao-rate rpm_limit 3
+== esgotar orçamento direto no gateway (F1, pausa de 1 s entre chamadas)
+chamada 1: 200
+chamada 2: 200
+chamada 3: 200
+chamada 4: 429
+== esgotar RPM direto no gateway (3 chamadas)
+chamada 1: 200
+chamada 2: 200
+chamada 3: 200
+== app recriada com a chave do cenário budget
+budget F1 503 0.028 {'detail': 'O orçamento de uso de IA deste serviço está esgotado.', 'code': 'model_budget_exceeded'} None 0
+budget F4 503 0.007 {'detail': 'O orçamento de uso de IA deste serviço está esgotado.', 'code': 'model_budget_exceeded'} None 0
+evidência: docs/execucao/evidencias/11-governanca-budget.json
+== app recriada com a chave do cenário rate
+rate F1 503 0.029 {'detail': 'O limite de uso de IA deste serviço foi atingido. Tente novamente em instantes.', 'code': 'model_throttled'} 60 0
+rate F4 503 0.01 {'detail': 'O limite de uso de IA deste serviço foi atingido. Tente novamente em instantes.', 'code': 'model_throttled'} 60 0
+evidência: docs/execucao/evidencias/11-governanca-rate.json
+== app recriada com a chave do cenário credencial-invalida
+credencial-invalida F1 502 0.041 {'detail': 'A requisição ao modelo foi recusada.', 'code': 'model_rejected'} None 0
+credencial-invalida F4 502 0.016 {'detail': 'A requisição ao modelo foi recusada.', 'code': 'model_rejected'} None 0
+evidência: docs/execucao/evidencias/11-governanca-credencial-invalida.json
+== logs da app (motivo traduzido, sem chave)
+app-1  | WARNING:  modelo indisponível: capacidade=ticket-classification motivo=rejected erro=AuthenticationError status=401 tipo=token_not_found_in_db
+app-1  | WARNING:  modelo indisponível: capacidade=order-extraction motivo=rejected erro=AuthenticationError status=401 tipo=token_not_found_in_db
+== restaurar a app com a chave normal do helpdesk (.env)
+{"ticket_id":"TK-00042","category":"delivery","priority":"high"}  HTTP 200 1.113574s
+== apagar chaves efêmeras
+apagadas: 2

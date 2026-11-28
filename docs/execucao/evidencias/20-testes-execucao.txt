@@ -1,0 +1,71 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 57 items
+
+tests/execution/test_deadline.py::test_gateway_mudo_termina_no_deadline_da_app[/tickets/classification-ticket-classification] PASSED [  1%]
+tests/execution/test_deadline.py::test_gateway_mudo_termina_no_deadline_da_app[/tickets/extraction-order-extraction] PASSED [  3%]
+tests/execution/test_output_contract.py::test_f1_saida_valida PASSED     [  5%]
+tests/execution/test_output_contract.py::test_f1_preserva_ticket_id_original_mesmo_se_o_modelo_devolver_outro PASSED [  7%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[json-entre-cercas] PASSED [  8%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[texto-livre] PASSED [ 10%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[json-lista] PASSED [ 12%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[conteudo-nulo] PASSED [ 14%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[categoria-fora-do-enum] PASSED [ 15%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[prioridade-fora-do-enum] PASSED [ 17%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[categoria-lista] PASSED [ 19%]
+tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[sem-categoria] PASSED [ 21%]
+tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[pedido-e-produto] PASSED [ 22%]
+tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[pedido-ausente] PASSED [ 24%]
+tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[produto-ausente] PASSED [ 26%]
+tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[ambos-ausentes] PASSED [ 28%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[objeto-vazio] PASSED [ 29%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[sem-produto] PASSED [ 31%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[sem-pedido] PASSED [ 33%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-com-quebra-de-linha] PASSED [ 35%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-com-digitos-nao-ascii] PASSED [ 36%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-sem-cerquilha] PASSED [ 38%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-numerico] PASSED [ 40%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[produto-numerico] PASSED [ 42%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[json-entre-cercas] PASSED [ 43%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[json-lista] PASSED [ 45%]
+tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[conteudo-nulo] PASSED [ 47%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00042] PASSED [ 49%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00100] PASSED [ 50%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00101] PASSED [ 52%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00102] PASSED [ 54%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00103] PASSED [ 56%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00104] PASSED [ 57%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00105] PASSED [ 59%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00106] PASSED [ 61%]
+tests/execution/test_sync_classification.py::test_resultado_completo_em_ate_3s_no_primario[TK-00107] PASSED [ 63%]
+tests/execution/test_sync_classification.py::test_entrada_invalida_nao_chama_o_modelo PASSED [ 64%]
+tests/execution/test_sync_classification.py::test_primario_500_recupera_pelo_large_equivalente PASSED [ 66%]
+tests/execution/test_sync_classification.py::test_primario_travado_responde_pelo_fallback_em_menos_de_15s PASSED [ 68%]
+tests/execution/test_sync_classification.py::test_tudo_travado_vira_erro_explicito_da_app_antes_de_15s PASSED [ 70%]
+tests/execution/test_sync_classification.py::test_indisponibilidade_total_vira_503_sem_resultado_ficticio PASSED [ 71%]
+tests/execution/test_sync_extraction.py::test_extracao_completa_no_primario[pedido-e-produto] PASSED [ 73%]
+tests/execution/test_sync_extraction.py::test_extracao_completa_no_primario[pedido-ausente] PASSED [ 75%]
+tests/execution/test_sync_extraction.py::test_extracao_completa_no_primario[produto-ausente] PASSED [ 77%]
+tests/execution/test_sync_extraction.py::test_extracao_completa_no_primario[ambos-ausentes] PASSED [ 78%]
+tests/execution/test_sync_extraction.py::test_extracao_completa_no_primario[exemplo-do-enunciado] PASSED [ 80%]
+tests/execution/test_sync_extraction.py::test_entrada_invalida_nao_chama_o_modelo PASSED [ 82%]
+tests/execution/test_sync_extraction.py::test_primario_500_recupera_pelo_large_equivalente PASSED [ 84%]
+tests/execution/test_sync_extraction.py::test_primario_travado_responde_pelo_fallback_em_menos_de_15s PASSED [ 85%]
+tests/execution/test_sync_extraction.py::test_dois_large_fora_falha_explicita_sem_chamar_o_mini PASSED [ 87%]
+tests/execution/test_sync_extraction.py::test_tudo_travado_vira_erro_explicito_da_app_antes_de_15s PASSED [ 89%]
+tests/execution/test_sync_governance.py::test_orcamento_esgotado_recusa_imediata_sem_chamar_provider[F1] PASSED [ 91%]
+tests/execution/test_sync_governance.py::test_orcamento_esgotado_recusa_imediata_sem_chamar_provider[F4] PASSED [ 92%]
+tests/execution/test_sync_governance.py::test_rpm_esgotado_recusa_com_retry_after_sem_chamar_provider[F1] PASSED [ 94%]
+tests/execution/test_sync_governance.py::test_rpm_esgotado_recusa_com_retry_after_sem_chamar_provider[F4] PASSED [ 96%]
+tests/execution/test_sync_governance.py::test_credencial_invalida_vira_recusa_sem_trocar_de_chave[F1] PASSED [ 98%]
+tests/execution/test_sync_governance.py::test_credencial_invalida_vira_recusa_sem_trocar_de_chave[F4] PASSED [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/site-packages/starlette/testclient.py:40
+  /usr/local/lib/python3.12/site-packages/starlette/testclient.py:40: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 57 passed, 1 warning in 106.28s (0:01:46) ===================

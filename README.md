@@ -217,6 +217,38 @@ docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 \
 
 Resultado esperado: `33 passed` (autenticação, orçamento, rate limit, isolamento, contabilização, integração com retry e fallback). Experimentos com evidência em JSON: `python docs/governanca/sondas_governanca.py precos|autenticacao|budget|rate|isolamento|fallback-budget|fallback-rate|custo-cadeia|concorrencia-budget|concorrencia-rate|reserva-sequencial|latencia`. Relatório: [docs/governanca/relatorio-governanca.md](docs/governanca/relatorio-governanca.md).
 
+### 9. Testar a execução síncrona de F1 e F4 (Passo 13)
+
+Borda, app, gateway e provider-fake reais (sem mocks para os requisitos de tempo), mais o contrato de saída e o prazo da app com o código real em processo. Roda em sequência (altera o modo do provider) e leva cerca de 2 min.
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 \
+  -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 \
+  -e GATEWAY_URL=http://host.docker.internal:4000 python:3.12-slim \
+  sh -c "pip install -q -r tests/execution/requirements.txt && python -m pytest tests/execution -v -p no:cacheprovider"
+```
+
+Resultado esperado: `57 passed` (F1 ≤ 3 s pela borda nas 9 entradas da caracterização, primário travado ≤ 15 s, mini nunca chamado na F4, recusas de governança sem chamar o provider, 25 casos de saída do modelo fora do contrato, prazo de 14 s com o gateway mudo).
+
+Experimentos com evidência em JSON (`docs/execucao/evidencias/`), um por vez:
+
+```bash
+# baseline | normal-f1 | normal-f4 | invalidas | error500 | timeout | slow | error429 |
+# larges-500 | providers-500 | providers-timeout | concorrencia
+docker run --rm -v "${PWD}:/w" -w /w -e HELPDESK_BASE_URL=http://host.docker.internal:8000 \
+  -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 python:3.12-slim \
+  sh -c "pip install -q httpx && python docs/execucao/sondas_execucao.py timeout"
+
+# prazo global da app: congelar o gateway, medir e descongelar
+docker compose pause gateway && <mesmo docker run> python docs/execucao/sondas_execucao.py deadline; docker compose unpause gateway
+
+# event loop: def x async def bloqueante x async def não bloqueante (FastAPI mínimo, sem o helpdesk)
+docker run --rm -v "${PWD}:/w" -w /w python:3.12-slim \
+  sh -c "pip install -q fastapi==0.115.6 uvicorn==0.34.0 httpx && python docs/execucao/exemplo_event_loop.py 10"
+```
+
+Modos de falha e consulta manual: `curl -s -X POST localhost:8090/admin/failures -H "Content-Type: application/json" -d '{"provider": "openai", "model": "gpt-fake-large", "mode": "timeout"}'`, depois `curl -s "localhost:8090/admin/calls?last=10"` e, sempre no fim, `curl -s -X POST localhost:8090/admin/reset`. Relatório: [docs/execucao/relatorio-execucao.md](docs/execucao/relatorio-execucao.md).
+
 ## Roteiro de governança
 
 O gateway aplica as políticas por **chave virtual**, antes de encaminhar ao provider ([ADR 0010](docs/adr/0010-gateway-governance.md)). As chaves são criadas pelo `gateway-bootstrap` em todo `docker compose up`, com os valores do `.env` ([ADR 0008](docs/adr/0008-key-bootstrap-service.md)):
@@ -344,10 +376,10 @@ Os quatro fluxos são síncronos (rotas `def`, resposta só no fim, sem streamin
 
 | Fluxo | Rota | Capacidade | Chamadas ao modelo | Tempo típico |
 |---|---|---|---|---|
-| F1 classificação | `POST /tickets/classification` | `ticket-classification` | 1; JSON validado (502 se a categoria ou a prioridade não existir) | ~1,1 s |
+| F1 classificação | `POST /tickets/classification` | `ticket-classification` | 1; JSON validado (502 se não for objeto JSON ou se a categoria ou a prioridade não existir) | ~1,1 s |
 | F2 sugestão | `POST /tickets/reply-suggestion` | `reply-suggestion` | 1; texto devolvido como veio | ~16 s |
 | F3 relatório | `POST /reports/topics` | `topics-report` | 1 por lote de 150 tickets do período, em série; temas somados e ordenados | ~10 s por dia; o mês passa dos 30 s da borda (Dor 1) |
-| F4 extração | `POST /tickets/extraction` | `order-extraction` | 1; JSON validado (502 se o número do pedido tiver formato inválido) | ~1,2 s |
+| F4 extração | `POST /tickets/extraction` | `order-extraction` | 1; JSON validado (502 se faltar um dos dois campos, se o número não for `#` + 6 dígitos ou se o produto não for texto) | ~1,1–1,2 s |
 
 ```bash
 curl -s -X POST localhost:8000/tickets/classification -H "Content-Type: application/json" \
@@ -368,6 +400,49 @@ curl -s -X POST localhost:8000/tickets/extraction -H "Content-Type: application/
 ```
 
 No Windows, o PowerShell corrompe os acentos do corpo: use Git Bash, `--data-binary @arquivo.json` ou a sonda (`docs/v2/sondas_v2.py features`). Os diagramas de sequência dos quatro fluxos estão em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md), seção 22.
+
+### Fluxos síncronos: F1 e F4 (Passo 13, [ADR 0011](docs/adr/0011-execution-modes.md))
+
+F1 e F4 são **Request-Response síncronos por decisão**: alguém (o cliente na tela, ou a automação de troca) espera o resultado agora, ele cabe com folga no orçamento de latência e não serve pela metade. Internamente as rotas são `def` (rodam no thread pool de 40 threads do FastAPI) com o cliente HTTP síncrono; isso não muda o contrato. F2 (streaming) e F3 (assíncrona) ainda são hipóteses dos Passos 14 e 15.
+
+**F1: classificação**
+
+```bash
+curl -s -X POST http://localhost:8000/tickets/classification \
+  -H "Content-Type: application/json" \
+  -d '{"ticket_id": "TK-00042", "text": "Meu pedido #481516 não chegou e já passou do prazo, urgente"}' \
+  -w '\nHTTP: %{http_code}\nTTFB: %{time_starttransfer}s\nTempo total: %{time_total}s\n'
+# {"ticket_id":"TK-00042","category":"delivery","priority":"high"}
+# HTTP: 200 / TTFB: 1.09s / Tempo total: 1.09s
+```
+
+**F4: extração**
+
+```bash
+curl -s -X POST http://localhost:8000/tickets/extraction \
+  -H "Content-Type: application/json" \
+  -d '{"ticket_id": "TK-00042", "text": "Quero devolver o teclado do pedido #481516."}' \
+  -w '\nHTTP: %{http_code}\nTTFB: %{time_starttransfer}s\nTempo total: %{time_total}s\n'
+# {"ticket_id":"TK-00042","order_number":"#481516","product":null}
+# ("teclado" sozinho não é um produto do simulador, que conhece "teclado mecânico": null legítimo)
+```
+
+| Feature | Entrada | Saída | Validações | Requisito de latência | Medido pela borda |
+|---|---|---|---|---|---|
+| F1 | `{"ticket_id": str≥1, "text": str≥1}` | `{"ticket_id", "category", "priority"}` | objeto JSON; `category` ∈ delivery, payment, exchange_return, product_defect, other; `priority` ∈ low, medium, high; `ticket_id` sempre o da requisição | **3 s** normal; **15 s** travado | 1,06–1,16 s; 4,10 s com primário travado |
+| F4 | idem | `{"ticket_id", "order_number", "product"}` | objeto JSON; as duas chaves presentes; número `#[0-9]{6}` ou `null`; produto texto ou `null` | **15 s** travado (sem meta normal no enunciado) | 1,06–1,24 s; 4,25 s com primário travado |
+
+| Situação | F1 | F4 |
+|---|---|---|
+| Entrada inválida | `422`, nenhuma chamada ao modelo | `422`, nenhuma chamada |
+| Primário `500`, `429`, lento ou travado | `200` pelo `claude-fake-large` (1,1–4,1 s) | `200` pelo `claude-fake-large` (1,25–4,25 s) |
+| Dois `large` fora | `200` pelo `gpt-fake-mini` (2,5 s) | `503 model_unavailable`, mini nunca chamado |
+| Tudo fora ou travado | `503` em 2,2–8,1 s | `503` em 2,2–6,1 s |
+| Gateway travado | `503 model_timeout` aos 14 s (prazo da app) | idem |
+| Orçamento ou RPM esgotado | `503 model_budget_exceeded` / `model_throttled`, sem chamar o provider | idem |
+| Saída do modelo fora do contrato | `502 {"detail"}` | `502 {"detail"}`; nunca um `null` fictício |
+
+Limites de execução: timeout por tentativa 3 s (mini 2 s), no máximo 4 chamadas (F1) ou 3 (F4) por requisição, prazo global de 14 s na app, borda de 30 s. Nenhum cenário produziu `504` da borda. Limitações remanescentes: sem validação semântica (um `#123456` bem formado pode ser o pedido errado), trabalho órfão quando a app desiste, margem de 1 s entre o prazo e os 15 s, e no máximo 40 esperas simultâneas por processo ([relatório](docs/execucao/relatorio-execucao.md), seção 30).
 
 ## Troca de modelo
 
@@ -475,8 +550,9 @@ Medida com o mesmo comando sobre o código do Passo 09 e reproduzida com CSV id�
 | [0008](docs/adr/0008-key-bootstrap-service.md) | serviço de bootstrap idempotente cria as chaves a cada `up` | solução | aceita |
 | [0009](docs/adr/0009-corporate-ai-governance.md) | política corporativa (simulada): consumo só pelo gateway, identidade, orçamento e limite por consumidor | corporativa | aceita |
 | [0010](docs/adr/0010-gateway-governance.md) | preço por modelo, chave virtual, orçamento e RPM no gateway; recusa sem retry nem fallback | solução | aceita |
+| [0011](docs/adr/0011-execution-modes.md) | modo de execução por feature (ADR único): F1 e F4 síncronas; F2 streaming e F3 assíncrona como hipóteses | solução | aceita para F1 e F4; F2 e F3 preliminares (Passos 14 e 15) |
 
-Os ADRs 0003, 0005 e 0006 têm seção de revisão do Passo 12. Modos de execução terão ADRs próprios (Passos 13 a 15). Governança: [docs/governanca/relatorio-governanca.md](docs/governanca/relatorio-governanca.md) e [checkpoint](docs/governanca/checkpoint-passo-12.md). Fallback: [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e [checkpoint](docs/fallback/checkpoint-passo-11.md). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+Os ADRs 0003, 0005 e 0006 têm seção de revisão do Passo 12. Execução síncrona: [docs/execucao/relatorio-execucao.md](docs/execucao/relatorio-execucao.md) e [checkpoint](docs/execucao/checkpoint-passo-13.md). Governança: [docs/governanca/relatorio-governanca.md](docs/governanca/relatorio-governanca.md) e [checkpoint](docs/governanca/checkpoint-passo-12.md). Fallback: [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e [checkpoint](docs/fallback/checkpoint-passo-11.md). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Diagnóstico da v1
 

@@ -1,0 +1,43 @@
+# Passo 13, antes da correção (código de 8227f5a). 1ª parte: pytest; 2ª: resposta observada por caso.
+PASSED tests/execution/test_output_contract.py::test_f1_saida_valida
+PASSED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[categoria-fora-do-enum]
+PASSED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[prioridade-fora-do-enum]
+PASSED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[sem-categoria]
+PASSED tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[pedido-e-produto]
+PASSED tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[pedido-ausente]
+PASSED tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[produto-ausente]
+PASSED tests/execution/test_output_contract.py::test_f4_saida_valida_inclusive_nulos_legitimos[ambos-ausentes]
+PASSED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-sem-cerquilha]
+FAILED tests/execution/test_output_contract.py::test_f1_preserva_ticket_id_original_mesmo_se_o_modelo_devolver_outro
+FAILED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[json-entre-cercas]
+FAILED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[texto-livre]
+FAILED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[json-lista]
+FAILED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[conteudo-nulo]
+FAILED tests/execution/test_output_contract.py::test_f1_saida_fora_do_contrato_vira_502_explicito[categoria-lista]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[objeto-vazio]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[sem-produto]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[sem-pedido]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-com-quebra-de-linha]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-com-digitos-nao-ascii]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[pedido-numerico]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[produto-numerico]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[json-entre-cercas]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[json-lista]
+FAILED tests/execution/test_output_contract.py::test_f4_saida_fora_do_contrato_vira_502_explicito[conteudo-nulo]
+16 failed, 9 passed, 1 warning in 3.86s
+/tickets/classification | saída do modelo: "{\"ticket_id\": \"TK-99999\", \"category\": \"delivery\", \"priority\": \"high\"}" -> HTTP 500 'Internal Server Error'
+/tickets/classification | saída do modelo: "```json\n{\"category\": \"delivery\", \"priority\": \"high\"}\n```" -> HTTP 500 'Internal Server Error'
+/tickets/classification | saída do modelo: "Categoria: delivery" -> HTTP 500 'Internal Server Error'
+/tickets/classification | saída do modelo: "[]" -> HTTP 500 'Internal Server Error'
+/tickets/classification | saída do modelo: null -> HTTP 500 'Internal Server Error'
+/tickets/classification | saída do modelo: "{\"category\": [\"delivery\"], \"priority\": \"high\"}" -> HTTP 500 'Internal Server Error'
+/tickets/extraction | saída do modelo: "{}" -> HTTP 200 '{"ticket_id":"TK-00042","order_number":null,"product":null}'
+/tickets/extraction | saída do modelo: "{\"order_number\": \"#481516\"}" -> HTTP 200 '{"ticket_id":"TK-00042","order_number":"#481516","product":null}'
+/tickets/extraction | saída do modelo: "{\"product\": \"teclado mecânico\"}" -> HTTP 200 '{"ticket_id":"TK-00042","order_number":null,"product":"teclado mecânico"}'
+/tickets/extraction | saída do modelo: {"order_number": "#481516\n", "product": null} -> HTTP 200 '{"ticket_id":"TK-00042","order_number":"#481516\\n","product":null}'   (número com quebra de linha aceito: re.match com ^...$ deixa passar "\n" no fim; medido com json.dumps porque o heredoc da 1ª tentativa gerou uma quebra de linha crua, JSON inválido)
+/tickets/extraction | saída do modelo: "{\"order_number\": \"#٤٨١٥١٦\", \"product\": null}" -> HTTP 200 '{"ticket_id":"TK-00042","order_number":"#٤٨١٥١٦","product":null}'
+/tickets/extraction | saída do modelo: "{\"order_number\": 481516, \"product\": null}" -> HTTP 500 'Internal Server Error'
+/tickets/extraction | saída do modelo: "{\"order_number\": \"#481516\", \"product\": 123}" -> HTTP 500 'Internal Server Error'
+/tickets/extraction | saída do modelo: "```json\n{\"order_number\": \"#481516\", \"product\": null}\n```" -> HTTP 500 'Internal Server Error'
+/tickets/extraction | saída do modelo: "[]" -> HTTP 500 'Internal Server Error'
+/tickets/extraction | saída do modelo: null -> HTTP 500 'Internal Server Error'
