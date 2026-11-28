@@ -1,0 +1,50 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 40 items
+
+tests/fallback/test_complete_unavailability.py::test_every_destination_failing_ends_the_chain_with_an_explicit_503[F1] PASSED [  2%]
+tests/fallback/test_complete_unavailability.py::test_every_destination_failing_ends_the_chain_with_an_explicit_503[F2] PASSED [  5%]
+tests/fallback/test_complete_unavailability.py::test_every_destination_failing_ends_the_chain_with_an_explicit_503[F3] PASSED [  7%]
+tests/fallback/test_complete_unavailability.py::test_every_destination_failing_ends_the_chain_with_an_explicit_503[F4] PASSED [ 10%]
+tests/fallback/test_complete_unavailability.py::test_every_destination_hung_fails_in_time_without_retrying_timeouts[F1-3-10.0] PASSED [ 12%]
+tests/fallback/test_complete_unavailability.py::test_every_destination_hung_fails_in_time_without_retrying_timeouts[F4-2-8.0] PASSED [ 15%]
+tests/fallback/test_degraded_fallback.py::test_accepting_features_use_the_approved_mini_only_after_both_large[F1] PASSED [ 17%]
+tests/fallback/test_degraded_fallback.py::test_accepting_features_use_the_approved_mini_only_after_both_large[F2] PASSED [ 20%]
+tests/fallback/test_degraded_fallback.py::test_rejecting_features_fail_explicitly_and_never_call_a_mini[F3] PASSED [ 22%]
+tests/fallback/test_degraded_fallback.py::test_rejecting_features_fail_explicitly_and_never_call_a_mini[F4] PASSED [ 25%]
+tests/fallback/test_degraded_fallback.py::test_mini_is_never_used_when_a_large_answers PASSED [ 27%]
+tests/fallback/test_fallback_budget.py::test_every_app_capability_has_a_chain_and_nothing_else_does PASSED [ 30%]
+tests/fallback/test_fallback_budget.py::test_chain_order_large_then_equivalent_large_of_other_provider_then_approved_mini[order-extraction] PASSED [ 32%]
+tests/fallback/test_fallback_budget.py::test_chain_order_large_then_equivalent_large_of_other_provider_then_approved_mini[reply-suggestion] PASSED [ 35%]
+tests/fallback/test_fallback_budget.py::test_chain_order_large_then_equivalent_large_of_other_provider_then_approved_mini[ticket-classification] PASSED [ 37%]
+tests/fallback/test_fallback_budget.py::test_chain_order_large_then_equivalent_large_of_other_provider_then_approved_mini[topics-report] PASSED [ 40%]
+tests/fallback/test_fallback_budget.py::test_chains_are_finite_and_acyclic PASSED [ 42%]
+tests/fallback/test_fallback_budget.py::test_one_deployment_per_group_so_the_primary_is_never_drawn_at_random PASSED [ 45%]
+tests/fallback/test_fallback_budget.py::test_attempt_limits_per_destination PASSED [ 47%]
+tests/fallback/test_fallback_budget.py::test_app_knows_neither_physical_models_nor_internal_destinations PASSED [ 50%]
+tests/fallback/test_fallback_budget.py::test_short_capabilities_fit_the_whole_chain_in_the_deadline[ticket-classification] PASSED [ 52%]
+tests/fallback/test_fallback_budget.py::test_short_capabilities_fit_the_whole_chain_in_the_deadline[order-extraction] PASSED [ 55%]
+tests/fallback/test_fallback_budget.py::test_long_capabilities_fit_fast_failure_recovery_in_the_deadline[reply-suggestion] PASSED [ 57%]
+tests/fallback/test_fallback_budget.py::test_long_capabilities_fit_fast_failure_recovery_in_the_deadline[topics-report] PASSED [ 60%]
+tests/fallback/test_fallback_budget.py::test_f1_hung_primary_recovers_on_the_equivalent_well_within_15s PASSED [ 62%]
+tests/fallback/test_fallback_budget.py::test_f1_slow_primary_is_cut_by_its_timeout_and_recovered PASSED [ 65%]
+tests/fallback/test_fallback_budget.py::test_f3_hung_primary_recovers_the_batch_inside_its_deadline PASSED [ 67%]
+tests/fallback/test_fallback_budget.py::test_f2_hung_primary_hits_the_deadline_and_the_orphan_chain_stays_finite PASSED [ 70%]
+tests/fallback/test_technical_fallback.py::test_normal_operation_uses_only_the_primary[F1] PASSED [ 72%]
+tests/fallback/test_technical_fallback.py::test_normal_operation_uses_only_the_primary[F2] PASSED [ 75%]
+tests/fallback/test_technical_fallback.py::test_normal_operation_uses_only_the_primary[F3] PASSED [ 77%]
+tests/fallback/test_technical_fallback.py::test_normal_operation_uses_only_the_primary[F4] PASSED [ 80%]
+tests/fallback/test_technical_fallback.py::test_primary_500_retries_once_then_recovers_on_the_equivalent_large[F1] PASSED [ 82%]
+tests/fallback/test_technical_fallback.py::test_primary_500_retries_once_then_recovers_on_the_equivalent_large[F2] PASSED [ 85%]
+tests/fallback/test_technical_fallback.py::test_primary_500_retries_once_then_recovers_on_the_equivalent_large[F3] PASSED [ 87%]
+tests/fallback/test_technical_fallback.py::test_primary_500_retries_once_then_recovers_on_the_equivalent_large[F4] PASSED [ 90%]
+tests/fallback/test_technical_fallback.py::test_primary_429_fails_over_without_retrying_the_saturated_destination[F1] PASSED [ 92%]
+tests/fallback/test_technical_fallback.py::test_primary_429_fails_over_without_retrying_the_saturated_destination[F4] PASSED [ 95%]
+tests/fallback/test_technical_fallback.py::test_primary_429_fails_over_without_retrying_the_saturated_destination[F2] PASSED [ 97%]
+tests/fallback/test_technical_fallback.py::test_f3_fallback_recovers_only_the_failed_batch PASSED [100%]
+
+======================== 40 passed in 238.55s (0:03:58) ========================
+................................                                         [100%]
+32 passed in 60.09s (0:01:00)

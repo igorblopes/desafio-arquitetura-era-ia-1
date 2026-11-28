@@ -3,7 +3,7 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Tabela de capacidades**, **Política de resiliência**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. A tabela de fallback e o roteiro de governança entram nos próximos passos.
+> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Tabela de capacidades**, **Tabela de fallback**, **Política de resiliência**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. O roteiro de governança entra no Passo 12.
 
 ## Visão geral
 
@@ -29,12 +29,13 @@ flowchart LR
 
 | Já implementado | Ainda pendente (não existe nesta versão) |
 |---|---|
-| contratos de sucesso da v1 preservados (32 testes, OpenAPI idêntico) | fallback e modelo fraco por capacidade (Passo 11) |
+| contratos de sucesso da v1 preservados (32 testes, OpenAPI idêntico) | deadline da cadeia dentro do gateway (cadeia órfã, ver ADR 0006) |
 | todas as chamadas pelo gateway, com capacidades lógicas | chave por consumidor, orçamento e limites (Passo 12) |
 | troca de modelo só na configuração do gateway | streaming da sugestão (Passo 14) |
 | credenciais dos providers fora da aplicação; timeout, retry limitado e backoff ([ADR 0005](docs/adr/0005-resilience-policy.md)) | relatório mensal assíncrono (Passo 15) |
+| fallback técnico nas 4 capacidades e mini só na F1/F2 ([ADR 0006](docs/adr/0006-fallback-policy.md)) | |
 
-A aplicação **não** tem fallback: com um provider fora do ar, a feature correspondente falha de forma explícita e em tempo limitado; com o gateway fora do ar, as quatro falham. Detalhes do passo em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+Com um provider fora do ar, cada feature é atendida pelo modelo `large` equivalente do outro provider; com os dois `large` fora, F1 e F2 usam um `mini` e F3 e F4 falham explicitamente (`503`); com o gateway fora do ar, as quatro falham. Detalhes do passo em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Como rodar
 
@@ -172,28 +173,72 @@ curl -s "localhost:8090/admin/calls?last=10"                       # evidência 
 curl -s -X POST localhost:8090/admin/reset                         # sempre restaurar no fim
 ```
 
+### 7. Testar o fallback (Passo 11)
+
+Mesmas regras da seção 6 (sequencial, reseta o provider). Cerca de 4 min.
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1   -e HELPDESK_BASE_URL=http://host.docker.internal:8000   -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090   python:3.12-slim sh -c "pip install -q -r tests/fallback/requirements.txt && python -m pytest tests/fallback -v -p no:cacheprovider"
+```
+
+Resultado esperado: `40 passed` (técnico, degradado, indisponibilidade completa, orçamento). Experimentos manuais, com Python no host:
+
+```bash
+curl -s -X POST localhost:8090/admin/reset                         # estado conhecido
+python docs/fallback/sondas_fallback.py primario-500               # P 500, P 500, equivalente 200
+python docs/fallback/sondas_fallback.py larges-500                 # os dois large fora: F1/F2 no mini, F3/F4 503
+python docs/fallback/sondas_fallback.py providers-500              # tudo fora: cadeia esgota, 4/3 chamadas
+python docs/fallback/sondas_fallback.py primario-timeout F1        # também primario-429, primario-slow, providers-timeout
+# derrubar só os dois large, mantendo os mini (falha por modelo):
+curl -s -X POST localhost:8090/admin/failures -H "Content-Type: application/json" -d '{"provider": "openai", "model": "gpt-fake-large", "mode": "error_500"}'
+curl -s -X POST localhost:8090/admin/failures -H "Content-Type: application/json" -d '{"provider": "anthropic", "model": "claude-fake-large", "mode": "error_500"}'
+curl -s "localhost:8090/admin/calls?last=10"                       # leia ANTES de resetar
+docker compose logs app | grep fallback                            # destino que atendeu
+curl -s -X POST localhost:8090/admin/reset                         # sempre restaurar no fim
+```
+
+Em experimentos com provider travado, a F2 deixa uma cadeia órfã no gateway por até ~45 s: espere esse tempo antes do próximo experimento ou filtre `/admin/calls` pelo campo `task`. Comparação large × mini com 1.000 tickets: `python docs/fallback/comparar_modelos.py`.
+
 ## Tabela de capacidades
 
-A aplicação pede **capacidades lógicas**; o gateway decide qual modelo físico atende ([ADR 0004](docs/adr/0004-logical-capabilities.md)). Na `v2-decoupled`, todas usam o modelo `large` que a v1 já usava, e as quatro são usadas pela aplicação.
+A aplicação pede **capacidades lógicas**; o gateway decide qual modelo físico atende ([ADR 0004](docs/adr/0004-logical-capabilities.md)) e em que ordem recuperar ([ADR 0006](docs/adr/0006-fallback-policy.md)). Os destinos de fallback são grupos internos do gateway (`<capacidade>-equivalent`, `<capacidade>-degraded`) que a app nunca pede.
 
-| Capacidade lógica | Feature | Modelo primário | Timeout por tentativa | Tentativas totais no primário | Limite da app | Fallback técnico | Modelo fraco |
+| Capacidade | Feature | Primário | Fallback técnico | Modelo inferior | Tentativas máximas por destino (primário / técnico / inferior) | Timeout por tentativa | Deadline da app |
 |---|---|---|---|---|---|---|---|
-| `ticket-classification` | F1 classificação | `openai/gpt-fake-large` | 3 s | 2 (1 retry) | 14 s | pendente (Passo 11) | pendente (Passo 11) |
-| `reply-suggestion` | F2 sugestão | `anthropic/claude-fake-large` (`max_tokens` 2000) | 20 s | 2; 1 em timeout | 25 s | pendente (Passo 11) | pendente (Passo 11) |
-| `topics-report` | F3 relatório | `anthropic/claude-fake-large` (`max_tokens` 2000) | 12 s por lote | 2; 1 em timeout | 14 s por lote | pendente (Passo 11) | pendente (Passo 11) |
-| `order-extraction` | F4 extração | `openai/gpt-fake-large` | 3 s | 2 (1 retry) | 14 s | pendente (Passo 11) | pendente (Passo 11) |
+| `ticket-classification` | F1 classificação | `openai/gpt-fake-large` | `anthropic/claude-fake-large` | `openai/gpt-fake-mini` | 2 / 1 / 1 (total 4) | 3 / 3 / 2 s | 14 s |
+| `reply-suggestion` | F2 sugestão | `anthropic/claude-fake-large` | `openai/gpt-fake-large` | `anthropic/claude-fake-mini` | 2 / 1 / 1 (total 4) | 20 / 20 / 5 s | 25 s |
+| `topics-report` | F3 relatório | `anthropic/claude-fake-large` | `openai/gpt-fake-large` | — (rejeitado) | 2 / 1 (total 3), por lote | 12 / 12 s | 25 s por lote |
+| `order-extraction` | F4 extração | `openai/gpt-fake-large` | `anthropic/claude-fake-large` | — (rejeitado) | 2 / 1 (total 3) | 3 / 3 s | 14 s |
+
+No primário, as 2 tentativas valem para `500`/`503`; `429`, timeout e `4xx` têm 1 tentativa e migram direto. `max_tokens` 2000 em todos os destinos Anthropic e nos de F2/F3.
+
+## Tabela de fallback
+
+Comportamento quando os **dois modelos `large`** estão indisponíveis (falha por modelo; os `mini` continuam no ar). Status medidos em `docs/fallback/evidencias/08-larges-500.json`.
+
+| Feature | Aceita modelo inferior? | Comportamento esperado | Status HTTP atual | Justificativa |
+|---|---|---|---|---|
+| F1 | sim (`gpt-fake-mini`) | classificação pelo mini, mesmo contrato | `200` em 2,3 s | cliente esperando na abertura; mini igual ao large em 1.000/1.000 tickets |
+| F2 | sim (`claude-fake-mini`) | sugestão mais curta (~44% do texto) | `200` em 4,8 s | o atendente revisa e edita antes de enviar |
+| F3 | não | falha explícita, nenhum relatório parcial | `503 model_unavailable` em 3,0 s | ninguém espera e dá para reprocessar; um agregado errado não avisa ninguém |
+| F4 | não | falha explícita, sem campos nulos artificiais | `503 model_unavailable` em 2,4 s | automação sem revisão; o mini errou o pedido em 150/1.000 e omitiu o produto em 192/1.000 |
+
+Com os dois providers inteiros fora, as quatro respondem `503` em cerca de 2 s (4 chamadas na F1/F2, 3 na F3/F4). Esta tabela muda quando a F2 ganhar streaming (Passo 14) e a F3 virar assíncrona (Passo 15).
 
 ## Política de resiliência
 
-| Item | Política ([ADR 0005](docs/adr/0005-resilience-policy.md)) |
+| Item | Política ([ADR 0005](docs/adr/0005-resilience-policy.md), revisada pelo [ADR 0006](docs/adr/0006-fallback-policy.md)) |
 |---|---|
-| Onde fica | gateway (`gateway/config.yaml`): timeout por tentativa, retry e backoff. App: limite externo (`config.py`), tradução do erro. SDK da app com `max_retries=0` |
-| Repete | `429`, `5xx`, falha de conexão; timeout só em F1 e F4 |
-| Não repete | `400`, `401`, `403`, `404`, contexto excedido, política de conteúdo |
-| Backoff | LiteLLM: 0,5 s × 2ⁿ + jitter de 0 a 0,75 s; respeita `Retry-After` até 60 s |
+| Onde fica | gateway (`gateway/config.yaml`): timeout por tentativa, retry, backoff e cadeia de fallback. App: deadline global da operação (`config.py`), tradução do erro e log do destino que atendeu. SDK da app com `max_retries=0` |
+| Ordem | primário `large` → `large` equivalente de outro provider → `mini` só na F1/F2 → erro explícito. Finita (`max_fallbacks: 2`), sem ciclo |
+| Repete no mesmo destino | só `500`/`503` no primário, 1 vez |
+| Migra sem repetir | `429` do provider, timeout, falha de conexão; nos destinos de fallback, qualquer erro (1 tentativa) |
+| Não repete | `400`, `401`, `403`, `404`, contexto excedido, política de conteúdo (o LiteLLM ainda percorre a cadeia em `400` na F1/F4, cada destino uma vez) |
+| Backoff | LiteLLM: 0,5 s × 2ⁿ + jitter de 0 a 0,75 s, mais uma pausa depois da última tentativa; só no primário |
+| Deadline | uma chamada HTTP da app ao gateway: trocar de destino não reinicia o prazo (14 s F1/F4, 25 s F2 e F3 por lote) |
 | Esgotou | `503` (`model_timeout`, `model_rate_limited`, `model_unavailable`) ou `502` (`model_rejected`), corpo `{"detail", "code"}` |
 
-Resultados: sob `error_500` e `error_429` há exatamente 2 chamadas ao provider (antes 3); com o provider travado, F1 responde `503` em 8,6 s (antes `504` da borda aos 30 s). Limitações: a F2 travada leva 20 s; `slow` agora é erro na F1 e F4; a F3 do mês continua passando da borda. Detalhes em [docs/resiliencia/relatorio-resiliencia.md](docs/resiliencia/relatorio-resiliencia.md).
+Resultados do Passo 11: `500` no primário vira `200` pelo equivalente (F1 2,8 s, F4 3,6 s, F2 18,1 s, F3 12,4 s); F1 com o primário travado responde em 4,1 s; nenhum `504` da borda. Limitações: a F2 travada ainda responde `503` aos 25 s e deixa a cadeia correndo no gateway (cadeia órfã); a F3 do mês continua passando da borda. Detalhes em [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e, para o Passo 10, [docs/resiliencia/relatorio-resiliencia.md](docs/resiliencia/relatorio-resiliencia.md).
 
 ## Fluxos
 
@@ -326,9 +371,10 @@ Medida com o mesmo comando sobre o código do Passo 09 e reproduzida com CSV id�
 | [0002](docs/adr/0002-contracts-and-dependency-inversion.md) | features dependem de um contrato de IA; só a composição conhece o adapter | software | aceita (as quatro features) |
 | [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1`; toda a IA passa por ele | solução | aceita (infraestrutura e as quatro features) |
 | [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita (quatro capacidades) |
-| [0005](docs/adr/0005-resilience-policy.md) | timeout, retry limitado e backoff no gateway; limite externo e erros na app | solução | aceita |
+| [0005](docs/adr/0005-resilience-policy.md) | timeout, retry limitado e backoff no gateway; limite externo e erros na app | solução | aceita; tentativas e prazo da F3 revisados pelo 0006 |
+| [0006](docs/adr/0006-fallback-policy.md) | fallback técnico para o large de outro provider em todas; mini só na F1 e F2; F3 e F4 falham explicitamente | solução | aceita |
 
-Fallback, governança e modos de execução terão ADRs próprios quando forem decididos (Passos 11 a 15). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+Governança e modos de execução terão ADRs próprios quando forem decididos (Passos 12 a 15). Fallback: [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e [checkpoint](docs/fallback/checkpoint-passo-11.md). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Diagnóstico da v1
 

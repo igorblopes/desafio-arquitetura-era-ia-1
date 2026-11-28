@@ -1,6 +1,6 @@
 # 0005. Limitar a espera e repetir uma única vez, no gateway
 
-- Status: aceita
+- Status: aceita; tentativas por destino e prazo da F3 revisados pelo [ADR 0006](0006-fallback-policy.md) (Passo 11)
 - Data: 2026-11-27
 - Nível: solução
 
@@ -91,3 +91,24 @@ pytest tests/resilience -v                                     # 34 passed
 ```
 
 Registros em `docs/resiliencia/evidencias/`; análise em [`docs/resiliencia/relatorio-resiliencia.md`](../resiliencia/relatorio-resiliencia.md).
+
+## Revisão no Passo 11 (2026-11-27)
+
+O texto acima é o registro da decisão do Passo 10 e fica como estava. Com o fallback do [ADR 0006](0006-fallback-policy.md), os valores abaixo mudaram. O dono das tentativas continua sendo o gateway, e a app continua com `max_retries=0`.
+
+| Item | Passo 10 | Passo 11 | Motivo operacional |
+|---|---|---|---|
+| Retry em timeout, F1 e F4 | 1 | 0 no primário | com o primário travado, repetir custava 3 s + pausas (9,6 s medidos até o fallback); migrar leva 4,1 s e deixa prazo para o mini |
+| Retry em `429` | 1, após `Retry-After` | 0 no primário | esperar o provider saturado custava 6,1 s; o equivalente responde na hora (1,1 s) |
+| Retry em `500`/`503` | 1 | 1 no primário | falha imediata pode ser transitória; custa no máximo 3,0 s de pausas |
+| Destinos de fallback | não existiam | 1 tentativa, qualquer erro (`DefaultRetries: 0`) | o primário já absorveu o transitório; cada salto troca de domínio |
+| Prazo da app, F3 (por lote) | 14 s | 25 s | precisa caber "primário travado (12 s) + equivalente (~9,9 s)" = 21,9 s medidos; continua abaixo dos 30 s da borda |
+| Prazo da app, F1/F4/F2 | 14 / 14 / 25 s | sem mudança | F1/F4: cadeia inteira no pior caso = 11 / 9 s |
+| Máximo de chamadas por operação de modelo | 2 | F1/F2: 4; F3/F4: 3 | soma das tentativas por destino |
+| Interação retry × fallback | — | o retry é escolhido pela política do **grupo** de cada destino; o fallback não reinicia o prazo da app (uma só chamada HTTP) | lido em `router.py` do LiteLLM 1.102.1 e confirmado no `/admin/calls` |
+
+Consequências da revisão:
+- O backoff com `Retry-After` deixou de ser exercitado: o teste correspondente virou "429 migra sem esperar" (`tests/resilience/test_backoff.py`).
+- Os testes do Passo 10 que esperavam `503` com o primário em falha agora põem os dois providers inteiros em falha para isolar o mecanismo; a intenção (limite de tentativas, prazo, erro explícito) foi mantida.
+- Limitação 4 (`Retry-After` alto) deixou de valer para o primário; os destinos de fallback não repetem.
+- Nova limitação: o gateway não tem deadline por requisição, então uma cadeia continua depois que a app desiste (cadeia órfã, ADR 0006).

@@ -5,13 +5,15 @@ import os
 GATEWAY_URL = os.environ["GATEWAY_URL"]
 GATEWAY_API_KEY = os.environ["GATEWAY_API_KEY"]
 
-# Limite de espera da app por chamada ao gateway, em segundos (ADR 0005). Cobre todas as
-# tentativas e pausas do gateway e fica abaixo dos 30 s da borda. Na F3 vale por lote.
+# Limite de espera da app por chamada ao gateway, em segundos (ADR 0005, revisado no ADR
+# 0006). É o deadline GLOBAL da cadeia inteira (primário, retry e fallback): uma só chamada
+# HTTP, então trocar de destino no gateway não reinicia o prazo. Fica abaixo dos 30 s da
+# borda. Na F3 vale por lote: 25 s cabem "primário travado (12 s) + equivalente (~10 s)".
 GATEWAY_CONNECT_TIMEOUT_SECONDS = 2.0
 GATEWAY_DEADLINE_SECONDS = {
     "ticket-classification": 14.0,
     "order-extraction": 14.0,
-    "topics-report": 14.0,
+    "topics-report": 25.0,
     "reply-suggestion": 25.0,
 }
 

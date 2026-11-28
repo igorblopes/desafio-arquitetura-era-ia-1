@@ -1,8 +1,13 @@
-"""Infraestrutura dos testes de resiliência (Passo 10, ADR 0005).
+"""Infraestrutura dos testes de resiliência (Passo 10, ADR 0005; revisada no Passo 11, ADR 0006).
 
 Integração real: aplicação, borda (porta 8000), gateway e provider-fake do docker compose.
 O modo de falha é estado global do provider, então a suíte roda em sequência (sem
 pytest-xdist) e cada teste começa e termina com o provider resetado.
+
+Desde o Passo 11 o gateway tem fallback: falhar só o modelo primário agora RECUPERA a
+feature. Para isolar timeout, retry e backoff, os testes que precisam do esgotamento põem os
+dois providers inteiros em falha (`set_all`). `calls(feature)` filtra pela tarefa da feature,
+porque uma cadeia órfã de um teste anterior pode registrar chamadas atrasadas.
 
 Variáveis de ambiente: HELPDESK_BASE_URL e PROVIDER_ADMIN_URL (as mesmas da caracterização).
 """
@@ -19,7 +24,7 @@ PROVIDER_URL = os.environ.get("PROVIDER_ADMIN_URL", "http://localhost:8090")
 TEXT = "Meu pedido #481516 não chegou e já passou do prazo, urgente"
 TICKET = {"ticket_id": "TK-00042", "text": TEXT}
 
-# feature -> (rota, corpo, provider e modelo físico que o gateway usa para ela)
+# feature -> (rota, corpo, provider e modelo físico do destino PRIMÁRIO da feature)
 FEATURES = {
     "F1": ("/tickets/classification", TICKET, "openai", "gpt-fake-large"),
     "F2": ("/tickets/reply-suggestion", TICKET, "anthropic", "claude-fake-large"),
@@ -27,6 +32,11 @@ FEATURES = {
            "claude-fake-large"),
     "F4": ("/tickets/extraction", TICKET, "openai", "gpt-fake-large"),
 }
+
+
+TASKS = {"F1": "classify", "F2": "suggest", "F3": "topics", "F4": "extract"}
+# destinos depois do primário na cadeia de fallback (ADR 0006): equivalente (+ mini na F1/F2)
+FALLBACK_DESTINATIONS = {"F1": 2, "F2": 2, "F3": 1, "F4": 1}
 
 
 class Stack:
@@ -43,10 +53,25 @@ class Stack:
             "/admin/failures", json={"provider": provider, "model": model, "mode": mode}
         ).raise_for_status()
 
-    def calls(self) -> list[dict]:
+    def set_all(self, mode: str) -> None:
+        """Os dois providers inteiros (large e mini) no mesmo modo: a cadeia toda falha."""
+        for provider in ("openai", "anthropic"):
+            self.provider.post(
+                "/admin/failures", json={"provider": provider, "mode": mode}
+            ).raise_for_status()
+
+    def calls(self, feature: str | None = None) -> list[dict]:
         body = self.provider.get("/admin/calls", params={"last": 50}).json()
         body = body["calls"] if isinstance(body, dict) else body
+        if feature is not None:
+            body = [c for c in body if c["task"] == TASKS[feature]]
         return sorted(body, key=lambda c: c["ts"])
+
+    def wait_calls(self, feature: str, count: int, limit: float) -> None:
+        """Espera uma cadeia órfã do gateway registrar `count` chamadas da feature."""
+        deadline = time.monotonic() + limit
+        while len(self.calls(feature)) < count and time.monotonic() < deadline:
+            time.sleep(0.5)
 
     def run(self, feature: str) -> tuple[httpx.Response, float]:
         route, body, _, _ = FEATURES[feature]

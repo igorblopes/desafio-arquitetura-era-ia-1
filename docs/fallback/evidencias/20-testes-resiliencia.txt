@@ -1,0 +1,42 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 34 items
+
+tests/resilience/test_backoff.py::test_error_500_waits_exponential_base_plus_jitter[F1] PASSED [  2%]
+tests/resilience/test_backoff.py::test_error_500_waits_exponential_base_plus_jitter[F2] PASSED [  5%]
+tests/resilience/test_backoff.py::test_error_429_is_not_retried_and_fails_over_without_waiting[F4] PASSED [  8%]
+tests/resilience/test_backoff.py::test_error_429_is_not_retried_and_fails_over_without_waiting[F3] PASSED [ 11%]
+tests/resilience/test_budget.py::test_every_capability_has_explicit_timeout_retry_policy_and_deadline PASSED [ 14%]
+tests/resilience/test_budget.py::test_deadline_covers_the_gateway_worst_case_and_stays_below_the_edge[ticket-classification] PASSED [ 17%]
+tests/resilience/test_budget.py::test_deadline_covers_the_gateway_worst_case_and_stays_below_the_edge[order-extraction] PASSED [ 20%]
+tests/resilience/test_budget.py::test_deadline_covers_the_gateway_worst_case_and_stays_below_the_edge[reply-suggestion] PASSED [ 23%]
+tests/resilience/test_budget.py::test_deadline_covers_the_gateway_worst_case_and_stays_below_the_edge[topics-report] PASSED [ 26%]
+tests/resilience/test_error_handling.py::test_invalid_input_never_reaches_the_provider PASSED [ 29%]
+tests/resilience/test_error_handling.py::test_provider_400_is_never_retried_and_becomes_502 PASSED [ 32%]
+tests/resilience/test_error_handling.py::test_context_error_recognized_by_the_gateway_does_not_fall_back PASSED [ 35%]
+tests/resilience/test_error_handling.py::test_error_body_does_not_leak_internals PASSED [ 38%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F1-error_500] PASSED [ 41%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F1-error_429] PASSED [ 44%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F2-error_500] PASSED [ 47%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F2-error_429] PASSED [ 50%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F3-error_500] PASSED [ 52%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F3-error_429] PASSED [ 55%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F4-error_500] PASSED [ 58%]
+tests/resilience/test_retry.py::test_persistent_failure_limits_attempts_per_destination[F4-error_429] PASSED [ 61%]
+tests/resilience/test_retry.py::test_transient_failure_is_recovered_by_retry_on_the_same_destination[F1] PASSED [ 64%]
+tests/resilience/test_retry.py::test_transient_failure_is_recovered_by_retry_on_the_same_destination[F4] PASSED [ 67%]
+tests/resilience/test_retry.py::test_transient_failure_is_recovered_by_retry_on_the_same_destination[F2] PASSED [ 70%]
+tests/resilience/test_timeout.py::test_hung_provider_returns_explicit_error_in_time[F1] PASSED [ 73%]
+tests/resilience/test_timeout.py::test_hung_provider_returns_explicit_error_in_time[F4] PASSED [ 76%]
+tests/resilience/test_timeout.py::test_hung_provider_returns_explicit_error_in_time[F2] PASSED [ 79%]
+tests/resilience/test_timeout.py::test_hung_provider_returns_explicit_error_in_time[F3] PASSED [ 82%]
+tests/resilience/test_timeout.py::test_slow_provider_beyond_attempt_timeout_fails_within_15s[F1-3] PASSED [ 85%]
+tests/resilience/test_timeout.py::test_slow_provider_beyond_attempt_timeout_fails_within_15s[F4-2] PASSED [ 88%]
+tests/resilience/test_timeout.py::test_normal_operation_is_not_interrupted_nor_retried[F1-3.0] PASSED [ 91%]
+tests/resilience/test_timeout.py::test_normal_operation_is_not_interrupted_nor_retried[F4-3.0] PASSED [ 94%]
+tests/resilience/test_timeout.py::test_normal_operation_is_not_interrupted_nor_retried[F2-20.0] PASSED [ 97%]
+tests/resilience/test_timeout.py::test_normal_operation_is_not_interrupted_nor_retried[F3-14.0] PASSED [100%]
+
+======================== 34 passed in 186.83s (0:03:06) ========================

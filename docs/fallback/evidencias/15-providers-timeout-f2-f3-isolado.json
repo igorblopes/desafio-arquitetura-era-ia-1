@@ -1,0 +1,113 @@
+[
+  {
+    "feature": "F2",
+    "cenario": "providers-timeout",
+    "falhas": [
+      {
+        "provider": "openai",
+        "model": null,
+        "mode": "timeout"
+      },
+      {
+        "provider": "anthropic",
+        "model": null,
+        "mode": "timeout"
+      }
+    ],
+    "http": 503,
+    "segundos": 25.041,
+    "corpo": {
+      "detail": "O modelo não respondeu dentro do prazo.",
+      "code": "model_timeout"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:59:37.910+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "suggest",
+        "status": 504,
+        "duration_ms": null,
+        "input_tokens": 19,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T00:59:57.921+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "suggest",
+        "status": 504,
+        "duration_ms": null,
+        "input_tokens": 19,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T01:00:17.928+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-mini",
+        "task": "suggest",
+        "status": 504,
+        "duration_ms": null,
+        "input_tokens": 19,
+        "output_tokens": null
+      }
+    ],
+    "sequencia": [
+      "claude-fake-large:504",
+      "gpt-fake-large:504",
+      "claude-fake-mini:504"
+    ],
+    "abertas_apos_espera": 3,
+    "custo_concluidas_usd": 0
+  },
+  {
+    "feature": "F3",
+    "cenario": "providers-timeout",
+    "falhas": [
+      {
+        "provider": "openai",
+        "model": null,
+        "mode": "timeout"
+      },
+      {
+        "provider": "anthropic",
+        "model": null,
+        "mode": "timeout"
+      }
+    ],
+    "http": 503,
+    "segundos": 24.075,
+    "corpo": {
+      "detail": "O modelo não respondeu dentro do prazo.",
+      "code": "model_timeout"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T01:00:33.207+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "task": "topics",
+        "status": 504,
+        "duration_ms": null,
+        "input_tokens": 6132,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T01:00:45.218+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "task": "topics",
+        "status": 504,
+        "duration_ms": null,
+        "input_tokens": 6132,
+        "output_tokens": null
+      }
+    ],
+    "sequencia": [
+      "claude-fake-large:504",
+      "gpt-fake-large:504"
+    ],
+    "abertas_apos_espera": 2,
+    "custo_concluidas_usd": 0
+  }
+]

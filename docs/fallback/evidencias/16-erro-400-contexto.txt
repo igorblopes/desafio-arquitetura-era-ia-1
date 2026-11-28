@@ -1,0 +1,18 @@
+Passo 11 - entrada acima do contexto (400) com fallback configurado. Corpo: {"ticket_id":"TK-1","text":"pedido atrasado " x 2500} (~10.004 tokens > 8.000)
+
+F1 (primario openai/gpt-fake-large), POST /tickets/classification
+  resposta: 502 {"detail":"A requisição ao modelo foi recusada.","code":"model_rejected"}
+  /admin/calls: gpt-fake-large 400 -> claude-fake-large 400 -> gpt-fake-mini 400
+  log do gateway: litellm.BadRequestError: OpenAIException - A entrada tem 10004 tokens e o contexto maximo do modelo e 8000 tokens.
+  => o LiteLLM 1.102.1 nao reconhece a mensagem em portugues do formato OpenAI como ContextWindowExceededError;
+     trata como BadRequestError generico, e o fallback regular roda para QUALQUER erro. context_window_fallbacks nao se aplica.
+
+F2 (primario anthropic/claude-fake-large), POST /tickets/reply-suggestion
+  resposta: 502 model_rejected
+  /admin/calls: claude-fake-large 400 (uma chamada)
+  log do gateway: litellm.ContextWindowExceededError ... "prompt is too long: 10004 tokens > 8000 maximum"
+  => mensagem reconhecida; context_window_fallbacks: [] (lista vazia) encerra a cadeia.
+
+Conclusao: o bloqueio de fallback em 400 funciona so quando o LiteLLM classifica o erro como estouro de contexto.
+Nos demais 4xx o gateway percorre a cadeia: as tentativas extras falham na hora (sem pausa, retries=0),
+nao geram tokens, e o status final continua 502 model_rejected. Limite: F1 3 chamadas, F4 2, F2/F3 1.

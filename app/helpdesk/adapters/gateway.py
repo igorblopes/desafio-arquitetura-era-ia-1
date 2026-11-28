@@ -26,7 +26,7 @@ class GatewayLanguageModel(LanguageModel):
         timeout = openai.Timeout(config.GATEWAY_DEADLINE_SECONDS[capability],
                                  connect=config.GATEWAY_CONNECT_TIMEOUT_SECONDS)
         try:
-            response = self._client.chat.completions.create(
+            raw = self._client.chat.completions.with_raw_response.create(
                 model=capability,
                 messages=[{"role": "user", "content": prompt}],
                 timeout=timeout,
@@ -37,7 +37,20 @@ class GatewayLanguageModel(LanguageModel):
                            capability, reason, type(error).__name__,
                            getattr(error, "status_code", None))
             raise LanguageModelError(capability, reason) from error
-        return response.choices[0].message.content
+        _log_fallback(capability, raw.headers)
+        return raw.parse().choices[0].message.content
+
+
+def _log_fallback(capability: str, headers) -> None:
+    """Registra quando o gateway respondeu por um destino que não é o primário (ADR 0006).
+
+    O destino é o nome do grupo que o gateway devolve; a app não interpreta nem conhece a
+    cadeia, só deixa o rastro para auditoria.
+    """
+    fallbacks = headers.get("x-litellm-attempted-fallbacks", "0")
+    if fallbacks not in ("", "0"):
+        logger.warning("capacidade atendida por fallback: capacidade=%s destino=%s saltos=%s",
+                       capability, headers.get("x-litellm-model-group"), fallbacks)
 
 
 def _reason(error: openai.APIError) -> str:

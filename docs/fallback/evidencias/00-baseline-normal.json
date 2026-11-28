@@ -1,0 +1,110 @@
+[
+  {
+    "modo": "normal",
+    "feature": "F1",
+    "quando": "2026-11-27T21:47:40-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 200,
+    "segundos": 1.103,
+    "resposta": "{'ticket_id': 'TK-00042', 'category': 'delivery', 'priority': 'high'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 1.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 11,
+    "custo_usd_saidas_concluidas": 0.000158,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:47:40.077+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 1076
+      }
+    ]
+  },
+  {
+    "modo": "normal",
+    "feature": "F4",
+    "quando": "2026-11-27T21:47:42-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 200,
+    "segundos": 1.25,
+    "resposta": "{'ticket_id': 'TK-00200', 'order_number': '#481516', 'product': 'fone de ouvido bluetooth'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 1.0,
+    "tokens_entrada": 18,
+    "tokens_saida": 17,
+    "custo_usd_saidas_concluidas": 0.000215,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:47:42.204+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 18,
+        "output_tokens": 17,
+        "duration_ms": 1227
+      }
+    ]
+  },
+  {
+    "modo": "normal",
+    "feature": "F2",
+    "quando": "2026-11-27T21:47:44-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 200,
+    "segundos": 15.974,
+    "resposta": "{'ticket_id': 'TK-00042', 'suggestion': 'Olá! Sinto muito pelo transtorno com a entrega do seu pedido.\\n\\nCaso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\\n\\nSe preferir, também é possível solicitar o cancelamento com reembolso integral.\\n\\nJá abri uma solicit",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 1.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 606,
+    "custo_usd_saidas_concluidas": 0.009147,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:47:44.474+00:00",
+        "model": "claude-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 606,
+        "duration_ms": 15951
+      }
+    ]
+  },
+  {
+    "modo": "normal",
+    "feature": "F3",
+    "quando": "2026-11-27T21:48:01-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 200,
+    "segundos": 9.849,
+    "resposta": "{'start': '2026-08-01', 'end': '2026-08-01', 'total_tickets': 137, 'topics': [{'topic': 'Problema no rastreio', 'count': 20, 'examples': ['TK-00001', 'TK-00007', 'TK-00008']}, {'topic': 'Pedido extraviado', 'count': 15, 'examples': ['TK-00005', 'TK-00006', 'TK-00009']}, {'topic': 'Troca por tamanho'",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 1.0,
+    "tokens_entrada": 6132,
+    "tokens_saida": 360,
+    "custo_usd_saidas_concluidas": 0.023796,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:48:01.486+00:00",
+        "model": "claude-fake-large",
+        "status": 200,
+        "input_tokens": 6132,
+        "output_tokens": 360,
+        "duration_ms": 9801
+      }
+    ]
+  }
+]

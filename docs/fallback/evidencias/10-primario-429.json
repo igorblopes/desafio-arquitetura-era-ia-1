@@ -1,0 +1,178 @@
+[
+  {
+    "feature": "F1",
+    "cenario": "primario-429",
+    "falhas": [
+      {
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "mode": "error_429"
+      }
+    ],
+    "http": 200,
+    "segundos": 1.1,
+    "corpo": {
+      "ticket_id": "TK-00042",
+      "category": "delivery",
+      "priority": "high"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:53:44.825+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "status": 429,
+        "duration_ms": 0,
+        "input_tokens": 19,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T00:53:44.833+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "status": 200,
+        "duration_ms": 1076,
+        "input_tokens": 19,
+        "output_tokens": 11
+      }
+    ],
+    "sequencia": [
+      "gpt-fake-large:429",
+      "claude-fake-large:200"
+    ],
+    "abertas_apos_espera": 0,
+    "custo_concluidas_usd": 0.000222
+  },
+  {
+    "feature": "F4",
+    "cenario": "primario-429",
+    "falhas": [
+      {
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "mode": "error_429"
+      }
+    ],
+    "http": 200,
+    "segundos": 1.244,
+    "corpo": {
+      "ticket_id": "TK-00200",
+      "order_number": "#481516",
+      "product": "fone de ouvido bluetooth"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:53:45.933+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "status": 429,
+        "duration_ms": 0,
+        "input_tokens": 18,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T00:53:45.941+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "status": 200,
+        "duration_ms": 1226,
+        "input_tokens": 18,
+        "output_tokens": 17
+      }
+    ],
+    "sequencia": [
+      "gpt-fake-large:429",
+      "claude-fake-large:200"
+    ],
+    "abertas_apos_espera": 0,
+    "custo_concluidas_usd": 0.000309
+  },
+  {
+    "feature": "F2",
+    "cenario": "primario-429",
+    "falhas": [
+      {
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "mode": "error_429"
+      }
+    ],
+    "http": 200,
+    "segundos": 15.97,
+    "corpo": {
+      "ticket_id": "TK-00042",
+      "suggestion": "<2424 caracteres>"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:53:47.187+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "status": 429,
+        "duration_ms": 0,
+        "input_tokens": 19,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T00:53:47.194+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "duration_ms": 15951,
+        "input_tokens": 19,
+        "output_tokens": 606
+      }
+    ],
+    "sequencia": [
+      "claude-fake-large:429",
+      "gpt-fake-large:200"
+    ],
+    "abertas_apos_espera": 0,
+    "custo_concluidas_usd": 0.006108
+  },
+  {
+    "feature": "F3",
+    "cenario": "primario-429",
+    "falhas": [
+      {
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "mode": "error_429"
+      }
+    ],
+    "http": 200,
+    "segundos": 9.857,
+    "corpo": {
+      "start": "2026-08-01",
+      "end": "2026-08-01",
+      "total_tickets": 137,
+      "topics": "<15 temas, soma 137>"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:54:03.232+00:00",
+        "provider": "anthropic",
+        "model": "claude-fake-large",
+        "status": 429,
+        "duration_ms": 1,
+        "input_tokens": 6132,
+        "output_tokens": null
+      },
+      {
+        "ts": "2026-11-28T00:54:03.240+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "duration_ms": 9801,
+        "input_tokens": 6132,
+        "output_tokens": 360
+      }
+    ],
+    "sequencia": [
+      "claude-fake-large:429",
+      "gpt-fake-large:200"
+    ],
+    "abertas_apos_espera": 0,
+    "custo_concluidas_usd": 0.01893
+  }
+]

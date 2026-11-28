@@ -1,0 +1,30 @@
+[
+  {
+    "feature": "F1",
+    "cenario": "normal",
+    "falhas": [],
+    "http": 200,
+    "segundos": 1.351,
+    "corpo": {
+      "ticket_id": "TK-00042",
+      "category": "delivery",
+      "priority": "high"
+    },
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:49:47.420+00:00",
+        "provider": "openai",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "duration_ms": 1076,
+        "input_tokens": 19,
+        "output_tokens": 11
+      }
+    ],
+    "sequencia": [
+      "gpt-fake-large:200"
+    ],
+    "abertas_apos_espera": 0,
+    "custo_concluidas_usd": 0.000158
+  }
+]

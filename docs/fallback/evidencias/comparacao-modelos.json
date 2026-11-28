@@ -1,0 +1,376 @@
+{
+  "amostra": "1 a cada 5 tickets de data/tickets.jsonl (1000 tickets)",
+  "classify": {
+    "casos": 1000,
+    "gpt-fake-large": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "prioridades": {
+        "medium": 661,
+        "high": 209,
+        "low": 130
+      },
+      "categorias": {
+        "delivery": 311,
+        "other": 112,
+        "payment": 240,
+        "product_defect": 172,
+        "exchange_return": 165
+      }
+    },
+    "claude-fake-large": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "prioridades": {
+        "medium": 661,
+        "high": 209,
+        "low": 130
+      },
+      "categorias": {
+        "delivery": 311,
+        "other": 112,
+        "payment": 240,
+        "product_defect": 172,
+        "exchange_return": 165
+      }
+    },
+    "gpt-fake-mini": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "prioridades": {
+        "medium": 661,
+        "high": 209,
+        "low": 130
+      },
+      "categorias": {
+        "delivery": 311,
+        "other": 112,
+        "payment": 240,
+        "product_defect": 172,
+        "exchange_return": 165
+      }
+    },
+    "claude-fake-mini": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "prioridades": {
+        "medium": 661,
+        "high": 209,
+        "low": 130
+      },
+      "categorias": {
+        "delivery": 311,
+        "other": 112,
+        "payment": 240,
+        "product_defect": 172,
+        "exchange_return": 165
+      }
+    }
+  },
+  "extract": {
+    "casos": 1000,
+    "gpt-fake-large": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "produto_nulo_quando_large_extraiu": 0
+    },
+    "claude-fake-large": {
+      "iguais_ao_gpt_large": 1000,
+      "diferentes": 0,
+      "diferencas_por_campo": {},
+      "tipos_mais_comuns": [],
+      "exemplos": [],
+      "produto_nulo_quando_large_extraiu": 0
+    },
+    "gpt-fake-mini": {
+      "iguais_ao_gpt_large": 684,
+      "diferentes": 316,
+      "diferencas_por_campo": {
+        "product": 192,
+        "order_number": 150
+      },
+      "tipos_mais_comuns": [
+        [
+          "product: 'tapete de yoga' -> None",
+          9
+        ],
+        [
+          "product: 'calça jeans' -> None",
+          9
+        ],
+        [
+          "product: 'cadeira gamer' -> None",
+          8
+        ],
+        [
+          "product: 'carregador turbo' -> None",
+          7
+        ],
+        [
+          "product: 'secador de cabelo' -> None",
+          7
+        ],
+        [
+          "product: 'notebook 14 polegadas' -> None",
+          7
+        ],
+        [
+          "product: 'vestido midi' -> None",
+          6
+        ],
+        [
+          "product: 'teclado mecânico' -> None",
+          6
+        ],
+        [
+          "product: 'webcam full hd' -> None",
+          6
+        ],
+        [
+          "product: 'cortina blackout' -> None",
+          6
+        ]
+      ],
+      "exemplos": [
+        {
+          "ticket": "TK-00031",
+          "texto": "Paguei o boleto de o edredom casal e o pagamento não foi confirmado. Sou cliente da loja há bastante tempo. Obrigado desde já. Prefiro contato por e-mail.",
+          "large": {
+            "order_number": null,
+            "product": "edredom casal"
+          },
+          "modelo": {
+            "order_number": null,
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00036",
+          "texto": "Tenho aqui a nota fiscal 927477. Recebi o tapete de yoga e o aparelho não liga, pedido nº 389511. É só uma dúvida. Prefiro contato por e-mail. Podem me ajudar, ",
+          "large": {
+            "order_number": "#389511",
+            "product": "tapete de yoga"
+          },
+          "modelo": {
+            "order_number": "#927477",
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00076",
+          "texto": "Tenho aqui a nota fiscal 974329. O item do pedido #130531 veio com defeito de fabricação. Prefiro contato por e-mail. Já tentei resolver pelo chat, sem sucesso.",
+          "large": {
+            "order_number": "#130531",
+            "product": null
+          },
+          "modelo": {
+            "order_number": "#974329",
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00081",
+          "texto": "O vestido midi parou de funcionar depois de dois dias de uso, pedido. Obrigado desde já. Aguardo retorno. Sou cliente da loja há bastante tempo. Moro em Campina",
+          "large": {
+            "order_number": null,
+            "product": "vestido midi"
+          },
+          "modelo": {
+            "order_number": null,
+            "product": null
+          }
+        }
+      ],
+      "produto_nulo_quando_large_extraiu": 192
+    },
+    "claude-fake-mini": {
+      "iguais_ao_gpt_large": 684,
+      "diferentes": 316,
+      "diferencas_por_campo": {
+        "product": 192,
+        "order_number": 150
+      },
+      "tipos_mais_comuns": [
+        [
+          "product: 'tapete de yoga' -> None",
+          9
+        ],
+        [
+          "product: 'calça jeans' -> None",
+          9
+        ],
+        [
+          "product: 'cadeira gamer' -> None",
+          8
+        ],
+        [
+          "product: 'carregador turbo' -> None",
+          7
+        ],
+        [
+          "product: 'secador de cabelo' -> None",
+          7
+        ],
+        [
+          "product: 'notebook 14 polegadas' -> None",
+          7
+        ],
+        [
+          "product: 'vestido midi' -> None",
+          6
+        ],
+        [
+          "product: 'teclado mecânico' -> None",
+          6
+        ],
+        [
+          "product: 'webcam full hd' -> None",
+          6
+        ],
+        [
+          "product: 'cortina blackout' -> None",
+          6
+        ]
+      ],
+      "exemplos": [
+        {
+          "ticket": "TK-00031",
+          "texto": "Paguei o boleto de o edredom casal e o pagamento não foi confirmado. Sou cliente da loja há bastante tempo. Obrigado desde já. Prefiro contato por e-mail.",
+          "large": {
+            "order_number": null,
+            "product": "edredom casal"
+          },
+          "modelo": {
+            "order_number": null,
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00036",
+          "texto": "Tenho aqui a nota fiscal 927477. Recebi o tapete de yoga e o aparelho não liga, pedido nº 389511. É só uma dúvida. Prefiro contato por e-mail. Podem me ajudar, ",
+          "large": {
+            "order_number": "#389511",
+            "product": "tapete de yoga"
+          },
+          "modelo": {
+            "order_number": "#927477",
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00076",
+          "texto": "Tenho aqui a nota fiscal 974329. O item do pedido #130531 veio com defeito de fabricação. Prefiro contato por e-mail. Já tentei resolver pelo chat, sem sucesso.",
+          "large": {
+            "order_number": "#130531",
+            "product": null
+          },
+          "modelo": {
+            "order_number": "#974329",
+            "product": null
+          }
+        },
+        {
+          "ticket": "TK-00081",
+          "texto": "O vestido midi parou de funcionar depois de dois dias de uso, pedido. Obrigado desde já. Aguardo retorno. Sou cliente da loja há bastante tempo. Moro em Campina",
+          "large": {
+            "order_number": null,
+            "product": "vestido midi"
+          },
+          "modelo": {
+            "order_number": null,
+            "product": null
+          }
+        }
+      ],
+      "produto_nulo_quando_large_extraiu": 192
+    },
+    "large_com_produto": 192,
+    "large_com_pedido": 615
+  },
+  "topics": {
+    "lotes": 17,
+    "dias": [
+      "2026-08-01",
+      "2026-08-02",
+      "2026-08-05",
+      "2026-08-09",
+      "2026-08-13",
+      "2026-08-17",
+      "2026-08-21",
+      "2026-08-25",
+      "2026-08-29",
+      "2026-08-31"
+    ],
+    "somas_batem_com_tickets_no_large": true,
+    "gpt-fake-large": {
+      "lotes_iguais_ao_gpt_large": 17,
+      "lotes_diferentes": 0,
+      "detalhes": []
+    },
+    "claude-fake-large": {
+      "lotes_iguais_ao_gpt_large": 17,
+      "lotes_diferentes": 0,
+      "detalhes": []
+    },
+    "gpt-fake-mini": {
+      "lotes_iguais_ao_gpt_large": 17,
+      "lotes_diferentes": 0,
+      "detalhes": []
+    },
+    "claude-fake-mini": {
+      "lotes_iguais_ao_gpt_large": 17,
+      "lotes_diferentes": 0,
+      "detalhes": []
+    }
+  },
+  "suggest": {
+    "casos": 24,
+    "gpt-fake-large": {
+      "identicos_ao_gpt_large": 24,
+      "caracteres_medios": 2433,
+      "tickets_com_pedido": 4,
+      "cita_o_numero_do_pedido": 0,
+      "em_portugues_sem_tarefa_desconhecida": 24
+    },
+    "claude-fake-large": {
+      "identicos_ao_gpt_large": 24,
+      "caracteres_medios": 2433,
+      "tickets_com_pedido": 4,
+      "cita_o_numero_do_pedido": 0,
+      "em_portugues_sem_tarefa_desconhecida": 24
+    },
+    "gpt-fake-mini": {
+      "identicos_ao_gpt_large": 0,
+      "caracteres_medios": 1068,
+      "tickets_com_pedido": 4,
+      "cita_o_numero_do_pedido": 0,
+      "em_portugues_sem_tarefa_desconhecida": 24
+    },
+    "claude-fake-mini": {
+      "identicos_ao_gpt_large": 0,
+      "caracteres_medios": 1068,
+      "tickets_com_pedido": 4,
+      "cita_o_numero_do_pedido": 0,
+      "em_portugues_sem_tarefa_desconhecida": 24
+    },
+    "exemplo_large": "Olá! Sinto muito pelo transtorno com a entrega do seu pedido.\n\nJá abri uma solicitação de verificação junto à transportadora responsável pelo envio.\n\nO prazo de retorno da transportadora costuma ser de até dois dias úteis.\n\nAssim que tivermos a posição atualizada, você recebe um aviso por e-mail.\n\nCaso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\n\nSe preferir, também é possível solicitar o cancelamento com reembolso integral.\n\nReforçando o ponto 1: já abri uma solicitação de verificação junto à transportadora responsável pelo envio.\n\nReforçando o ponto 2: o prazo de retorno da transportadora costuma ser de até dois dias úteis.\n\nReforçando o ponto 3: ass",
+    "exemplo_gpt_mini": "Olá! Sinto muito pelo transtorno com a entrega do seu pedido.\n\nAssim que tivermos a posição atualizada, você recebe um aviso por e-mail.\n\nCaso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\n\nSe preferir, também é possível solicitar o cancelamento com reembolso integral.\n\nJá abri uma solicitação de verificação junto à transportadora responsável pelo envio.\n\nO prazo de retorno da transportadora costuma ser de até dois dias úteis.\n\nReforçando o ponto 1: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.\n\nReforçando o ponto 2: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\n\nReforçando o ponto 3:",
+    "exemplo_claude_mini": "Olá! Sinto muito pelo transtorno com a entrega do seu pedido.\n\nAssim que tivermos a posição atualizada, você recebe um aviso por e-mail.\n\nCaso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\n\nSe preferir, também é possível solicitar o cancelamento com reembolso integral.\n\nJá abri uma solicitação de verificação junto à transportadora responsável pelo envio.\n\nO prazo de retorno da transportadora costuma ser de até dois dias úteis.\n\nReforçando o ponto 1: assim que tivermos a posição atualizada, você recebe um aviso por e-mail.\n\nReforçando o ponto 2: caso o pedido seja considerado extraviado, fazemos o reenvio sem nenhum custo adicional.\n\nReforçando o ponto 3:"
+  },
+  "duracao_s": 151.9
+}
