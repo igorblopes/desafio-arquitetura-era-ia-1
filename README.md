@@ -3,7 +3,7 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Tabela de capacidades**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. A tabela de fallback e o roteiro de governança entram nos próximos passos.
+> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Tabela de capacidades**, **Política de resiliência**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. A tabela de fallback e o roteiro de governança entram nos próximos passos.
 
 ## Visão geral
 
@@ -29,12 +29,12 @@ flowchart LR
 
 | Já implementado | Ainda pendente (não existe nesta versão) |
 |---|---|
-| comportamento externo da v1 preservado (32 testes, contratos HTTP idênticos) | timeout explícito, retry e backoff decididos (Passo 10) |
-| todas as chamadas pelo gateway, com capacidades lógicas | fallback e modelo fraco por capacidade (Passo 11) |
-| troca de modelo só na configuração do gateway | chave por consumidor, orçamento e limites (Passo 12) |
-| credenciais dos providers fora da aplicação | streaming da sugestão (Passo 14) e relatório mensal assíncrono (Passo 15) |
+| contratos de sucesso da v1 preservados (32 testes, OpenAPI idêntico) | fallback e modelo fraco por capacidade (Passo 11) |
+| todas as chamadas pelo gateway, com capacidades lógicas | chave por consumidor, orçamento e limites (Passo 12) |
+| troca de modelo só na configuração do gateway | streaming da sugestão (Passo 14) |
+| credenciais dos providers fora da aplicação; timeout, retry limitado e backoff ([ADR 0005](docs/adr/0005-resilience-policy.md)) | relatório mensal assíncrono (Passo 15) |
 
-A aplicação **não** tem fallback nem resiliência: com um provider fora do ar, a feature correspondente falha; com o gateway fora do ar, as quatro falham. Detalhes do passo em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+A aplicação **não** tem fallback: com um provider fora do ar, a feature correspondente falha de forma explícita e em tempo limitado; com o gateway fora do ar, as quatro falham. Detalhes do passo em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Como rodar
 
@@ -154,18 +154,46 @@ python metrics/measure.py --source ../helpdesk-v1/app/helpdesk --name v1-coupled
 
 Saída: 0 sucesso, 1 arquivo ilegível ou com erro de sintaxe (nada é gravado), 2 argumentos inválidos. Sem Python no host: `docker run --rm -v "${PWD}:/w" -w /w python:3.12-slim sh -c "pip install -q -r metrics/requirements.txt && python metrics/measure.py --source app/helpdesk --name v2-decoupled"`.
 
+### 6. Testar a resiliência (Passo 10)
+
+Pré-requisito: o ambiente da seção 1 no ar. A suíte liga modos de falha no provider-fake, roda em sequência (não use paralelismo nem rode a caracterização ao mesmo tempo) e reseta o provider antes e depois de cada teste. Leva cerca de 3 min.
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1   -e HELPDESK_BASE_URL=http://host.docker.internal:8000   -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090   python:3.12-slim sh -c "pip install -q -r tests/resilience/requirements.txt && python -m pytest tests/resilience -v -p no:cacheprovider"
+```
+
+Experimentos manuais (Python no host):
+
+```bash
+python docs/resiliencia/sondas_resiliencia.py error_500            # normal | error_429 | slow | timeout
+python docs/resiliencia/experimentos_extra.py recuperacao
+curl -s -X POST localhost:8090/admin/failures -H "Content-Type: application/json"   -d '{"provider": "openai", "model": "gpt-fake-large", "mode": "error_500"}'
+curl -s "localhost:8090/admin/calls?last=10"                       # evidência das tentativas
+curl -s -X POST localhost:8090/admin/reset                         # sempre restaurar no fim
+```
+
 ## Tabela de capacidades
 
 A aplicação pede **capacidades lógicas**; o gateway decide qual modelo físico atende ([ADR 0004](docs/adr/0004-logical-capabilities.md)). Na `v2-decoupled`, todas usam o modelo `large` que a v1 já usava, e as quatro são usadas pela aplicação.
 
-| Capacidade lógica | Feature | Modelo primário | Fallback técnico | Modelo fraco | Tentativas máximas |
-|---|---|---|---|---|---|
-| `ticket-classification` | F1 classificação | `openai/gpt-fake-large` | pendente (Passo 11) | pendente (Passo 11) | não configurado (Passo 10)¹ |
-| `reply-suggestion` | F2 sugestão | `anthropic/claude-fake-large` (`max_tokens` 2000) | pendente (Passo 11) | pendente (Passo 11) | não configurado (Passo 10)¹ |
-| `topics-report` | F3 relatório | `anthropic/claude-fake-large` (`max_tokens` 2000) | pendente (Passo 11) | pendente (Passo 11) | não configurado (Passo 10)¹ |
-| `order-extraction` | F4 extração | `openai/gpt-fake-large` | pendente (Passo 11) | pendente (Passo 11) | não configurado (Passo 10)¹ |
+| Capacidade lógica | Feature | Modelo primário | Timeout por tentativa | Tentativas totais no primário | Limite da app | Fallback técnico | Modelo fraco |
+|---|---|---|---|---|---|---|---|
+| `ticket-classification` | F1 classificação | `openai/gpt-fake-large` | 3 s | 2 (1 retry) | 14 s | pendente (Passo 11) | pendente (Passo 11) |
+| `reply-suggestion` | F2 sugestão | `anthropic/claude-fake-large` (`max_tokens` 2000) | 20 s | 2; 1 em timeout | 25 s | pendente (Passo 11) | pendente (Passo 11) |
+| `topics-report` | F3 relatório | `anthropic/claude-fake-large` (`max_tokens` 2000) | 12 s por lote | 2; 1 em timeout | 14 s por lote | pendente (Passo 11) | pendente (Passo 11) |
+| `order-extraction` | F4 extração | `openai/gpt-fake-large` | 3 s | 2 (1 retry) | 14 s | pendente (Passo 11) | pendente (Passo 11) |
 
-¹ Nenhuma política foi decidida. Observado: o adapter não retenta (`max_retries=0`) e o LiteLLM retenta 2 vezes por padrão em 5xx, com backoff. Sob falha persistente, cada feature faz 3 chamadas ao provider e responde 500 em 4,0 a 4,6 s (na v1, 1,2 a 1,4 s) ([evidência](docs/v2/evidencias/16-falha-depois.txt)).
+## Política de resiliência
+
+| Item | Política ([ADR 0005](docs/adr/0005-resilience-policy.md)) |
+|---|---|
+| Onde fica | gateway (`gateway/config.yaml`): timeout por tentativa, retry e backoff. App: limite externo (`config.py`), tradução do erro. SDK da app com `max_retries=0` |
+| Repete | `429`, `5xx`, falha de conexão; timeout só em F1 e F4 |
+| Não repete | `400`, `401`, `403`, `404`, contexto excedido, política de conteúdo |
+| Backoff | LiteLLM: 0,5 s × 2ⁿ + jitter de 0 a 0,75 s; respeita `Retry-After` até 60 s |
+| Esgotou | `503` (`model_timeout`, `model_rate_limited`, `model_unavailable`) ou `502` (`model_rejected`), corpo `{"detail", "code"}` |
+
+Resultados: sob `error_500` e `error_429` há exatamente 2 chamadas ao provider (antes 3); com o provider travado, F1 responde `503` em 8,6 s (antes `504` da borda aos 30 s). Limitações: a F2 travada leva 20 s; `slow` agora é erro na F1 e F4; a F3 do mês continua passando da borda. Detalhes em [docs/resiliencia/relatorio-resiliencia.md](docs/resiliencia/relatorio-resiliencia.md).
 
 ## Fluxos
 
@@ -298,8 +326,9 @@ Medida com o mesmo comando sobre o código do Passo 09 e reproduzida com CSV id�
 | [0002](docs/adr/0002-contracts-and-dependency-inversion.md) | features dependem de um contrato de IA; só a composição conhece o adapter | software | aceita (as quatro features) |
 | [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1`; toda a IA passa por ele | solução | aceita (infraestrutura e as quatro features) |
 | [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita (quatro capacidades) |
+| [0005](docs/adr/0005-resilience-policy.md) | timeout, retry limitado e backoff no gateway; limite externo e erros na app | solução | aceita |
 
-Fallback, governança e modos de execução terão ADRs próprios quando forem decididos (Passos 10 a 15). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+Fallback, governança e modos de execução terão ADRs próprios quando forem decididos (Passos 11 a 15). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Diagnóstico da v1
 

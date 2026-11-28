@@ -1,0 +1,8 @@
+timeout    F1  HTTP 503    8.587s  tentativas=2 abertas=2 intervalos=[4.136]
+timeout    F4  HTTP 503    7.632s  tentativas=2 abertas=2 intervalos=[3.524]
+timeout    F2  HTTP 503   20.026s  tentativas=1 abertas=1 intervalos=[]
+timeout    F3  HTTP 503   12.064s  tentativas=1 abertas=1 intervalos=[]
+slow       F1  HTTP 503    8.369s  tentativas=2 abertas=0 intervalos=[3.738]
+slow       F4  HTTP 503    8.001s  tentativas=2 abertas=0 intervalos=[3.598]
+slow       F2  HTTP 503   20.027s  tentativas=1 abertas=1 intervalos=[]
+slow       F3  HTTP 503   12.266s  tentativas=1 abertas=1 intervalos=[]

@@ -1,0 +1,76 @@
+[
+  {
+    "modo": "slow",
+    "feature": "F1",
+    "quando": "2026-11-27T21:16:20-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 503,
+    "segundos": 8.369,
+    "resposta": "{'detail': 'O modelo não respondeu dentro do prazo.', 'code': 'model_timeout'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      3.738
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 12.0,
+    "tokens_entrada": 38,
+    "tokens_saida": 22,
+    "custo_usd_saidas_concluidas": 0.000315,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:16:20.511+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 10752
+      },
+      {
+        "ts": "2026-11-28T00:16:24.249+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 10751
+      }
+    ]
+  },
+  {
+    "modo": "slow",
+    "feature": "F4",
+    "quando": "2026-11-27T21:16:40-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 503,
+    "segundos": 8.001,
+    "resposta": "{'detail': 'O modelo não respondeu dentro do prazo.', 'code': 'model_timeout'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      3.598
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 12.0,
+    "tokens_entrada": 36,
+    "tokens_saida": 34,
+    "custo_usd_saidas_concluidas": 0.00043,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:16:40.919+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 18,
+        "output_tokens": 17,
+        "duration_ms": 12251
+      },
+      {
+        "ts": "2026-11-28T00:16:44.517+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 18,
+        "output_tokens": 17,
+        "duration_ms": 12251
+      }
+    ]
+  }
+]

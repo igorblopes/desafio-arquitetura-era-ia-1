@@ -1,0 +1,56 @@
+[
+  {
+    "modo": "timeout",
+    "feature": "F1",
+    "quando": "2026-11-27T21:12:06-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 503,
+    "segundos": 3.046,
+    "resposta": "{'detail': 'O modelo não respondeu dentro do prazo.', 'code': 'model_timeout'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 3.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 4.8e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:12:06.453+00:00",
+        "model": "gpt-fake-large",
+        "status": 504,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  },
+  {
+    "modo": "timeout",
+    "feature": "F2",
+    "quando": "2026-11-27T21:12:12-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 503,
+    "segundos": 20.027,
+    "resposta": "{'detail': 'O modelo não respondeu dentro do prazo.', 'code': 'model_timeout'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 3.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 5.7e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:12:12.511+00:00",
+        "model": "claude-fake-large",
+        "status": 504,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,5 @@
+timeout    F1  HTTP 503    3.046s  tentativas=1 abertas=1 intervalos=[]
+timeout    F2  HTTP 503   20.027s  tentativas=1 abertas=1 intervalos=[]
+gateway pausado (F1 e F2):
+{"detail":"O modelo não respondeu dentro do prazo.","code":"model_timeout"}  -> HTTP 503 14.018184s
+{"detail":"O modelo não respondeu dentro do prazo.","code":"model_timeout"}  -> HTTP 503 25.026974s

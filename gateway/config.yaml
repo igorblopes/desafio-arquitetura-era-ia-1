@@ -8,7 +8,8 @@
 # api_key      = lida do ambiente do container do gateway (os.environ/...), nunca escrita aqui.
 #
 # v2-decoupled: um destino por capacidade, sempre o modelo "large" que a v1 usava.
-# Fallback, retries, budget e rate limit ainda não estão configurados (Passos 10 a 12).
+# Passo 10: timeout por tentativa em cada destino e retry em router_settings (ADR 0005).
+# Fallback (Passo 11), budget e rate limit (Passo 12) ainda não estão configurados.
 
 model_list:
   - model_name: ticket-classification          # F1
@@ -16,18 +17,21 @@ model_list:
       model: openai/gpt-fake-large
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
+      timeout: 3                               # por tentativa; normal ~1,1 s
 
   - model_name: order-extraction               # F4
     litellm_params:
       model: openai/gpt-fake-large
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
+      timeout: 3                               # por tentativa; normal ~1,2 s
 
   - model_name: reply-suggestion               # F2
     litellm_params:
       model: anthropic/claude-fake-large
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
+      timeout: 20                              # por tentativa; normal até ~16,2 s
       max_tokens: 2000                         # mesmo limite que a v1 envia (config.MAX_OUTPUT_TOKENS)
 
   - model_name: topics-report                  # F3
@@ -35,7 +39,36 @@ model_list:
       model: anthropic/claude-fake-large
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
+      timeout: 12                              # por tentativa (um lote); normal até ~9,9 s
       max_tokens: 2000
+
+# Retentativas e backoff (ADR 0005). O gateway é o ÚNICO dono: o SDK da app usa
+# max_retries=0 e o LiteLLM zera o do SDK do provider nas chamadas do router.
+# Backoff do LiteLLM v1.102.1 (não configurável por capacidade): 0,5 s x 2^n + jitter de
+# 0 a 0,75 s; com Retry-After entre 1 e 60 s, espera o valor pedido + jitter. A versão
+# também faz uma pausa depois da última tentativa, que entra no orçamento.
+router_settings:
+  num_retries: 1                     # retentativas adicionais (2 tentativas no total)
+  disable_cooldowns: true            # sem tirar destino de rotação (circuit breaker fora do escopo)
+  model_group_retry_policy:
+    ticket-classification: &curta    # F1: resposta curta, vale repetir um timeout
+      TimeoutErrorRetries: 1
+      RateLimitErrorRetries: 1
+      InternalServerErrorRetries: 1
+      ServiceUnavailableErrorRetries: 1
+      BadRequestErrorRetries: 0
+      AuthenticationErrorRetries: 0
+      ContentPolicyViolationErrorRetries: 0
+    order-extraction: *curta         # F4
+    reply-suggestion: &longa         # F2: geração longa, repetir um timeout não cabe no prazo
+      TimeoutErrorRetries: 0
+      RateLimitErrorRetries: 1
+      InternalServerErrorRetries: 1
+      ServiceUnavailableErrorRetries: 1
+      BadRequestErrorRetries: 0
+      AuthenticationErrorRetries: 0
+      ContentPolicyViolationErrorRetries: 0
+    topics-report: *longa            # F3
 
 general_settings:
   # Autenticação própria do gateway. Sem banco de dados, a master key é a única chave

@@ -1,0 +1,32 @@
+main                           0   7  1.00  0.00  0.00  0/0      -
+ports                          6   0  0.00  0.50  0.50  1/2      -
+report                         1   4  0.80  0.00  0.20  0/0      -
+schemas                        5   0  0.00  0.00  1.00  0/7      SIM
+suggestion                     1   2  0.67  0.00  0.33  0/0      -
+tickets                        1   1  0.50  0.00  0.50  0/0      -
+
+arestas (20):
+  adapters.gateway -> config
+  adapters.gateway -> ports
+  classification -> ports
+  classification -> schemas
+  extraction -> ports
+  extraction -> schemas
+  main -> adapters.gateway
+  main -> classification
+  main -> extraction
+  main -> ports
+  main -> report
+  main -> schemas
+  main -> suggestion
+  report -> config
+  report -> ports
+  report -> schemas
+  report -> tickets
+  suggestion -> ports
+  suggestion -> schemas
+  tickets -> config
+soma Ca = 20, soma Ce = 20 (ok)
+
+CSV: docs/resiliencia/metricas/resilience-step-10.csv
+PNG: docs/resiliencia/metricas/resilience-step-10.png

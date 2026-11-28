@@ -1,0 +1,29 @@
+[
+  {
+    "modo": "timeout",
+    "feature": "F2",
+    "quando": "2026-11-27T21:10:43-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 500,
+    "segundos": 20.026,
+    "resposta": "Internal Server Error",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 3.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 5.7e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:10:43.008+00:00",
+        "model": "claude-fake-large",
+        "status": 504,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  }
+]

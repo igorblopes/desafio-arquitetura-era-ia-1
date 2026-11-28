@@ -1,0 +1,29 @@
+[
+  {
+    "modo": "timeout",
+    "feature": "F1",
+    "quando": "2026-11-27T21:07:46-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 504,
+    "segundos": 30.003,
+    "resposta": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.27.5</center>\r\n</body>\r\n</html>\r\n",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 5.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 4.8e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:07:47.278+00:00",
+        "model": "gpt-fake-large",
+        "status": 504,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  }
+]

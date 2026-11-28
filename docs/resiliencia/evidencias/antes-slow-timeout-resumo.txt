@@ -1,0 +1,8 @@
+slow       F1  HTTP 200   10.778s  tentativas=1 abertas=0 intervalos=[]
+slow       F4  HTTP 200   12.276s  tentativas=1 abertas=0 intervalos=[]
+slow       F2  HTTP 504   30.031s  tentativas=1 abertas=1 intervalos=[]
+slow       F3  HTTP 504   30.031s  tentativas=1 abertas=1 intervalos=[]
+timeout    F1  HTTP 504   30.003s  tentativas=1 abertas=1 intervalos=[]
+edge-1  | 2026/11/28 00:08:16 [error] 23#23: *131 upstream timed out (110: Operation timed out) while reading response header from upstream, client: 172.18.0.1, server: , request: "POST /tickets/class
+timeout    F2  HTTP 504   30.031s  tentativas=1 abertas=1 intervalos=[]
+edge-1  | 2026/11/28 00:09:02 [error] 23#23: *133 upstream timed out (110: Operation timed out) while reading response header from upstream, client: 172.18.0.1, server: , request: "POST /tickets/reply

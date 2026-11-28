@@ -1,0 +1,6 @@
+entrada inválida na API do helpdesk           HTTP 422   0.003s  chamadas=0
+entrada maior que o contexto (400 do provider) HTTP 502   0.307s  chamadas=1
+chave inválida no gateway (direto no gateway): HTTP 400 0.003989s chamadas=0
+capacidade inexistente (direto no gateway): HTTP 400 0.012010s chamadas=0
+chave do provider errada no gateway: {"detail":"A requisição ao modelo foi recusada.","code":"model_rejected"} HTTP 502 0.755536s chamadas=1
+chave do gateway errada na app: {"detail":"A requisição ao modelo foi recusada.","code":"model_rejected"} HTTP 502 0.099066s chamadas=0

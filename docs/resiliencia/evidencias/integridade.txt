@@ -1,0 +1,8 @@
+diff protegidos exit=0 (vazio acima = intacto)
+80283055f02175a84c8b6bc62dacf81964ad15f0
+b637c5ae2036642c0eaffa985880691a6c9aed66
+grep modelos: 1
+grep chaves: 1
+app/helpdesk/adapters/gateway.py:3:import openai
+app/helpdesk/adapters/gateway.py:4:from openai import OpenAI
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}

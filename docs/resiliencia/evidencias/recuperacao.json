@@ -1,0 +1,42 @@
+[
+  {
+    "falha": "error_500",
+    "feature": "F1",
+    "status": 200,
+    "segundos": 2.158,
+    "status_no_provider": [
+      500,
+      200
+    ]
+  },
+  {
+    "falha": "error_429",
+    "feature": "F4",
+    "status": 200,
+    "segundos": 3.996,
+    "status_no_provider": [
+      429,
+      200
+    ]
+  },
+  {
+    "falha": "timeout",
+    "feature": "F1",
+    "status": 200,
+    "segundos": 4.966,
+    "status_no_provider": [
+      504,
+      200
+    ]
+  },
+  {
+    "falha": "error_500",
+    "feature": "F2",
+    "status": 200,
+    "segundos": 16.91,
+    "status_no_provider": [
+      500,
+      200
+    ]
+  }
+]

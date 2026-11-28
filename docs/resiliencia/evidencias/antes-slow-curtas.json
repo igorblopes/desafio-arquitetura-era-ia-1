@@ -1,0 +1,56 @@
+[
+  {
+    "modo": "slow",
+    "feature": "F1",
+    "quando": "2026-11-27T21:05:43-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 200,
+    "segundos": 10.778,
+    "resposta": "{'ticket_id': 'TK-00042', 'category': 'delivery', 'priority': 'high'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 11,
+    "custo_usd_saidas_concluidas": 0.000158,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:05:43.613+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 10751
+      }
+    ]
+  },
+  {
+    "modo": "slow",
+    "feature": "F4",
+    "quando": "2026-11-27T21:05:56-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 200,
+    "segundos": 12.276,
+    "resposta": "{'ticket_id': 'TK-00200', 'order_number': '#481516', 'product': 'fone de ouvido bluetooth'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 18,
+    "tokens_saida": 17,
+    "custo_usd_saidas_concluidas": 0.000215,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:05:56.407+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 18,
+        "output_tokens": 17,
+        "duration_ms": 12251
+      }
+    ]
+  }
+]

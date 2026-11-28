@@ -1,0 +1,29 @@
+[
+  {
+    "modo": "slow",
+    "feature": "F2",
+    "quando": "2026-11-27T21:17:01-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 503,
+    "segundos": 20.027,
+    "resposta": "{'detail': 'O modelo não respondeu dentro do prazo.', 'code': 'model_timeout'}",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 5.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 5.7e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:17:01.100+00:00",
+        "model": "claude-fake-large",
+        "status": null,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  }
+]

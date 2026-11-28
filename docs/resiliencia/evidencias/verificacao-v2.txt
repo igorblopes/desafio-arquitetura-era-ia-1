@@ -1,0 +1,132 @@
+modelo indisponível: capacidade=ticket-classification motivo=unavailable erro=InternalServerError status=500
+modelo indisponível: capacidade=order-extraction motivo=unavailable erro=InternalServerError status=500
+modelo indisponível: capacidade=reply-suggestion motivo=unavailable erro=InternalServerError status=500
+modelo indisponível: capacidade=topics-report motivo=unavailable erro=InternalServerError status=500
+[
+  {
+    "feature": "F1",
+    "cenario": "sucesso",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00042\",\"category\":\"delivery\",\"priority\":\"high\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "categoria fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "prioridade fora da lista vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Classificação fora dos valores permitidos\"}"
+  },
+  {
+    "feature": "F1",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": false,
+    "status": 503,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [
+      "status"
+    ],
+    "corpo": "{\"detail\":\"O modelo está indisponível.\",\"code\":\"model_unavailable\"}"
+  },
+  {
+    "feature": "F4",
+    "cenario": "sucesso",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00200\",\"order_number\":\"#481516\",\"product\":\"fone de ouvido bluetooth\"}"
+  },
+  {
+    "feature": "F4",
+    "cenario": "campos nulos preservados",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00200\",\"order_number\":null,\"product\":null}"
+  },
+  {
+    "feature": "F4",
+    "cenario": "pedido em formato inválido vira 502",
+    "ok": true,
+    "status": 502,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"detail\":\"Número de pedido em formato inválido\"}"
+  },
+  {
+    "feature": "F4",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": false,
+    "status": 503,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [
+      "status"
+    ],
+    "corpo": "{\"detail\":\"O modelo está indisponível.\",\"code\":\"model_unavailable\"}"
+  },
+  {
+    "feature": "F2",
+    "cenario": "texto devolvido sem transformação",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [],
+    "corpo": "{\"ticket_id\":\"TK-00042\",\"suggestion\":\"Olá!\\n\\nSentimos muito pelo atraso do pedido #481516.  \\nVamos verificar — ç, ã, é ✓\\n\"}"
+  },
+  {
+    "feature": "F2",
+    "cenario": "gateway em 500: 500 e 1 requisição",
+    "ok": false,
+    "status": 503,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [
+      "status"
+    ],
+    "corpo": "{\"detail\":\"O modelo está indisponível.\",\"code\":\"model_unavailable\"}"
+  },
+  {
+    "feature": "F3",
+    "cenario": "274 tickets em 2 lotes: conteúdo e agregação",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 2,
+    "falhas": [],
+    "corpo": "{\"start\":\"2026-08-01\",\"end\":\"2026-08-02\",\"total_tickets\":274,\"topics\":[{\"topic\":\"Pedido extraviado\",\"count\":7,\"examples\":[\"A1\",\"A2\",\"B1\"]},{\"topic\":\"Atraso\",\"count\":3,\"examples\":[\"B3\"]},{\"topic\":\"Troca\",\"count\":3,\"examples\":[\"A3\"]}]}"
+  },
+  {
+    "feature": "F3",
+    "cenario": "período sem tickets: nenhuma requisição",
+    "ok": true,
+    "status": 200,
+    "requisicoes_ao_gateway": 0,
+    "falhas": [],
+    "corpo": "{\"start\":\"2026-09-01\",\"end\":\"2026-09-30\",\"total_tickets\":0,\"topics\":[]}"
+  },
+  {
+    "feature": "F3",
+    "cenario": "gateway em 500 no 1º lote: 500 e 1 requisição",
+    "ok": false,
+    "status": 503,
+    "requisicoes_ao_gateway": 1,
+    "falhas": [
+      "status"
+    ],
+    "corpo": "{\"detail\":\"O modelo está indisponível.\",\"code\":\"model_unavailable\"}"
+  }
+]
+FEATURES: F1 F2 F3 F4  CENÁRIOS: 13  RESULTADO: FALHOU

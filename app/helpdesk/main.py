@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from . import classification, extraction, report, suggestion
 from .adapters.gateway import GatewayLanguageModel
+from .ports import LanguageModelError
 from .schemas import (Classification, OrderData, PeriodInput, ReplySuggestion, TicketInput,
                       TopicsReport)
 
@@ -9,6 +11,23 @@ from .schemas import (Classification, OrderData, PeriodInput, ReplySuggestion, T
 language_model = GatewayLanguageModel()
 
 app = FastAPI(title="Helpdesk")
+
+
+# Status e mensagem por motivo (ADR 0005). 503: vale tentar mais tarde. 502: precisa de
+# correção. O 504 fica só para a borda, para não confundir as duas origens.
+MODEL_ERRORS = {
+    "timeout": (503, "O modelo não respondeu dentro do prazo."),
+    "rate_limited": (503, "O modelo está limitando requisições."),
+    "unavailable": (503, "O modelo está indisponível."),
+    "rejected": (502, "A requisição ao modelo foi recusada."),
+}
+
+
+@app.exception_handler(LanguageModelError)
+def model_error(request: Request, error: LanguageModelError) -> JSONResponse:
+    status, detail = MODEL_ERRORS[error.reason]
+    return JSONResponse(status_code=status,
+                        content={"detail": detail, "code": f"model_{error.reason}"})
 
 
 @app.get("/health")

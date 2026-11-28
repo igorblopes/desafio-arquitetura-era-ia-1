@@ -1,0 +1,29 @@
+[
+  {
+    "modo": "slow",
+    "feature": "F1",
+    "quando": "2026-11-27T21:11:21-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 500,
+    "segundos": 3.041,
+    "resposta": "Internal Server Error",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 0,
+    "espera_s": 10.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 11,
+    "custo_usd_saidas_concluidas": 0.000158,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:11:21.478+00:00",
+        "model": "gpt-fake-large",
+        "status": 200,
+        "input_tokens": 19,
+        "output_tokens": 11,
+        "duration_ms": 10751
+      }
+    ]
+  }
+]

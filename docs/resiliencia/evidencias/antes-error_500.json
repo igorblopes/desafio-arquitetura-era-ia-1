@@ -1,0 +1,186 @@
+[
+  {
+    "modo": "error_500",
+    "feature": "F1",
+    "quando": "2026-11-27T21:04:33-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 500,
+    "segundos": 4.663,
+    "resposta": "Internal Server Error",
+    "tentativas": 3,
+    "intervalos_s": [
+      1.19,
+      1.401
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 57,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.000142,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:04:33.981+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:35.171+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:36.572+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F4",
+    "quando": "2026-11-27T21:04:40-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 500,
+    "segundos": 4.92,
+    "resposta": "Internal Server Error",
+    "tentativas": 3,
+    "intervalos_s": [
+      0.993,
+      1.49
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 54,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.000135,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:04:40.683+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 18,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:41.676+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 18,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:43.166+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 18,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F2",
+    "quando": "2026-11-27T21:04:47-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 500,
+    "segundos": 4.525,
+    "resposta": "Internal Server Error",
+    "tentativas": 3,
+    "intervalos_s": [
+      0.709,
+      1.465
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 57,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.000171,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:04:47.630+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:48.339+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:04:49.804+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F3",
+    "quando": "2026-11-27T21:04:54-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 500,
+    "segundos": 4.898,
+    "resposta": "Internal Server Error",
+    "tentativas": 3,
+    "intervalos_s": [
+      0.744,
+      1.413
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 2.0,
+    "tokens_entrada": 18396,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.055188,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:04:54.235+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 6132,
+        "output_tokens": null,
+        "duration_ms": 1
+      },
+      {
+        "ts": "2026-11-28T00:04:54.980+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 6132,
+        "output_tokens": null,
+        "duration_ms": 1
+      },
+      {
+        "ts": "2026-11-28T00:04:56.394+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 6132,
+        "output_tokens": null,
+        "duration_ms": 1
+      }
+    ]
+  }
+]

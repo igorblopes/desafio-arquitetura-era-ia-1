@@ -1,0 +1,8 @@
+normal     F1  HTTP 200    1.398s  tentativas=1 abertas=0 intervalos=[]
+normal     F4  HTTP 200    1.238s  tentativas=1 abertas=0 intervalos=[]
+normal     F2  HTTP 200   15.966s  tentativas=1 abertas=0 intervalos=[]
+normal     F3  HTTP 200    9.856s  tentativas=1 abertas=0 intervalos=[]
+timeout    F1  HTTP 500    3.060s  tentativas=1 abertas=1 intervalos=[]
+timeout    F2  HTTP 500   20.026s  tentativas=1 abertas=1 intervalos=[]
+timeout    F3  HTTP 500   12.077s  tentativas=1 abertas=1 intervalos=[]
+slow       F1  HTTP 500    3.041s  tentativas=1 abertas=0 intervalos=[]

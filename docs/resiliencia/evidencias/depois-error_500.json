@@ -1,0 +1,150 @@
+[
+  {
+    "modo": "error_500",
+    "feature": "F1",
+    "quando": "2026-11-27T21:14:18-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 503,
+    "segundos": 2.498,
+    "resposta": "{'detail': 'O modelo está indisponível.', 'code': 'model_unavailable'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      1.122
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 3.0,
+    "tokens_entrada": 38,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 9.5e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:14:18.566+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:14:19.688+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F4",
+    "quando": "2026-11-27T21:14:24-03:00",
+    "provider": "openai",
+    "modelo": "gpt-fake-large",
+    "status": 503,
+    "segundos": 2.193,
+    "resposta": "{'detail': 'O modelo está indisponível.', 'code': 'model_unavailable'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      0.805
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 3.0,
+    "tokens_entrada": 36,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 9e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:14:24.093+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 18,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:14:24.898+00:00",
+        "model": "gpt-fake-large",
+        "status": 500,
+        "input_tokens": 18,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F2",
+    "quando": "2026-11-27T21:14:29-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 503,
+    "segundos": 2.73,
+    "resposta": "{'detail': 'O modelo está indisponível.', 'code': 'model_unavailable'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      0.967
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 3.0,
+    "tokens_entrada": 38,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.000114,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:14:29.328+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      },
+      {
+        "ts": "2026-11-28T00:14:30.295+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": 0
+      }
+    ]
+  },
+  {
+    "modo": "error_500",
+    "feature": "F3",
+    "quando": "2026-11-27T21:14:35-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 503,
+    "segundos": 2.188,
+    "resposta": "{'detail': 'O modelo está indisponível.', 'code': 'model_unavailable'}",
+    "tentativas": 2,
+    "intervalos_s": [
+      0.576
+    ],
+    "abertas_apos_espera": 0,
+    "espera_s": 3.0,
+    "tokens_entrada": 12264,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 0.036792,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:14:35.114+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 6132,
+        "output_tokens": null,
+        "duration_ms": 1
+      },
+      {
+        "ts": "2026-11-28T00:14:35.691+00:00",
+        "model": "claude-fake-large",
+        "status": 500,
+        "input_tokens": 6132,
+        "output_tokens": null,
+        "duration_ms": 1
+      }
+    ]
+  }
+]

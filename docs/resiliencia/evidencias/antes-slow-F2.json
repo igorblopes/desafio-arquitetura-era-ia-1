@@ -1,0 +1,29 @@
+[
+  {
+    "modo": "slow",
+    "feature": "F2",
+    "quando": "2026-11-27T21:06:10-03:00",
+    "provider": "anthropic",
+    "modelo": "claude-fake-large",
+    "status": 504,
+    "segundos": 30.031,
+    "resposta": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.27.5</center>\r\n</body>\r\n</html>\r\n",
+    "tentativas": 1,
+    "intervalos_s": [],
+    "abertas_apos_espera": 1,
+    "espera_s": 5.0,
+    "tokens_entrada": 19,
+    "tokens_saida": 0,
+    "custo_usd_saidas_concluidas": 5.7e-05,
+    "chamadas": [
+      {
+        "ts": "2026-11-28T00:06:10.926+00:00",
+        "model": "claude-fake-large",
+        "status": null,
+        "input_tokens": 19,
+        "output_tokens": null,
+        "duration_ms": null
+      }
+    ]
+  }
+]

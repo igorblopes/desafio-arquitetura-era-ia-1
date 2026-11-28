@@ -1,0 +1,16 @@
+[
+  {
+    "cenario": "entrada inválida na API do helpdesk",
+    "status": 422,
+    "segundos": 0.003,
+    "chamadas_no_provider": 0,
+    "resposta": "{'detail': [{'type': 'missing', 'loc': ['body', 'text'], 'msg': 'Field required', 'input': {'ticket_id': 'TK-1'}}]}"
+  },
+  {
+    "cenario": "entrada maior que o contexto (400 do provider)",
+    "status": 502,
+    "segundos": 0.307,
+    "chamadas_no_provider": 1,
+    "resposta": "{'detail': 'A requisição ao modelo foi recusada.', 'code': 'model_rejected'}"
+  }
+]
