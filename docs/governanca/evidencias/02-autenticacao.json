@@ -1,0 +1,191 @@
+{
+  "experimento": "autenticacao",
+  "inicio": "2026-11-28T07:53:34.294+00:00",
+  "fim": "2026-11-28T07:53:46.128+00:00",
+  "resultado": {
+    "chave_valida": {
+      "chamadas_antes": 0,
+      "resposta": {
+        "status": 200,
+        "body": {
+          "content": "{\"category\": \"delivery\", \"priority\": \"high\"}",
+          "usage": {
+            "completion_tokens": 11,
+            "prompt_tokens": 19,
+            "total_tokens": 30
+          }
+        },
+        "elapsed_s": 1.097,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "599",
+          "x-ratelimit-api_key-limit-requests": "600",
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.483",
+          "x-litellm-response-duration-ms": "1079.4969999999998"
+        },
+        "ts": "2026-11-28T07:53:35.434+00:00",
+        "chave": "helpdesk-app sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 1,
+      "novas_chamadas_ao_provider": 1,
+      "log_gateway": []
+    },
+    "chave_invalida": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication Error, Invalid proxy server token passed. Received API Key = sk-...9999, Key Hash (Token) =2cc35770bc963e032b5caba4162af05c4236babb7f1dbf74fdaca8ee763798e3. Unable to find token in cache or `LiteLLM_VerificationTokenTable`",
+            "type": "token_not_found_in_db",
+            "param": "key",
+            "code": "401"
+          }
+        },
+        "elapsed_s": 0.027,
+        "headers": {},
+        "ts": "2026-11-28T07:53:36.839+00:00",
+        "chave": "outra sk-...9999",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 1,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:53:36 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Authentication Error, Invalid proxy server token passed. key=2cc35770bc963e032b5caba4162af05c4236babb7f1dbf74fdaca8ee763798e3, not found in db. Create key via `/key/gen",
+        "INFO:     172.18.0.1:40994 - \"POST /v1/chat/completions HTTP/1.1\" 401 Unauthorized"
+      ]
+    },
+    "sem_chave": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication Error, No api key passed in.",
+            "type": "auth_error",
+            "param": "None",
+            "code": "401"
+          }
+        },
+        "elapsed_s": 0.007,
+        "headers": {},
+        "ts": "2026-11-28T07:53:38.189+00:00",
+        "chave": "(sem chave)",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 1,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "INFO:     172.18.0.1:39568 - \"POST /v1/chat/completions HTTP/1.1\" 401 Unauthorized"
+      ]
+    },
+    "capacidade_nao_autorizada": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 403,
+        "body": {
+          "error": {
+            "message": "key not allowed to access model. This key can only access models=['ticket-classification']. Tried to access order-extraction",
+            "type": "key_model_access_denied",
+            "param": "model",
+            "code": "403"
+          }
+        },
+        "elapsed_s": 0.008,
+        "headers": {},
+        "ts": "2026-11-28T07:53:39.539+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "order-extraction"
+      },
+      "chamadas_depois": 1,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": []
+    },
+    "grupo_interno_direto": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 403,
+        "body": {
+          "error": {
+            "message": "key not allowed to access model. This key can only access models=['ticket-classification', 'order-extraction', 'reply-suggestion', 'topics-report']. Tried to access ticket-classification-degraded",
+            "type": "key_model_access_denied",
+            "param": "model",
+            "code": "403"
+          }
+        },
+        "elapsed_s": 0.005,
+        "headers": {},
+        "ts": "2026-11-28T07:53:40.901+00:00",
+        "chave": "helpdesk-app sk-...0001",
+        "capacidade": "ticket-classification-degraded"
+      },
+      "chamadas_depois": 1,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": []
+    },
+    "revogada_antes": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 200,
+        "body": {
+          "content": "{\"category\": \"delivery\", \"priority\": \"high\"}",
+          "usage": {
+            "completion_tokens": 11,
+            "prompt_tokens": 19,
+            "total_tokens": 30
+          }
+        },
+        "elapsed_s": 1.104,
+        "headers": {
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.389",
+          "x-litellm-response-duration-ms": "1079.093"
+        },
+        "ts": "2026-11-28T07:53:43.416+00:00",
+        "chave": "governance-revoke-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 2,
+      "novas_chamadas_ao_provider": 1,
+      "log_gateway": []
+    },
+    "revogada_depois": {
+      "chamadas_antes": 2,
+      "resposta": {
+        "status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication Error, Invalid proxy server token passed. Received API Key = sk-...0001, Key Hash (Token) =c26596496765a74ea3b28aaaefe81455a267470e728856d27cfc2b7292b21d8e. Unable to find token in cache or `LiteLLM_VerificationTokenTable`",
+            "type": "token_not_found_in_db",
+            "param": "key",
+            "code": "401"
+          }
+        },
+        "elapsed_s": 0.011,
+        "headers": {},
+        "ts": "2026-11-28T07:53:44.780+00:00",
+        "chave": "governance-revoke-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 2,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:53:44 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Authentication Error, Invalid proxy server token passed. key=c26596496765a74ea3b28aaaefe81455a267470e728856d27cfc2b7292b21d8e, not found in db. Create key via `/key/gen",
+        "INFO:     172.18.0.1:39622 - \"POST /v1/chat/completions HTTP/1.1\" 401 Unauthorized"
+      ]
+    },
+    "revogacao": {
+      "criada": 200,
+      "apagada": 200
+    }
+  }
+}

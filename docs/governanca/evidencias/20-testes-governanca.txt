@@ -1,0 +1,47 @@
+﻿============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python
+rootdir: /w
+plugins: anyio-4.16.0
+collecting ... collected 33 items
+
+tests/governance/test_authentication.py::test_chave_do_helpdesk_consome_as_capacidades PASSED [  3%]
+tests/governance/test_authentication.py::test_helpdesk_pela_borda_usa_a_chave_virtual PASSED [  6%]
+tests/governance/test_authentication.py::test_chave_invalida_recusada_antes_do_provider PASSED [  9%]
+tests/governance/test_authentication.py::test_sem_chave_recusada_antes_do_provider PASSED [ 12%]
+tests/governance/test_authentication.py::test_chave_revogada_recusada_antes_do_provider PASSED [ 15%]
+tests/governance/test_authentication.py::test_capacidade_fora_da_chave_recusada PASSED [ 18%]
+tests/governance/test_authentication.py::test_helpdesk_nao_chama_grupo_interno_de_fallback PASSED [ 21%]
+tests/governance/test_authentication.py::test_recusa_nao_ecoa_a_chave_recebida PASSED [ 24%]
+tests/governance/test_budget.py::test_consumo_dentro_do_orcamento_e_contabilizado PASSED [ 27%]
+tests/governance/test_budget.py::test_esgotamento_e_recusa_antes_do_provider PASSED [ 30%]
+tests/governance/test_budget.py::test_gasto_gravado_passa_do_teto_em_no_maximo_uma_chamada PASSED [ 33%]
+tests/governance/test_budget.py::test_concorrencia_nao_ultrapassa_o_orcamento PASSED [ 36%]
+tests/governance/test_budget.py::test_rajada_sequencial_nunca_passa_de_tres_chamadas PASSED [ 39%]
+tests/governance/test_consumer_isolation.py::test_chave_esgotada_nao_compromete_as_outras PASSED [ 42%]
+tests/governance/test_cost_accounting.py::test_custo_registrado_igual_ao_calculo_manual[ticket-classification-gpt-fake-large] PASSED [ 45%]
+tests/governance/test_cost_accounting.py::test_custo_registrado_igual_ao_calculo_manual[reply-suggestion-claude-fake-large] PASSED [ 48%]
+tests/governance/test_cost_accounting.py::test_custo_registrado_igual_ao_calculo_manual[ticket-classification-degraded-gpt-fake-mini] PASSED [ 51%]
+tests/governance/test_cost_accounting.py::test_custo_registrado_igual_ao_calculo_manual[reply-suggestion-degraded-claude-fake-mini] PASSED [ 54%]
+tests/governance/test_cost_accounting.py::test_gasto_acumulado_na_chave PASSED [ 57%]
+tests/governance/test_cost_accounting.py::test_fallback_cobra_so_o_destino_que_respondeu PASSED [ 60%]
+tests/governance/test_governance_resilience.py::test_orcamento_esgotado_nao_dispara_fallback[primario] PASSED [ 63%]
+tests/governance/test_governance_resilience.py::test_orcamento_esgotado_nao_dispara_fallback[cadeia_inteira] PASSED [ 66%]
+tests/governance/test_governance_resilience.py::test_rpm_esgotado_nao_dispara_fallback PASSED [ 69%]
+tests/governance/test_governance_resilience.py::test_falha_elegivel_do_provider_continua_com_fallback PASSED [ 72%]
+tests/governance/test_governance_resilience.py::test_app_traduz_orcamento_esgotado_sem_repetir PASSED [ 75%]
+tests/governance/test_governance_resilience.py::test_app_traduz_rpm_esgotado_com_retry_after PASSED [ 78%]
+tests/governance/test_governance_resilience.py::test_app_distingue_429_do_provider_do_429_do_gateway PASSED [ 81%]
+tests/governance/test_governance_resilience.py::test_app_traduz_credencial_invalida_como_recusa PASSED [ 84%]
+tests/governance/test_rate_limiting.py::test_dentro_do_limite_encaminha_e_informa_o_saldo PASSED [ 87%]
+tests/governance/test_rate_limiting.py::test_requisicao_alem_do_limite_recusada_antes_do_provider PASSED [ 90%]
+tests/governance/test_rate_limiting.py::test_conta_requisicao_logica_e_nao_tentativa_fisica PASSED [ 93%]
+tests/governance/test_rate_limiting.py::test_concorrencia_respeita_o_limite PASSED [ 96%]
+tests/governance/test_rate_limiting.py::test_recupera_quando_a_janela_termina PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/governance/test_governance_resilience.py::test_app_traduz_orcamento_esgotado_sem_repetir
+  /usr/local/lib/python3.12/site-packages/starlette/testclient.py:40: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 33 passed, 1 warning in 192.86s (0:03:12) ===================

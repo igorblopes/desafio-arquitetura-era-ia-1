@@ -1,0 +1,29 @@
+Passo 12, subetapas 4.14 e 4.15: estado de partida (commit ce6c041, sem banco, sem preços).
+Coletado em 2026-11-28 07:44 UTC com a master key (a única chave aceita até então).
+
+POST localhost:4000/v1/chat/completions  model=ticket-classification  (F1, TK-00042)
+status 200
+x-litellm-model-name: openai/gpt-fake-large
+x-litellm-response-cost-original: 0.0          <- custo zero: o LiteLLM não conhece o modelo simulado
+x-litellm-response-cost-input: 0.0
+x-litellm-response-cost-output: 0.0
+x-litellm-key-spend: 0.0
+usage: {'completion_tokens': 11, 'prompt_tokens': 19, 'total_tokens': 30}
+
+GET localhost:8090/admin/calls?last=5
+[{"provider":"openai","model":"gpt-fake-large","task":"classify","status":200,"input_tokens":19,"output_tokens":11,"duration_ms":1076}]
+
+Custo esperado (provider-fake/README.md: US$ 2,50 e 10,00 por 1M):
+  (19 x 2,50 + 11 x 10,00) / 1.000.000 = (47,5 + 110) / 1.000.000 = US$ 0,0001575
+Custo registrado: US$ 0,0  -> um orçamento nunca estouraria.
+
+GET localhost:4000/key/info   -> 500 "Database not connected. Connect a database to your proxy"
+GET localhost:4000/spend/logs -> 500 "Database not connected ..."
+=> sem banco o LiteLLM não emite chave virtual, não guarda gasto por chave e não tem orçamento.
+
+Depois de declarar input_cost_per_token/output_cost_per_token em gateway/config.yaml
+(mesma chamada, ainda com a master key, antes do banco):
+x-litellm-response-cost: 0.0001575
+x-litellm-response-cost-input: 4.75e-05
+x-litellm-response-cost-output: 0.00011
+=> confere com o cálculo manual.

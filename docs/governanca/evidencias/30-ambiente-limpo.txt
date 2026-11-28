@@ -1,0 +1,122 @@
+== Ambiente limpo: cópia dos arquivos versionados + novos, sem .env, projeto helpdesk-clean, volumes novos
+== 2026-11-28T08:31:05Z cp .env.example .env && docker compose up -d --build --wait
+exit=0 tempo=28s
+ Container helpdesk-clean-gateway-bootstrap-1 Exited 
+ Container helpdesk-clean-provider-fake-1 Healthy 
+ Container helpdesk-clean-gateway-1 Healthy 
+SERVICE             IMAGE                              STATUS
+app                 helpdesk-clean-app                 Up 3 seconds (healthy)
+edge                nginx:1.27-alpine                  Up 1 second
+gateway             ghcr.io/berriai/litellm:v1.102.1   Up 20 seconds (healthy)
+gateway-bootstrap   ghcr.io/berriai/litellm:v1.102.1   Exited (0) 4 seconds ago
+gateway-db          postgres:17.2-alpine               Up 25 seconds (healthy)
+provider-fake       helpdesk-clean-provider-fake       Up 25 seconds (healthy)
+== bootstrap
+[bootstrap] helpdesk-app             sk-...0001  criada; budget=20.0 rpm=600 spend=0.0000000
+[bootstrap] governance-budget-demo   sk-...0001  criada; budget=0.0004 rpm=None spend=0.0000000
+[bootstrap] governance-rate-demo     sk-...0001  criada; budget=1.0 rpm=3 spend=0.0000000
+[bootstrap] concluído
+== health
+{"status":"ok"} 200
+{"status":"healthy","db":"connected"}
+
++ F1 pela borda
+{"ticket_id":"TK-00042","category":"other","priority":"high"}  HTTP 200 1.095979s
++ curl -s -w '  HTTP %{http_code}\n' localhost:8000/tickets/extraction -H 'Content-Type: application/json' -d '{"ticket_id":"TK-00200","text":"Pedido #481516, o fone de ouvido bluetooth veio com chiado"}'
+{"ticket_id":"TK-00200","order_number":"#481516","product":"fone de ouvido bluetooth"}  HTTP 200
++ curl -s -o /dev/null -w 'F2 HTTP %{http_code} %{time_total}s\n' localhost:8000/tickets/reply-suggestion -H 'Content-Type: application/json' -d '{"ticket_id":"TK-00042","text":"Meu pedido #481516 nao chegou"}'
+F2 HTTP 200 16.016229s
++ curl -s -w '  HTTP %{http_code}\n' localhost:8000/reports/topics -H 'Content-Type: application/json' -d '{"start":"2026-08-01","end":"2026-08-01"}'
+{"start":"2026-08-01","end":"2026-08-01","total_tickets":137,"topics":[{"topic":"Problema no rastreio","count":20,"examples":["TK-00001","TK-00007","TK-00008"]}
++ docker compose exec -T app env
+GATEWAY_API_KEY=sk-helpdesk-***
+GATEWAY_URL=http://gateway:4000
+GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305
++ docker compose config
++ awk '/^  app:/,/^  edge:/'
+3:      GATEWAY_API_KEY: sk-helpdesk-***
++ set +x
+=================== Experimento A (comandos do README)
++ K=sk-governance-budget-local-0001
++ curl -s 'localhost:4000/key/info?key=sk-governance-budget-local-0001' -H 'Authorization: Bearer sk-gateway-local-0001'
+"key_alias":"governance-budget-demo"
+"spend":0.0
+"max_budget":0.0004
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-budget-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-litellm-response-cost: 0.0001375
++ sleep 1
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-budget-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-litellm-response-cost: 0.0001375
++ sleep 1
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-budget-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-litellm-response-cost: 0.0001375
++ sleep 1
++ sleep 15
++ curl -s 'localhost:4000/key/info?key=sk-governance-budget-local-0001' -H 'Authorization: Bearer sk-gateway-local-0001'
+"spend":0.0004125
++ chamadas
++ curl -s 'localhost:8090/admin/calls?last=5000'
++ wc -l
+6
++ curl -s -w '\nHTTP %{http_code}\n' localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-budget-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+{"error":{"message":"Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.00041250000000003664, Max budget: 0.0004","type":"budget_exceeded","param":null,"code":"429"}}
+HTTP 429
++ chamadas
++ curl -s 'localhost:8090/admin/calls?last=5000'
++ wc -l
+6
++ docker compose logs gateway --since 2m
++ tail -1
+gateway-1  | 08:34:38 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.00041250000000003664, Max budget: 0.0004
++ docker compose run --rm gateway-bootstrap --reset-spend governance-budget-demo
+ Container helpdesk-clean-gateway-bootstrap-run-2ce846cb368e Creating 
+ Container helpdesk-clean-gateway-bootstrap-run-2ce846cb368e Created 
+[bootstrap] governance-budget-demo sk-...0001 tentativa 1: spend 0.0004125 -> 0.0000000
+[bootstrap] governance-budget-demo gasto zerado e confirmado após um ciclo de gravação
++ set +x
+=================== Experimento B (comandos do README)
++ K=sk-governance-rate-local-0001
++ curl -s 'localhost:4000/key/info?key=sk-governance-rate-local-0001' -H 'Authorization: Bearer sk-gateway-local-0001'
+"key_alias":"governance-rate-demo"
+"rpm_limit":3
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-rate-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-ratelimit-api_key-remaining-requests: 2
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-rate-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-ratelimit-api_key-remaining-requests: 1
++ curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-rate-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 200 OK
+x-ratelimit-api_key-remaining-requests: 0
++ chamadas
++ curl -s 'localhost:8090/admin/calls?last=5000'
++ wc -l
+9
++ curl -s -D - localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-rate-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP/1.1 429 Too Many Requests
+retry-after: 60
+"type":"throttling_error"
++ chamadas
++ curl -s 'localhost:8090/admin/calls?last=5000'
++ wc -l
+9
++ sleep 60
++ curl -s -o /dev/null -w 'HTTP %{http_code}\n' localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-governance-rate-local-0001' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+HTTP 200
++ curl -s -o /dev/null -w '%{http_code}\n' localhost:4000/v1/chat/completions -H 'Authorization: Bearer sk-invalida' -H 'Content-Type: application/json' -d '{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+401
++ chamadas
++ curl -s 'localhost:8090/admin/calls?last=5000'
++ wc -l
+10
++ docker compose exec -T gateway-db psql -U litellm -d litellm -c 'select key_alias, spend, max_budget, rpm_limit from "LiteLLM_VerificationToken" order by 1;'
+       key_alias        |   spend   | max_budget | rpm_limit 
+------------------------+-----------+------------+-----------
+ governance-budget-demo |         0 |     0.0004 |          
+ governance-rate-demo   | 0.0004125 |          1 |         3
+ helpdesk-app           |  0.033164 |         20 |       600
+(3 rows)
+

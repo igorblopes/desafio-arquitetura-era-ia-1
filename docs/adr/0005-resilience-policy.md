@@ -112,3 +112,18 @@ Consequências da revisão:
 - Os testes do Passo 10 que esperavam `503` com o primário em falha agora põem os dois providers inteiros em falha para isolar o mecanismo; a intenção (limite de tentativas, prazo, erro explícito) foi mantida.
 - Limitação 4 (`Retry-After` alto) deixou de valer para o primário; os destinos de fallback não repetem.
 - Nova limitação: o gateway não tem deadline por requisição, então uma cadeia continua depois que a app desiste (cadeia órfã, ADR 0006).
+
+## Revisão no Passo 12 (2026-11-28)
+
+Com a governança do [ADR 0010](0010-gateway-governance.md), a classificação de erros ganhou a origem **gateway**:
+
+| Erro | Origem | Retry | Fallback | App |
+|---|---|---|---|---|
+| `500`/`503`, timeout, `429` do provider | provider | como na revisão do Passo 11 | sim (ADR 0006) | `503 model_unavailable` / `model_timeout` / `model_rate_limited` |
+| `429 budget_exceeded` | gateway | não | não | `503 model_budget_exceeded` |
+| `429 throttling_error` "Rate limit exceeded for…" | gateway | não | não | `503 model_throttled` + `Retry-After` |
+| `401`/`403` | gateway | não | não | `502 model_rejected` |
+
+- Ninguém repete recusa de governança: elas acontecem antes do router (onde moram retry e fallback) e a app continua com `max_retries=0`. Evidência: `/admin/calls` sem nenhuma chamada nova com o primário e a cadeia inteira em `500` (`docs/governanca/evidencias/04` e `07`).
+- O status sozinho não basta: o `429` do limitador do gateway e o `429` de um provider ao fim da cadeia têm o mesmo status e o mesmo `type`. O adapter decide pelo `type` e pelo início da mensagem (`tests/governance/test_governance_resilience.py`).
+- Contabilização das tentativas: tentativa que falhou sem `usage` custa 0 no gateway; o RPM conta a requisição lógica (1), não as tentativas físicas (até 4).

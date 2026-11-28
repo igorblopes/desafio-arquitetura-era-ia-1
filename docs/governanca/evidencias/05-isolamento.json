@@ -1,0 +1,112 @@
+{
+  "experimento": "isolamento",
+  "inicio": "2026-11-28T07:54:25.525+00:00",
+  "fim": "2026-11-28T07:55:34.297+00:00",
+  "resultado": {
+    "rate_esgotando_janela": [
+      200,
+      200,
+      200
+    ],
+    "governance-rate-demo": {
+      "chamadas_antes": 3,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Rate limit exceeded for api_key: 73acfd9d4dadf004b3d9d66f1f9b97b86f8c2aba08fbe6dfca0f1e8120e59738. Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 07:56:29 UTC",
+            "type": "throttling_error",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.035,
+        "headers": {
+          "retry-after": "60",
+          "x-litellm-response-cost": "0"
+        },
+        "ts": "2026-11-28T07:55:29.889+00:00",
+        "chave": "governance-rate-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 3,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:55:29 - LiteLLM Proxy:ERROR: common_request_processing.py:1460 - litellm.proxy.proxy_server._handle_llm_api_exception(): Exception occured - 429: Rate limit exceeded for REDACTED Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 07:56:29 UTC",
+        "INFO:     172.18.0.1:44590 - \"POST /v1/chat/completions HTTP/1.1\" 429 Too Many Requests"
+      ]
+    },
+    "governance-budget-demo": {
+      "chamadas_antes": 3,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+            "type": "budget_exceeded",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.007,
+        "headers": {},
+        "ts": "2026-11-28T07:55:31.257+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 3,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:55:31 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+        "INFO:     172.18.0.1:44604 - \"POST /v1/chat/completions HTTP/1.1\" 429 Too Many Requests"
+      ]
+    },
+    "helpdesk-app_pela_borda": {
+      "status": 200,
+      "body": {
+        "ticket_id": "TK-00042",
+        "category": "delivery",
+        "priority": "high"
+      },
+      "novas_chamadas": 1
+    },
+    "chaves": {
+      "budget": {
+        "key_alias": "governance-budget-demo",
+        "models": [
+          "ticket-classification"
+        ],
+        "max_budget": 0.0004,
+        "budget_duration": null,
+        "rpm_limit": null,
+        "spend": 0.0004725,
+        "budget_reset_at": null
+      },
+      "rate": {
+        "key_alias": "governance-rate-demo",
+        "models": [
+          "ticket-classification"
+        ],
+        "max_budget": 1.0,
+        "budget_duration": null,
+        "rpm_limit": 3,
+        "spend": 0.0008849999999999999,
+        "budget_reset_at": null
+      },
+      "helpdesk": {
+        "key_alias": "helpdesk-app",
+        "models": [
+          "ticket-classification",
+          "order-extraction",
+          "reply-suggestion",
+          "topics-report"
+        ],
+        "max_budget": 20.0,
+        "budget_duration": "30d",
+        "rpm_limit": 600,
+        "spend": 0.0001575,
+        "budget_reset_at": "2026-12-01T00:00:00+00:00"
+      }
+    }
+  }
+}

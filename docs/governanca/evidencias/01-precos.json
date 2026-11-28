@@ -1,0 +1,65 @@
+{
+  "experimento": "precos",
+  "inicio": "2026-11-28T07:53:27.453+00:00",
+  "fim": "2026-11-28T07:53:30.535+00:00",
+  "resultado": {
+    "linhas": [
+      {
+        "grupo": "ticket-classification",
+        "modelo_esperado": "gpt-fake-large",
+        "modelo_chamado": "gpt-fake-large",
+        "tokens_entrada": 19,
+        "tokens_saida": 11,
+        "preco_por_1M": [
+          2.5,
+          10.0
+        ],
+        "custo_manual": 0.0001575,
+        "custo_registrado": 0.0001575,
+        "confere": true
+      },
+      {
+        "grupo": "reply-suggestion",
+        "modelo_esperado": "claude-fake-large",
+        "modelo_chamado": "claude-fake-large",
+        "tokens_entrada": 19,
+        "tokens_saida": 11,
+        "preco_por_1M": [
+          3.0,
+          15.0
+        ],
+        "custo_manual": 0.000222,
+        "custo_registrado": 0.000222,
+        "confere": true
+      },
+      {
+        "grupo": "ticket-classification-degraded",
+        "modelo_esperado": "gpt-fake-mini",
+        "modelo_chamado": "gpt-fake-mini",
+        "tokens_entrada": 19,
+        "tokens_saida": 11,
+        "preco_por_1M": [
+          0.15,
+          0.6
+        ],
+        "custo_manual": 9.45e-06,
+        "custo_registrado": 9.45e-06,
+        "confere": true
+      },
+      {
+        "grupo": "reply-suggestion-degraded",
+        "modelo_esperado": "claude-fake-mini",
+        "modelo_chamado": "claude-fake-mini",
+        "tokens_entrada": 19,
+        "tokens_saida": 11,
+        "preco_por_1M": [
+          0.8,
+          4.0
+        ],
+        "custo_manual": 5.92e-05,
+        "custo_registrado": 5.92e-05,
+        "confere": true
+      }
+    ]
+  }
+}

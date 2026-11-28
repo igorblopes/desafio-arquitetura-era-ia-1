@@ -1,0 +1,125 @@
+{
+  "experimento": "reserva-sequencial",
+  "inicio": "2026-11-28T08:19:27.758+00:00",
+  "fim": "2026-11-28T08:19:41.348+00:00",
+  "resultado": {
+    "orcamento": 0.0004,
+    "custo_f1": 0.0001575,
+    "execucoes": [
+      {
+        "sequencia": [
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          }
+        ],
+        "autorizadas": 3,
+        "chamadas_ao_provider": 3
+      },
+      {
+        "sequencia": [
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          }
+        ],
+        "autorizadas": 3,
+        "chamadas_ao_provider": 3
+      },
+      {
+        "sequencia": [
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 200,
+            "custo_visto_na_recusa": null
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.00040000000000001146
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          },
+          {
+            "status": 429,
+            "custo_visto_na_recusa": 0.0004725000000000212
+          }
+        ],
+        "autorizadas": 3,
+        "chamadas_ao_provider": 3
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+== Cenário C: gateway reiniciado (2026-11-28T08:30:18Z)
+-- gasto antes
+helpdesk-app spend= 0.2949756499999999
+governance-budget-demo spend= 0.000315
+governance-rate-demo spend= 0.0025623
+-- docker compose restart gateway
+ Container desafio-arquitetura-era-ia-1-gateway-1 Started 
+-- docker compose up -d --wait
+ Container desafio-arquitetura-era-ia-1-gateway-bootstrap-1 Exited 
+exit=0
+[bootstrap] helpdesk-app             sk-...0001  já conforme; budget=20.0 rpm=600 spend=0.2949756
+[bootstrap] governance-budget-demo   sk-...0001  já conforme; budget=0.0004 rpm=None spend=0.0003150
+[bootstrap] governance-rate-demo     sk-...0001  já conforme; budget=1.0 rpm=3 spend=0.0025623
+[bootstrap] concluído
+-- gasto depois
+helpdesk-app spend= 0.2949756499999999
+governance-budget-demo spend= 0.000315
+governance-rate-demo spend= 0.0025623
+-- chaves no banco (sem duplicatas)
+       key_alias        | count 
+------------------------+-------
+ governance-budget-demo |     1
+ governance-rate-demo   |     1
+ helpdesk-app           |     1
+(3 rows)
+
+-- health
+{"status":"ok"} 200

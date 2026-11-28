@@ -1,0 +1,131 @@
+{
+  "experimento": "budget",
+  "inicio": "2026-11-28T07:53:51.938+00:00",
+  "fim": "2026-11-28T07:54:14.699+00:00",
+  "resultado": {
+    "antes": {
+      "key_alias": "governance-budget-demo",
+      "models": [
+        "ticket-classification"
+      ],
+      "max_budget": 0.0004,
+      "budget_duration": null,
+      "rpm_limit": null,
+      "spend": 0.0,
+      "budget_reset_at": null
+    },
+    "requisicoes": [
+      {
+        "n": 1,
+        "status": 200,
+        "modelo": [
+          "gpt-fake-large"
+        ],
+        "tokens": [
+          [
+            19,
+            11
+          ]
+        ],
+        "custo_manual": 0.0001575,
+        "custo_registrado": "0.0001575",
+        "acumulado_manual": 0.0001575,
+        "disponivel_manual": 0.0002425,
+        "chegou_ao_provider": true,
+        "corpo": null
+      },
+      {
+        "n": 2,
+        "status": 200,
+        "modelo": [
+          "gpt-fake-large"
+        ],
+        "tokens": [
+          [
+            19,
+            11
+          ]
+        ],
+        "custo_manual": 0.0001575,
+        "custo_registrado": "0.0001575",
+        "acumulado_manual": 0.000315,
+        "disponivel_manual": 8.5e-05,
+        "chegou_ao_provider": true,
+        "corpo": null
+      },
+      {
+        "n": 3,
+        "status": 200,
+        "modelo": [
+          "gpt-fake-large"
+        ],
+        "tokens": [
+          [
+            19,
+            11
+          ]
+        ],
+        "custo_manual": 0.0001575,
+        "custo_registrado": "0.0001575",
+        "acumulado_manual": 0.0004725,
+        "disponivel_manual": -7.25e-05,
+        "chegou_ao_provider": true,
+        "corpo": null
+      },
+      {
+        "n": 4,
+        "status": 429,
+        "modelo": [],
+        "tokens": [],
+        "custo_manual": 0,
+        "custo_registrado": null,
+        "acumulado_manual": 0.0004725,
+        "disponivel_manual": -7.25e-05,
+        "chegou_ao_provider": false,
+        "corpo": {
+          "error": {
+            "message": "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+            "type": "budget_exceeded",
+            "param": null,
+            "code": "429"
+          }
+        }
+      }
+    ],
+    "prova_bloqueio": {
+      "chamadas_antes": 3,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+            "type": "budget_exceeded",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.005,
+        "headers": {},
+        "ts": "2026-11-28T07:53:57.362+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 3,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:53:57 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004"
+      ]
+    },
+    "depois_gravacao": {
+      "key_alias": "governance-budget-demo",
+      "models": [
+        "ticket-classification"
+      ],
+      "max_budget": 0.0004,
+      "budget_duration": null,
+      "rpm_limit": null,
+      "spend": 0.0004725,
+      "budget_reset_at": null
+    }
+  }
+}

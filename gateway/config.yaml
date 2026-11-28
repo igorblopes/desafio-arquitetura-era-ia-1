@@ -11,13 +11,20 @@
 #
 # Um único destino (deployment) por grupo: sem balanceamento de carga, o primário nunca é
 # trocado por sorteio. A ordem de recuperação está em router_settings.fallbacks.
-# Budget e rate limit (Passo 12) ainda não estão configurados.
+#
+# Governança (Passo 12, ADRs 0007 a 0010): o PREÇO de cada modelo físico está no seu destino
+# (input/output_cost_per_token, US$ por token, da tabela do provider-fake/README.md), então o
+# custo é o do modelo que de fato respondeu, inclusive num fallback. Orçamento, RPM e quais
+# capacidades cada chave pode pedir ficam nas CHAVES VIRTUAIS, guardadas no Postgres do
+# gateway e criadas por gateway/scripts/bootstrap_keys.py; nada disso fica neste arquivo.
 
 model_list:
   # ---------------- F1: ticket-classification ----------------
   - model_name: ticket-classification          # primário
     litellm_params:
       model: openai/gpt-fake-large
+      input_cost_per_token: 0.0000025   # US$ 2,50 / 10,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.00001
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
       timeout: 3                               # por tentativa; normal ~1,1 s
@@ -25,6 +32,8 @@ model_list:
   - model_name: ticket-classification-equivalent   # fallback técnico: large de OUTRO provider
     litellm_params:
       model: anthropic/claude-fake-large
+      input_cost_per_token: 0.000003    # US$ 3,00 / 15,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.000015
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
       timeout: 3
@@ -33,6 +42,8 @@ model_list:
   - model_name: ticket-classification-degraded     # modelo inferior APROVADO (ADR 0006, F1)
     litellm_params:
       model: openai/gpt-fake-mini
+      input_cost_per_token: 0.00000015  # US$ 0,15 / 0,60 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.0000006
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
       timeout: 2                               # normal ~0,4 s
@@ -41,6 +52,8 @@ model_list:
   - model_name: order-extraction               # primário
     litellm_params:
       model: openai/gpt-fake-large
+      input_cost_per_token: 0.0000025   # US$ 2,50 / 10,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.00001
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
       timeout: 3                               # por tentativa; normal ~1,2 s
@@ -48,6 +61,8 @@ model_list:
   - model_name: order-extraction-equivalent    # fallback técnico
     litellm_params:
       model: anthropic/claude-fake-large
+      input_cost_per_token: 0.000003    # US$ 3,00 / 15,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.000015
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
       timeout: 3
@@ -57,6 +72,8 @@ model_list:
   - model_name: reply-suggestion               # primário
     litellm_params:
       model: anthropic/claude-fake-large
+      input_cost_per_token: 0.000003    # US$ 3,00 / 15,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.000015
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
       timeout: 20                              # por tentativa; normal até ~16,2 s
@@ -65,6 +82,8 @@ model_list:
   - model_name: reply-suggestion-equivalent    # fallback técnico
     litellm_params:
       model: openai/gpt-fake-large
+      input_cost_per_token: 0.0000025   # US$ 2,50 / 10,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.00001
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
       timeout: 20
@@ -73,6 +92,8 @@ model_list:
   - model_name: reply-suggestion-degraded      # modelo inferior APROVADO (ADR 0006, F2)
     litellm_params:
       model: anthropic/claude-fake-mini
+      input_cost_per_token: 0.0000008   # US$ 0,80 / 4,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.000004
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
       timeout: 5                               # normal ~2,1 s
@@ -82,6 +103,8 @@ model_list:
   - model_name: topics-report                  # primário
     litellm_params:
       model: anthropic/claude-fake-large
+      input_cost_per_token: 0.000003    # US$ 3,00 / 15,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.000015
       api_base: http://provider-fake:8090/anthropic
       api_key: os.environ/FAKE_ANTHROPIC_KEY
       timeout: 12                              # por tentativa (um lote); normal até ~9,9 s
@@ -90,6 +113,8 @@ model_list:
   - model_name: topics-report-equivalent       # fallback técnico
     litellm_params:
       model: openai/gpt-fake-large
+      input_cost_per_token: 0.0000025   # US$ 2,50 / 10,00 por 1M (provider-fake/README.md)
+      output_cost_per_token: 0.00001
       api_base: http://provider-fake:8090/openai/v1
       api_key: os.environ/FAKE_OPENAI_KEY
       timeout: 12
@@ -154,6 +179,8 @@ router_settings:
     reply-suggestion-degraded: *unica
 
 general_settings:
-  # Autenticação própria do gateway. Sem banco de dados, a master key é a única chave
-  # aceita; chaves virtuais por consumidor ficam para o Passo 12 (ADR 0003).
+  # Master key: só administração (criar, alterar, revogar chaves). Consumo usa chave virtual.
+  # Com DATABASE_URL no ambiente (compose), o gateway aceita as chaves virtuais do banco.
+  # enforce_fallback_model_access fica no padrão (falso): a chave da app só lista as 4
+  # capacidades, mas o gateway ainda pode usar os grupos internos da cadeia de fallback.
   master_key: os.environ/GATEWAY_MASTER_KEY

@@ -13,20 +13,24 @@ language_model = GatewayLanguageModel()
 app = FastAPI(title="Helpdesk")
 
 
-# Status e mensagem por motivo (ADR 0005). 503: vale tentar mais tarde. 502: precisa de
-# correção. O 504 fica só para a borda, para não confundir as duas origens.
+# Status e mensagem por motivo (ADR 0005; governança no ADR 0010). 503: vale tentar mais
+# tarde. 502: precisa de correção. O 504 fica só para a borda, para não confundir as origens.
+# As recusas de governança dizem só o motivo: nada de chave, orçamento ou limite configurado.
 MODEL_ERRORS = {
     "timeout": (503, "O modelo não respondeu dentro do prazo."),
     "rate_limited": (503, "O modelo está limitando requisições."),
     "unavailable": (503, "O modelo está indisponível."),
     "rejected": (502, "A requisição ao modelo foi recusada."),
+    "throttled": (503, "O limite de uso de IA deste serviço foi atingido. Tente novamente em instantes."),
+    "budget_exceeded": (503, "O orçamento de uso de IA deste serviço está esgotado."),
 }
 
 
 @app.exception_handler(LanguageModelError)
 def model_error(request: Request, error: LanguageModelError) -> JSONResponse:
     status, detail = MODEL_ERRORS[error.reason]
-    return JSONResponse(status_code=status,
+    headers = {"Retry-After": str(error.retry_after)} if error.retry_after else None
+    return JSONResponse(status_code=status, headers=headers,
                         content={"detail": detail, "code": f"model_{error.reason}"})
 
 

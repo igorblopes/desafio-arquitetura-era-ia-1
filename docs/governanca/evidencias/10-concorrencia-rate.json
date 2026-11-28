@@ -1,0 +1,20 @@
+{
+  "experimento": "concorrencia-rate",
+  "inicio": "2026-11-28T08:03:41.304+00:00",
+  "fim": "2026-11-28T08:04:44.467+00:00",
+  "resultado": {
+    "iniciadas": 6,
+    "limite": 3,
+    "status": [
+      200,
+      200,
+      429,
+      429,
+      429,
+      200
+    ],
+    "autorizadas": 3,
+    "recusadas": 3,
+    "chamadas_ao_provider": 3
+  }
+}

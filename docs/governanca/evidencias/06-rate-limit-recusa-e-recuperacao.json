@@ -1,0 +1,121 @@
+{
+  "experimento": "rate",
+  "inicio": "2026-11-28T07:55:38.863+00:00",
+  "fim": "2026-11-28T07:57:47.759+00:00",
+  "resultado": {
+    "politica": {
+      "key_alias": "governance-rate-demo",
+      "models": [
+        "ticket-classification"
+      ],
+      "max_budget": 1.0,
+      "budget_duration": null,
+      "rpm_limit": 3,
+      "spend": 0.0008849999999999999,
+      "budget_reset_at": null
+    },
+    "requisicoes": [
+      {
+        "n": 1,
+        "horario": "2026-11-28T07:56:41.028+00:00",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "2",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.628",
+          "x-litellm-response-duration-ms": "1080.1909999999998"
+        },
+        "chegou_ao_provider": true
+      },
+      {
+        "n": 2,
+        "horario": "2026-11-28T07:56:42.439+00:00",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "1",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.397",
+          "x-litellm-response-duration-ms": "1081.013"
+        },
+        "chegou_ao_provider": true
+      },
+      {
+        "n": 3,
+        "horario": "2026-11-28T07:56:43.851+00:00",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "0",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.463",
+          "x-litellm-response-duration-ms": "1079.242"
+        },
+        "chegou_ao_provider": true
+      }
+    ],
+    "prova_bloqueio": {
+      "chamadas_antes": 3,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Rate limit exceeded for api_key: 73acfd9d4dadf004b3d9d66f1f9b97b86f8c2aba08fbe6dfca0f1e8120e59738. Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 07:57:44 UTC",
+            "type": "throttling_error",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.007,
+        "headers": {
+          "retry-after": "60",
+          "x-litellm-response-cost": "0"
+        },
+        "ts": "2026-11-28T07:56:44.183+00:00",
+        "chave": "governance-rate-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 3,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:56:44 - LiteLLM Proxy:ERROR: common_request_processing.py:1460 - litellm.proxy.proxy_server._handle_llm_api_exception(): Exception occured - 429: Rate limit exceeded for REDACTED Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 07:57:44 UTC",
+        "INFO:     172.18.0.1:39732 - \"POST /v1/chat/completions HTTP/1.1\" 429 Too Many Requests"
+      ]
+    },
+    "recusas_extras": [
+      429,
+      429
+    ],
+    "recuperacao": {
+      "janela_termina": "2026-11-28T07:57:44+00:00",
+      "status_3s_antes": 200,
+      "status_apos": 200,
+      "horario_apos": "2026-11-28T07:57:47.230+00:00",
+      "headers_apos": {
+        "x-ratelimit-api_key-remaining-requests": "1",
+        "x-ratelimit-api_key-limit-requests": "3",
+        "x-litellm-response-cost": "0.0001575",
+        "x-litellm-model-group": "ticket-classification",
+        "x-litellm-model-name": "openai/gpt-fake-large",
+        "x-litellm-attempted-retries": "0",
+        "x-litellm-attempted-fallbacks": "0",
+        "x-litellm-overhead-duration-ms": "1.35",
+        "x-litellm-response-duration-ms": "1079.479"
+      },
+      "chegou_ao_provider": true
+    }
+  }
+}

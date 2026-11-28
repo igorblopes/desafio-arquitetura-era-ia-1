@@ -1,0 +1,59 @@
+{
+  "experimento": "concorrencia-budget",
+  "inicio": "2026-11-28T08:03:20.462+00:00",
+  "fim": "2026-11-28T08:03:41.107+00:00",
+  "resultado": {
+    "iniciadas": 6,
+    "status": [
+      200,
+      429,
+      429,
+      429,
+      429,
+      429
+    ],
+    "autorizadas": 1,
+    "recusadas": 5,
+    "recusas": [
+      "Budget has been exceeded! Key=fc1839f70797c3d4539cd87ac736d97826a20cb350c4d1c0d4566aa4f47d972e Current cost: 0.32783, Max budget: 0.0004",
+      "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.00040000000000001146, Max budget: 0.0004",
+      "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.00040000000000001146, Max budget: 0.0004",
+      "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.00040000000000001146, Max budget: 0.0004",
+      "Budget has been exceeded! Key=fc1839f70797c3d4539cd87ac736d97826a20cb350c4d1c0d4566aa4f47d972e Current cost: 0.491745, Max budget: 0.0004"
+    ],
+    "chamadas_ao_provider": 1,
+    "orcamento": 0.0004,
+    "gasto_registrado": 0.0001575,
+    "ultrapassagem": -0.0002425,
+    "requisicao_seguinte": {
+      "chamadas_antes": 1,
+      "resposta": {
+        "status": 200,
+        "body": {
+          "content": "{\"category\": \"delivery\", \"priority\": \"high\"}",
+          "usage": {
+            "completion_tokens": 11,
+            "prompt_tokens": 19,
+            "total_tokens": 30
+          }
+        },
+        "elapsed_s": 1.087,
+        "headers": {
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.367",
+          "x-litellm-response-duration-ms": "1079.848"
+        },
+        "ts": "2026-11-28T08:03:39.744+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 2,
+      "novas_chamadas_ao_provider": 1,
+      "log_gateway": []
+    }
+  }
+}

@@ -3,15 +3,15 @@
 Fork de trabalho do desafio **Arquitetura na Era da IA** (Full Cycle). O enunciado original continua disponível no [repositório base](https://github.com/devfullcycle/desafio-arquitetura-era-ia-1).
 
 > [!NOTE]
-> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Tabela de capacidades**, **Tabela de fallback**, **Política de resiliência**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**. O roteiro de governança entra no Passo 12.
+> Este README está em construção. Seções presentes: **Visão geral**, **Como rodar**, **Roteiro de governança**, **Tabela de capacidades**, **Tabela de fallback**, **Política de resiliência**, **Fluxos**, **Troca de modelo**, **Métrica**, **Mapa de decisões** e **Diagnóstico da v1**.
 
 ## Visão geral
 
-O helpdesk tem quatro funcionalidades de IA, todas síncronas: classificação de tickets (F1), sugestão de resposta (F2), relatório de temas (F3) e extração de dados do pedido (F4). Desde o Passo 09 (candidata à tag `v2-decoupled`), a aplicação está **desacoplada dos providers**:
+O helpdesk tem quatro funcionalidades de IA, todas síncronas: classificação de tickets (F1), sugestão de resposta (F2), relatório de temas (F3) e extração de dados do pedido (F4). A aplicação é **desacoplada** dos providers (Passo 09, tag `v2-decoupled`), **resiliente** a falha de provider (timeout, retry e fallback, Passos 10 e 11) e **governada** no gateway (Passo 12): consome com uma chave virtual própria, com preço por modelo, orçamento e limite de requisições aplicados antes do provider:
 
 - cada feature pede uma **capacidade lógica** (`ticket-classification`, `reply-suggestion`, `topics-report`, `order-extraction`) por um contrato de uma operação, `ports.LanguageModel.complete(capability, prompt)`;
 - um único adapter (`app/helpdesk/adapters/gateway.py`) fala com o **AI Gateway** (LiteLLM Proxy, serviço `gateway`), e só `main.py` o conhece;
-- modelos físicos, chaves dos providers e `max_tokens` ficam no gateway (`gateway/config.yaml`); o serviço `app` recebe só `GATEWAY_URL` e `GATEWAY_API_KEY`.
+- modelos físicos, chaves dos providers, `max_tokens` e preços ficam no gateway (`gateway/config.yaml`); o serviço `app` recebe só `GATEWAY_URL` e `GATEWAY_API_KEY`, que é a chave virtual `helpdesk-app` (nunca a master key).
 
 ```mermaid
 flowchart LR
@@ -21,8 +21,10 @@ flowchart LR
     F --> P{{ports.LanguageModel}}
     AD[adapters.gateway] -.implementa.-> P
     M -->|injeta| AD
-    AD -->|GATEWAY_API_KEY| G[gateway :4000]
+    AD -->|chave virtual helpdesk-app| G[gateway :4000]
     G --> PF[provider-fake :8090]
+    G --> DB[(gateway-db)]
+    BS[gateway-bootstrap] -->|master key: cria chaves| G
     style P fill:#d4edda,stroke:#1e8449
     style AD fill:#d6eaf8,stroke:#2471a3
 ```
@@ -30,10 +32,11 @@ flowchart LR
 | Já implementado | Ainda pendente (não existe nesta versão) |
 |---|---|
 | contratos de sucesso da v1 preservados (32 testes, OpenAPI idêntico) | deadline da cadeia dentro do gateway (cadeia órfã, ver ADR 0006) |
-| todas as chamadas pelo gateway, com capacidades lógicas | chave por consumidor, orçamento e limites (Passo 12) |
+| todas as chamadas pelo gateway, com capacidades lógicas | alta disponibilidade do gateway e contadores compartilhados (Redis) |
 | troca de modelo só na configuração do gateway | streaming da sugestão (Passo 14) |
 | credenciais dos providers fora da aplicação; timeout, retry limitado e backoff ([ADR 0005](docs/adr/0005-resilience-policy.md)) | relatório mensal assíncrono (Passo 15) |
 | fallback técnico nas 4 capacidades e mini só na F1/F2 ([ADR 0006](docs/adr/0006-fallback-policy.md)) | |
+| chave virtual por consumidor, preço dos 4 modelos, orçamento e RPM com recusa antes do provider ([ADR 0010](docs/adr/0010-gateway-governance.md)) | |
 
 Com um provider fora do ar, cada feature é atendida pelo modelo `large` equivalente do outro provider; com os dois `large` fora, F1 e F2 usam um `mini` e F3 e F4 falham explicitamente (`503`); com o gateway fora do ar, as quatro falham. Detalhes do passo em [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
@@ -45,21 +48,23 @@ Com um provider fora do ar, cada feature é atendida pelo modelo `large` equival
 cp .env.example .env        # só na primeira vez
 docker compose up -d --build --wait
 curl http://localhost:8000/health                # {"status":"ok"}
-curl http://localhost:4000/health/readiness      # {"status":"healthy","db":"Not connected"}
+curl http://localhost:4000/health/readiness      # {"status":"healthy","db":"connected"}
 ```
 
-No PowerShell, use `Copy-Item .env.example .env` e `curl.exe`. Dependências: só Docker com Compose. Não há serviço pago nem credencial privada: as chaves do `.env.example` só funcionam contra o provider-fake. Verificado numa cópia limpa: 21,6 s até os 4 serviços saudáveis e `32 passed` ([evidência](docs/v2/evidencias/24-init-reprodutivel.txt)).
+No PowerShell, use `Copy-Item .env.example .env` e `curl.exe`. Dependências: só Docker com Compose. Não há serviço pago nem credencial privada: as chaves do `.env.example` só funcionam contra o provider-fake. O `up` cria o banco do gateway, aplica as migrações e roda o serviço `gateway-bootstrap`, que cria as três chaves virtuais (ver [Roteiro de governança](#roteiro-de-governança)) e termina; a app só sobe depois dele. Nenhum passo manual. Verificado numa cópia limpa no Passo 12: 28 s até tudo saudável, chaves criadas e quatro features `200` ([evidência](docs/governanca/evidencias/30-ambiente-limpo.txt)).
 
 A aplicação só é acessada pela borda (`http://localhost:8000`). O provider-fake expõe a administração em `http://localhost:8090/admin/*`. O AI Gateway responde em `http://localhost:4000` (porta publicada só para testes; dentro do compose ele é `http://gateway:4000`).
 
 | Serviço | Porta no host | Papel | Variáveis que recebe |
 |---|---|---|---|
 | `edge` | 8000 | borda (nginx, 30 s), única entrada do helpdesk | — |
-| `app` | — | FastAPI do helpdesk | `GATEWAY_URL`, `GATEWAY_API_KEY` |
-| `gateway` | 4000 | AI Gateway (LiteLLM Proxy `v1.102.1`), configuração em `gateway/config.yaml` | `FAKE_OPENAI_KEY`, `FAKE_ANTHROPIC_KEY`, `GATEWAY_MASTER_KEY` |
+| `app` | — | FastAPI do helpdesk | `GATEWAY_URL`, `GATEWAY_API_KEY` (= `HELPDESK_GATEWAY_KEY`) |
+| `gateway` | 4000 | AI Gateway (LiteLLM Proxy `v1.102.1`), configuração em `gateway/config.yaml` | `FAKE_OPENAI_KEY`, `FAKE_ANTHROPIC_KEY`, `GATEWAY_MASTER_KEY`, `DATABASE_URL` |
+| `gateway-db` | — | Postgres 17.2 do gateway: chaves virtuais e gasto ([ADR 0007](docs/adr/0007-gateway-governance-database.md)) | `GATEWAY_DB_PASSWORD` |
+| `gateway-bootstrap` | — | cria ou alinha as chaves virtuais a cada `up` e termina com `Exited (0)` ([ADR 0008](docs/adr/0008-key-bootstrap-service.md)) | `GATEWAY_MASTER_KEY` e as 3 chaves virtuais |
 | `provider-fake` | 8090 | providers simulados (`openai` e `anthropic`) e `/admin/*` | `FAKE_OPENAI_KEY`, `FAKE_ANTHROPIC_KEY` |
 
-Nenhum serviço usa `env_file`: cada um recebe do `.env`, por interpolação, só as variáveis que usa. Se faltar alguma, o compose para com `defina ... no .env`. A `GATEWAY_API_KEY` da app é, provisoriamente, o valor da master key do gateway ([ADR 0003](docs/adr/0003-ai-gateway.md)); chaves por consumidor entram no Passo 12. Logs do gateway: `docker compose logs gateway`.
+Nenhum serviço usa `env_file`: cada um recebe do `.env`, por interpolação, só as variáveis que usa. Se faltar alguma, o compose para com `defina ... no .env`. A app recebe só a sua chave virtual: nem master key, nem chave de provider, nem senha do banco (`docker compose exec app env`). Logs: `docker compose logs gateway` e `docker compose logs gateway-bootstrap`.
 
 ### 2. Rodar os testes de caracterização
 
@@ -114,11 +119,11 @@ Para subir duas versões, uma de cada vez, use nomes de projeto distintos (`dock
 
 ### 4. Testar o AI Gateway diretamente
 
-O gateway também pode ser chamado sem a app, com a chave do `.env`:
+O gateway também pode ser chamado sem a app, com a chave virtual do helpdesk (`HELPDESK_GATEWAY_KEY` do `.env`):
 
 ```bash
 curl -s localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer sk-gateway-local-0001" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-helpdesk-local-0001" -H "Content-Type: application/json" \
   -d '{"model": "ticket-classification", "messages": [{"role": "user", "content": "TASK: classify\nMeu pedido #481516 não chegou"}]}'
 curl -s "localhost:8090/admin/calls?last=1"     # provider e modelo físico que atenderam
 ```
@@ -198,6 +203,99 @@ curl -s -X POST localhost:8090/admin/reset                         # sempre rest
 ```
 
 Em experimentos com provider travado, a F2 deixa uma cadeia órfã no gateway por até ~45 s: espere esse tempo antes do próximo experimento ou filtre `/admin/calls` pelo campo `task`. Comparação large × mini com 1.000 tickets: `python docs/fallback/comparar_modelos.py`.
+
+### 8. Testar a governança (Passo 12)
+
+Gateway real com o banco, provider-fake real e a app real em processo; cada teste cria e apaga a sua própria chave efêmera, então não consome as chaves de demonstração nem a do helpdesk. Cerca de 3 min (um teste espera a janela de 60 s do rate limit).
+
+```bash
+docker run --rm -v "${PWD}:/w" -w /w -e PYTHONDONTWRITEBYTECODE=1 \
+  -e HELPDESK_BASE_URL=http://host.docker.internal:8000 -e PROVIDER_ADMIN_URL=http://host.docker.internal:8090 \
+  -e GATEWAY_URL=http://host.docker.internal:4000 python:3.12-slim \
+  sh -c "pip install -q -r tests/governance/requirements.txt && python -m pytest tests/governance -v -p no:cacheprovider"
+```
+
+Resultado esperado: `33 passed` (autenticação, orçamento, rate limit, isolamento, contabilização, integração com retry e fallback). Experimentos com evidência em JSON: `python docs/governanca/sondas_governanca.py precos|autenticacao|budget|rate|isolamento|fallback-budget|fallback-rate|custo-cadeia|concorrencia-budget|concorrencia-rate|reserva-sequencial|latencia`. Relatório: [docs/governanca/relatorio-governanca.md](docs/governanca/relatorio-governanca.md).
+
+## Roteiro de governança
+
+O gateway aplica as políticas por **chave virtual**, antes de encaminhar ao provider ([ADR 0010](docs/adr/0010-gateway-governance.md)). As chaves são criadas pelo `gateway-bootstrap` em todo `docker compose up`, com os valores do `.env` ([ADR 0008](docs/adr/0008-key-bootstrap-service.md)):
+
+| Identidade | Variável no `.env` | Capacidades | Orçamento | Rate limit | Quem usa |
+|---|---|---|---|---|---|
+| `helpdesk-app` | `HELPDESK_GATEWAY_KEY` | as 4 | US$ 20 / 30 dias (aviso em 15) | 600 req/min | só o serviço `app` |
+| `governance-budget-demo` | `GOVERNANCE_BUDGET_KEY` | `ticket-classification` | US$ 0,0004, acumulado | — | Experimento A |
+| `governance-rate-demo` | `GOVERNANCE_RATE_KEY` | `ticket-classification` | US$ 1 (nunca é a causa) | 3 req/min | Experimento B |
+| master key | `GATEWAY_MASTER_KEY` | administração | — | — | gateway e bootstrap; nunca a app |
+
+Preços configurados (os do `provider-fake/README.md`): `gpt-fake-large` US$ 2,50/10,00, `claude-fake-large` 3,00/15,00, `gpt-fake-mini` 0,15/0,60, `claude-fake-mini` 0,80/4,00 por 1M tokens de entrada/saída. As funcionalidades continuam sendo validadas pela borda (porta 8000, chave do helpdesk); os experimentos abaixo chamam o gateway direto (porta 4000) porque cada um usa uma chave diferente.
+
+Comandos em bash (Linux, macOS ou Git Bash), na raiz do repositório. Rode cada experimento sem outro tráfego no ambiente: a prova compara `/admin/calls` antes e depois, e **não** use `/admin/reset` entre as duas contagens.
+
+```bash
+M=sk-gateway-local-0001          # master key (GATEWAY_MASTER_KEY), só para consultar a chave
+B='{"model":"ticket-classification","messages":[{"role":"user","content":"TASK: classify\nMeu pedido #481516 nao chegou"}]}'
+chamadas() { curl -s "localhost:8090/admin/calls?last=5000" | grep -o '"id"' | wc -l; }
+```
+
+### Experimento A: recusa por orçamento
+
+Cada chamada custa US$ 0,0001375 (11 tokens de entrada × 2,50 + 11 de saída × 10,00, por milhão). O gateway admite enquanto o gasto for **menor** que US$ 0,0004: passam 3 (gasto 0,0004125) e a 4ª é recusada.
+
+```bash
+K=sk-governance-budget-local-0001                                   # GOVERNANCE_BUDGET_KEY
+# 1-2. estado inicial e orçamento: "max_budget":0.0004, "spend":0.0 (se não, passo 10 antes)
+curl -s "localhost:4000/key/info?key=$K" -H "Authorization: Bearer $M" | grep -oE '"(key_alias|max_budget|spend)":[^,]*'
+# 3. três requisições autorizadas (custo de cada uma no header)
+for i in 1 2 3; do curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H "Authorization: Bearer $K" \
+  -H "Content-Type: application/json" -d "$B" | grep -iE "^HTTP|x-litellm-response-cost:"; sleep 1; done
+# 4. consumo: o gasto vai ao banco em lote; espere ~15 s ("spend":0.0004125)
+sleep 15; curl -s "localhost:4000/key/info?key=$K" -H "Authorization: Bearer $M" | grep -oE '"spend":[^,]*'
+# 5. contagem de chamadas ao provider ANTES
+chamadas
+# 6-7. nova requisição: recusada pelo gateway
+curl -s -w "\nHTTP %{http_code}\n" localhost:4000/v1/chat/completions -H "Authorization: Bearer $K" -H "Content-Type: application/json" -d "$B"
+# 8-9. contagem DEPOIS (mesmo número = nenhuma chamada nova ao provider)
+chamadas
+docker compose logs gateway --since 2m | grep "Budget has been exceeded"   # recusa na autenticação
+# 10. restaurar para repetir (só chaves de demonstração; espera o gasto estabilizar, ~35 s)
+docker compose run --rm gateway-bootstrap --reset-spend governance-budget-demo
+```
+
+Observado ([evidência](docs/governanca/evidencias/30-ambiente-limpo.txt)): `HTTP 429` com `"type":"budget_exceeded"` e `Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004125..., Max budget: 0.0004`, e a mesma contagem antes e depois. O `429` sozinho não prova nada: a prova é a contagem igual.
+
+### Experimento B: recusa por limite de requisições
+
+Janela **fixa** de 60 s que começa na primeira requisição admitida (limitador do LiteLLM `v1.102.1`, contador em memória). Cada requisição recebida conta 1, mesmo que o gateway faça retry ou fallback por dentro.
+
+```bash
+K=sk-governance-rate-local-0001                                     # GOVERNANCE_RATE_KEY
+# 1-2. estado e limite ("rpm_limit":3); comece com a chave parada há 60 s (janela vazia)
+curl -s "localhost:4000/key/info?key=$K" -H "Authorization: Bearer $M" | grep -oE '"(key_alias|rpm_limit)":[^,]*'
+# 3. três requisições (saldo no header: 2, 1, 0)
+for i in 1 2 3; do curl -s -o /dev/null -D - localhost:4000/v1/chat/completions -H "Authorization: Bearer $K" \
+  -H "Content-Type: application/json" -d "$B" | grep -iE "^HTTP|remaining-requests"; done
+# 4. contagem ANTES
+chamadas
+# 5-6. requisição adicional: recusada, com Retry-After
+curl -s -D - localhost:4000/v1/chat/completions -H "Authorization: Bearer $K" -H "Content-Type: application/json" -d "$B" | grep -ioE "^HTTP.*|retry-after.*|\"type\":\"[a-z_]*\""
+# 7-8. contagem DEPOIS (mesmo número)
+chamadas
+# 9. recuperação: 60 s depois da PRIMEIRA requisição a chave volta sozinha
+sleep 60; curl -s -o /dev/null -w "HTTP %{http_code}\n" localhost:4000/v1/chat/completions -H "Authorization: Bearer $K" -H "Content-Type: application/json" -d "$B"
+```
+
+Observado: `HTTP 429`, `retry-after: 60`, `"type":"throttling_error"` (`Rate limit exceeded for api_key: <hash>. Limit type: requests. Current limit: 3, Remaining: 0`), contagem igual e `200` depois da janela. O "Limit resets at" do corpo e o `Retry-After` são pessimistas: contam 60 s a partir da recusa, mas a janela termina 60 s depois da primeira requisição.
+
+### Outras verificações
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" localhost:4000/v1/chat/completions -H "Authorization: Bearer sk-invalida" -H "Content-Type: application/json" -d "$B"   # 401, sem chamada ao provider
+docker compose exec app env | grep -E "KEY|DATABASE"        # só GATEWAY_API_KEY (a chave virtual do helpdesk)
+docker compose exec gateway-db psql -U litellm -d litellm -c 'select key_alias, spend, max_budget, rpm_limit from "LiteLLM_VerificationToken";'
+```
+
+Recusa por orçamento ou rate limit não dispara retry nem fallback (nenhum modelo é chamado, nem com o primário em falha). Na app elas viram `503` com `code` `model_budget_exceeded` ou `model_throttled` (com `Retry-After`), sem expor chave nem limite.
 
 ## Tabela de capacidades
 
@@ -372,9 +470,13 @@ Medida com o mesmo comando sobre o código do Passo 09 e reproduzida com CSV id�
 | [0003](docs/adr/0003-ai-gateway.md) | AI Gateway self-hosted: LiteLLM Proxy `v1.102.1`; toda a IA passa por ele | solução | aceita (infraestrutura e as quatro features) |
 | [0004](docs/adr/0004-logical-capabilities.md) | capacidades lógicas mapeadas no gateway | solução | aceita (quatro capacidades) |
 | [0005](docs/adr/0005-resilience-policy.md) | timeout, retry limitado e backoff no gateway; limite externo e erros na app | solução | aceita; tentativas e prazo da F3 revisados pelo 0006 |
-| [0006](docs/adr/0006-fallback-policy.md) | fallback técnico para o large de outro provider em todas; mini só na F1 e F2; F3 e F4 falham explicitamente | solução | aceita |
+| [0006](docs/adr/0006-fallback-policy.md) | fallback técnico para o large de outro provider em todas; mini só na F1 e F2; F3 e F4 falham explicitamente | solução | aceita; revisado no Passo 12 |
+| [0007](docs/adr/0007-gateway-governance-database.md) | Postgres próprio do gateway para chaves virtuais e gasto | solução | aceita |
+| [0008](docs/adr/0008-key-bootstrap-service.md) | serviço de bootstrap idempotente cria as chaves a cada `up` | solução | aceita |
+| [0009](docs/adr/0009-corporate-ai-governance.md) | política corporativa (simulada): consumo só pelo gateway, identidade, orçamento e limite por consumidor | corporativa | aceita |
+| [0010](docs/adr/0010-gateway-governance.md) | preço por modelo, chave virtual, orçamento e RPM no gateway; recusa sem retry nem fallback | solução | aceita |
 
-Governança e modos de execução terão ADRs próprios quando forem decididos (Passos 12 a 15). Fallback: [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e [checkpoint](docs/fallback/checkpoint-passo-11.md). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
+Os ADRs 0003, 0005 e 0006 têm seção de revisão do Passo 12. Modos de execução terão ADRs próprios (Passos 13 a 15). Governança: [docs/governanca/relatorio-governanca.md](docs/governanca/relatorio-governanca.md) e [checkpoint](docs/governanca/checkpoint-passo-12.md). Fallback: [docs/fallback/relatorio-fallback.md](docs/fallback/relatorio-fallback.md) e [checkpoint](docs/fallback/checkpoint-passo-11.md). Plano da refatoração: [docs/refactoring-plan.md](docs/refactoring-plan.md) (versão 1.2). Piloto da F1: [docs/piloto/relatorio-piloto.md](docs/piloto/relatorio-piloto.md). Refatoração completa: [docs/v2/relatorio-v2.md](docs/v2/relatorio-v2.md).
 
 ## Diagnóstico da v1
 

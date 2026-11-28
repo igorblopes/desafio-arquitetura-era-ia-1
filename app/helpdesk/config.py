@@ -1,6 +1,7 @@
 import os
 
-# AI Gateway: endereço e chave própria do gateway, vindos do ambiente.
+# AI Gateway: endereço e chave VIRTUAL de consumo do helpdesk (helpdesk-app, ADR 0010),
+# vindos do ambiente. Não é a master key: só consome as 4 capacidades, com orçamento e RPM.
 # Usados só pelo adapter do gateway; modelo, provider, tentativas e backoff ficam no gateway.
 GATEWAY_URL = os.environ["GATEWAY_URL"]
 GATEWAY_API_KEY = os.environ["GATEWAY_API_KEY"]

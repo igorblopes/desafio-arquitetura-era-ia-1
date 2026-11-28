@@ -1,0 +1,5 @@
+pytest>=8,<10
+httpx>=0.27,<1
+# A app real roda em processo nos testes de integração com resiliência (adapter e API).
+fastapi==0.115.6
+openai==3.19.0

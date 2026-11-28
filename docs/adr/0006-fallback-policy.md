@@ -180,3 +180,12 @@ pytest tests/fallback -v                                    # 40 passed
 ```
 
 Detalhes, tabelas e diagramas em [`docs/fallback/relatorio-fallback.md`](../fallback/relatorio-fallback.md); registros em `docs/fallback/evidencias/`; configuração em `gateway/config.yaml`.
+
+## Revisão no Passo 12 (2026-11-28)
+
+As pendências marcadas para o Passo 12 foram resolvidas ([ADR 0010](0010-gateway-governance.md)):
+
+- **Governança antes do fallback, verificado:** com orçamento esgotado ou RPM esgotado, a requisição é recusada na autenticação/limitador e nenhum destino (primário, equivalente, mini) recebe chamada, mesmo com o primário ou a cadeia inteira em `500` (`docs/governanca/evidencias/04-fallback-nao-contorna-budget.json` e `07-fallback-nao-contorna-rate.json`).
+- **Grupos internos:** a chave `helpdesk-app` lista só as 4 capacidades; pedir `*-equivalent` ou `*-degraded` direto dá `403 key_model_access_denied`. O fallback interno continua funcionando (`enforce_fallback_model_access` no padrão, falso).
+- **Custo:** preços declarados por destino; num fallback a chave paga o modelo que respondeu (primário `500` na F1: US$ 0,000222 do `claude-fake-large`, não 0,0001575; dois large fora: US$ 0,00000945 do mini). Tentativas que falharam com `500` custam 0.
+- **RPM:** uma requisição com 4 tentativas físicas conta 1 no limite da chave.

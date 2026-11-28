@@ -1,0 +1,61 @@
+{
+  "experimento": "fallback-budget",
+  "inicio": "2026-11-28T07:54:18.772+00:00",
+  "fim": "2026-11-28T07:54:21.565+00:00",
+  "resultado": {
+    "primario_500": {
+      "chamadas_antes": 0,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+            "type": "budget_exceeded",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.005,
+        "headers": {},
+        "ts": "2026-11-28T07:54:18.811+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 0,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:54:18 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004"
+      ]
+    },
+    "dois_large_500": {
+      "chamadas_antes": 0,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004",
+            "type": "budget_exceeded",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.005,
+        "headers": {},
+        "ts": "2026-11-28T07:54:20.192+00:00",
+        "chave": "governance-budget-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 0,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:54:20 - LiteLLM Proxy:ERROR: auth_exception_handler.py:159 - litellm.proxy.proxy_server.user_api_key_auth(): Exception occured - Budget has been exceeded! Key=governance-budget-demo (sk-...0001) Current cost: 0.0004725000000000212, Max budget: 0.0004"
+      ]
+    },
+    "chamadas_por_modelo": {
+      "gpt-fake-large": 0,
+      "claude-fake-large": 0,
+      "gpt-fake-mini": 0,
+      "claude-fake-mini": 0
+    }
+  }
+}

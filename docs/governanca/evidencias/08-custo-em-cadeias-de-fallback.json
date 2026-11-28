@@ -1,0 +1,160 @@
+{
+  "experimento": "custo-cadeia",
+  "inicio": "2026-11-28T07:59:15.976+00:00",
+  "fim": "2026-11-28T08:01:01.426+00:00",
+  "resultado": {
+    "cadeias": [
+      {
+        "cenario": "normal",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "2",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "0.0001575",
+          "x-litellm-model-group": "ticket-classification",
+          "x-litellm-model-name": "openai/gpt-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "0",
+          "x-litellm-overhead-duration-ms": "1.443",
+          "x-litellm-response-duration-ms": "1079.6680000000001"
+        },
+        "tentativas": [
+          {
+            "modelo": "gpt-fake-large",
+            "status": 200,
+            "tokens": [
+              19,
+              11
+            ],
+            "custo_esperado": 0.0001575
+          }
+        ],
+        "custo_esperado_total": 0.0001575
+      },
+      {
+        "cenario": "primario_500",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "1",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "0.000222",
+          "x-litellm-model-group": "ticket-classification-equivalent",
+          "x-litellm-model-name": "anthropic/claude-fake-large",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "1",
+          "x-litellm-overhead-duration-ms": "3.333",
+          "x-litellm-response-duration-ms": "1081.5539999999999"
+        },
+        "tentativas": [
+          {
+            "modelo": "gpt-fake-large",
+            "status": 500,
+            "tokens": [
+              19,
+              null
+            ],
+            "custo_esperado": 0.0
+          },
+          {
+            "modelo": "gpt-fake-large",
+            "status": 500,
+            "tokens": [
+              19,
+              null
+            ],
+            "custo_esperado": 0.0
+          },
+          {
+            "modelo": "claude-fake-large",
+            "status": 200,
+            "tokens": [
+              19,
+              11
+            ],
+            "custo_esperado": 0.000222
+          }
+        ],
+        "custo_esperado_total": 0.000222
+      },
+      {
+        "cenario": "dois_large_500",
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "0",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "9.45e-06",
+          "x-litellm-model-group": "ticket-classification-degraded",
+          "x-litellm-model-name": "openai/gpt-fake-mini",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "2",
+          "x-litellm-overhead-duration-ms": "1.294",
+          "x-litellm-response-duration-ms": "377.96200000000005"
+        },
+        "tentativas": [
+          {
+            "modelo": "gpt-fake-large",
+            "status": 500,
+            "tokens": [
+              19,
+              null
+            ],
+            "custo_esperado": 0.0
+          },
+          {
+            "modelo": "gpt-fake-large",
+            "status": 500,
+            "tokens": [
+              19,
+              null
+            ],
+            "custo_esperado": 0.0
+          },
+          {
+            "modelo": "claude-fake-large",
+            "status": 500,
+            "tokens": [
+              19,
+              null
+            ],
+            "custo_esperado": 0.0
+          },
+          {
+            "modelo": "gpt-fake-mini",
+            "status": 200,
+            "tokens": [
+              19,
+              11
+            ],
+            "custo_esperado": 9.45e-06
+          }
+        ],
+        "custo_esperado_total": 9.45e-06
+      }
+    ],
+    "gasto_chave_rate": {
+      "antes": 0.00170085,
+      "depois": 0.0020898,
+      "delta": 0.00038895
+    },
+    "borda_f1_primario_500": {
+      "status": 200,
+      "chamadas": [
+        [
+          "gpt-fake-large",
+          500
+        ],
+        [
+          "gpt-fake-large",
+          500
+        ],
+        [
+          "claude-fake-large",
+          200
+        ]
+      ],
+      "gasto_helpdesk_antes": 0.000315,
+      "gasto_helpdesk_depois": 0.000537,
+      "delta": 0.000222
+    }
+  }
+}

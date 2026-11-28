@@ -1,0 +1,27 @@
+== grep modelos fisicos em app/
+exit=1
+== grep credenciais em app/
+exit=1
+== docker compose exec app env (mascarado)
+GATEWAY_URL=http://gateway:4000
+GATEWAY_API_KEY=sk-helpdesk-***
+GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305
+== docker compose config: servico app (env_file, volumes, build args)
+3:      GATEWAY_API_KEY: sk-helpdesk-***
+9:        source: D:\Projetos\Fullcycle\desafio-arquitetura-era-ia-1\data
+10:        target: /data
+== quem recebe a master key
+53:  gateway:
+96:  gateway-bootstrap:
+== porta do banco publicada? (Ports do container gateway-db; vazio ou só 5432/tcp interno = não publicada)
+5432/tcp  (sem mapeamento 0.0.0.0:...->5432)
+== git diff v2-decoupled -- provider-fake/ edge/ data/ (vazio = intacto)
+== git diff v1-coupled v2-decoupled -- tests/characterization/
+== git diff HEAD -- tests/characterization/
+== tags
+07c2026db512dacefde56420464cf0338535d8a1
+c954c434d16c1e8d489d57baa0dd02b4fd3e1294
+80283055f02175a84c8b6bc62dacf81964ad15f0
+b637c5ae2036642c0eaffa985880691a6c9aed66
+== estado do provider
+{"providers":{"openai":"normal","anthropic":"normal"},"models":{},"effective_by_model":{"gpt-fake-large":"normal","gpt-fake-mini":"normal","claude-fake-large":"normal","claude-fake-mini":"normal"}}

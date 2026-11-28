@@ -129,3 +129,7 @@ A F1 é o primeiro consumidor real do gateway. Ela usa o adapter `GatewayLanguag
 O gateway é agora ponto único de falha de toda a IA da aplicação (R19). Timeout, `num_retries` e backoff explícitos são entrada do Passo 10; fallback, do Passo 11; chaves por consumidor e orçamento, do Passo 12.
 
 **A decisão continua válida, sem mudança.**
+
+## Revisão no Passo 12 (2026-11-28)
+
+O texto acima fica como registro. A autenticação provisória terminou: a app passou a usar a chave virtual `helpdesk-app` (`HELPDESK_GATEWAY_KEY`), e a master key só administra o gateway (gateway e serviço de bootstrap a recebem; a app não). O gateway ganhou um Postgres próprio ([ADR 0007](0007-gateway-governance-database.md)), as chaves são criadas sem passo manual ([ADR 0008](0008-key-bootstrap-service.md)) e os preços dos modelos simulados estão declarados em `input/output_cost_per_token` de cada destino, não em `model_info` como previsto antes ([ADR 0010](0010-gateway-governance.md)).

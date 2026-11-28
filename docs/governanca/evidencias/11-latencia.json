@@ -1,0 +1,24 @@
+{
+  "experimento": "latencia",
+  "inicio": "2026-11-28T08:04:50.071+00:00",
+  "fim": "2026-11-28T08:05:16.332+00:00",
+  "resultado": {
+    "master": {
+      "overhead_ms_mediana": 1.351,
+      "overhead_ms_max": 1.816,
+      "total_s_mediana": 1.089,
+      "total_s_max": 1.101
+    },
+    "helpdesk-app": {
+      "overhead_ms_mediana": 1.411,
+      "overhead_ms_max": 1.491,
+      "total_s_mediana": 1.095,
+      "total_s_max": 1.107
+    },
+    "f1_pela_borda": {
+      "mediana_s": 1.09,
+      "max_s": 1.105,
+      "n": 8
+    }
+  }
+}

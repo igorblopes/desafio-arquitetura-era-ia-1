@@ -1,0 +1,133 @@
+{
+  "experimento": "fallback-rate",
+  "inicio": "2026-11-28T07:57:57.103+00:00",
+  "fim": "2026-11-28T07:59:10.170+00:00",
+  "resultado": {
+    "dentro_do_limite_com_fallback": [
+      {
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "2",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "9.45e-06",
+          "x-litellm-model-group": "ticket-classification-degraded",
+          "x-litellm-model-name": "openai/gpt-fake-mini",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "2",
+          "x-litellm-overhead-duration-ms": "1.364",
+          "x-litellm-response-duration-ms": "377.652"
+        },
+        "chamadas": [
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "claude-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-mini",
+            200
+          ]
+        ]
+      },
+      {
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "1",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "9.45e-06",
+          "x-litellm-model-group": "ticket-classification-degraded",
+          "x-litellm-model-name": "openai/gpt-fake-mini",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "2",
+          "x-litellm-overhead-duration-ms": "1.306",
+          "x-litellm-response-duration-ms": "377.399"
+        },
+        "chamadas": [
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "claude-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-mini",
+            200
+          ]
+        ]
+      },
+      {
+        "status": 200,
+        "headers": {
+          "x-ratelimit-api_key-remaining-requests": "0",
+          "x-ratelimit-api_key-limit-requests": "3",
+          "x-litellm-response-cost": "9.45e-06",
+          "x-litellm-model-group": "ticket-classification-degraded",
+          "x-litellm-model-name": "openai/gpt-fake-mini",
+          "x-litellm-attempted-retries": "0",
+          "x-litellm-attempted-fallbacks": "2",
+          "x-litellm-overhead-duration-ms": "1.101",
+          "x-litellm-response-duration-ms": "376.90299999999996"
+        },
+        "chamadas": [
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-large",
+            500
+          ],
+          [
+            "claude-fake-large",
+            500
+          ],
+          [
+            "gpt-fake-mini",
+            200
+          ]
+        ]
+      }
+    ],
+    "prova_bloqueio": {
+      "chamadas_antes": 12,
+      "resposta": {
+        "status": 429,
+        "body": {
+          "error": {
+            "message": "Rate limit exceeded for api_key: 73acfd9d4dadf004b3d9d66f1f9b97b86f8c2aba08fbe6dfca0f1e8120e59738. Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 08:00:08 UTC",
+            "type": "throttling_error",
+            "param": null,
+            "code": "429"
+          }
+        },
+        "elapsed_s": 0.008,
+        "headers": {
+          "retry-after": "60",
+          "x-litellm-response-cost": "0"
+        },
+        "ts": "2026-11-28T07:59:08.785+00:00",
+        "chave": "governance-rate-demo sk-...0001",
+        "capacidade": "ticket-classification"
+      },
+      "chamadas_depois": 12,
+      "novas_chamadas_ao_provider": 0,
+      "log_gateway": [
+        "07:59:08 - LiteLLM Proxy:ERROR: common_request_processing.py:1460 - litellm.proxy.proxy_server._handle_llm_api_exception(): Exception occured - 429: Rate limit exceeded for REDACTED Limit type: requests. Current limit: 3, Remaining: 0. Limit resets at: 2026-11-28 08:00:08 UTC",
+        "INFO:     172.18.0.1:50858 - \"POST /v1/chat/completions HTTP/1.1\" 429 Too Many Requests"
+      ]
+    }
+  }
+}
